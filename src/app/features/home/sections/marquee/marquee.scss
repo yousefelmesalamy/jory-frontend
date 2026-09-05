@@ -1,0 +1,38 @@
+$maroon: #7a2a2a;
+$gold: #d3a45f;
+$on-maroon: #f0dcb8;
+
+:host {
+  display: block;
+}
+
+.marquee {
+  background: $maroon;
+  overflow: hidden;
+}
+
+.marquee__inner {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  padding: 16px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.marquee__item {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+  white-space: nowrap;
+  font-size: 13.5px;
+  letter-spacing: 0.16em;
+  color: $on-maroon;
+}
+
+.marquee__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $gold;
+}

@@ -1,0 +1,299 @@
+<div class="shop">
+  <header class="shop__head">
+    <p class="shop__crumb">{{ t().crumbShop }}</p>
+    <h1 class="shop__title">{{ t().shopTitle }}</h1>
+    <p class="shop__lead">{{ t().shopLead }}</p>
+  </header>
+
+  <button
+    class="shop__filters-toggle"
+    type="button"
+    [attr.aria-expanded]="filtersOpen()"
+    (click)="filtersOpen.set(!filtersOpen())"
+  >
+    {{ t().filtersToggle }}
+    @if (appliedFilters().length) {
+      <span class="shop__filters-count">{{ appliedFilters().length }}</span>
+    }
+  </button>
+
+  <div class="shop__layout">
+    <aside class="shop__filters" [class.shop__filters--open]="filtersOpen()" [formGroup]="form">
+      <div class="filter-group">
+        <label class="filter-group__label" for="filter-search">{{ t().filterSearch }}</label>
+        <input
+          id="filter-search"
+          class="filter-group__input"
+          type="search"
+          formControlName="search"
+          [placeholder]="t().filterSearchPlaceholder"
+        />
+      </div>
+
+      <fieldset class="filter-group">
+        <legend class="filter-group__label">{{ t().filterType }}</legend>
+        <div class="pills">
+          @for (choice of typeChoices(); track choice.value) {
+            <button
+              class="pill"
+              type="button"
+              [class.pill--on]="isChosen('type', choice.value)"
+              [attr.aria-pressed]="isChosen('type', choice.value)"
+              (click)="toggleChoice('type', choice.value)"
+            >
+              {{ choice.label }}
+            </button>
+          }
+        </div>
+      </fieldset>
+
+      <!-- The one filter drawn as what it measures: chips run light to dark. -->
+      <fieldset class="filter-group">
+        <legend class="filter-group__label">{{ t().filterRoast }}</legend>
+        <div class="roast">
+          @for (choice of roastChoices(); track choice.value) {
+            <button
+              class="roast__chip"
+              type="button"
+              [class.roast__chip--on]="isChosen('roast', choice.value)"
+              [attr.aria-pressed]="isChosen('roast', choice.value)"
+              [attr.aria-label]="choice.label"
+              [attr.title]="choice.label"
+              [style.--bean]="choice.shade"
+              (click)="toggleChoice('roast', choice.value)"
+            ></button>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="filter-group">
+        <legend class="filter-group__label">{{ t().filterProcess }}</legend>
+        <div class="pills">
+          @for (choice of processChoices(); track choice.value) {
+            <button
+              class="pill"
+              type="button"
+              [class.pill--on]="isChosen('process', choice.value)"
+              [attr.aria-pressed]="isChosen('process', choice.value)"
+              (click)="toggleChoice('process', choice.value)"
+            >
+              {{ choice.label }}
+            </button>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset class="filter-group">
+        <legend class="filter-group__label">{{ t().priceRange }}</legend>
+        <div class="price">
+          <input
+            class="filter-group__input"
+            type="number"
+            min="0"
+            formControlName="minPrice"
+            [placeholder]="t().priceMin"
+            [attr.aria-label]="t().priceMin"
+          />
+          <span class="price__rule" aria-hidden="true"></span>
+          <input
+            class="filter-group__input"
+            type="number"
+            min="0"
+            formControlName="maxPrice"
+            [placeholder]="t().priceMax"
+            [attr.aria-label]="t().priceMax"
+          />
+        </div>
+      </fieldset>
+
+      <div class="filter-group">
+        <label class="filter-group__label" for="filter-category">{{ t().filterCategory }}</label>
+        <select id="filter-category" class="filter-group__input" formControlName="category">
+          <option value="">{{ t().filterAllCategories }}</option>
+          @for (cat of categories(); track cat.id) {
+            <option [value]="cat.slug">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-group__label" for="filter-origin">{{ t().filterOrigin }}</label>
+        <input
+          id="filter-origin"
+          class="filter-group__input"
+          type="text"
+          formControlName="origin"
+          [placeholder]="t().filterOriginPlaceholder"
+        />
+      </div>
+
+      <fieldset class="filter-group">
+        <legend class="filter-group__label">{{ t().filterBestSelling }}</legend>
+        <div class="pills">
+          @for (choice of bestSellingChoices(); track choice.value) {
+            <button
+              class="pill"
+              type="button"
+              [class.pill--on]="isChosen('bestSelling', choice.value)"
+              [attr.aria-pressed]="isChosen('bestSelling', choice.value)"
+              (click)="toggleChoice('bestSelling', choice.value)"
+            >
+              {{ choice.label }}
+            </button>
+          }
+        </div>
+      </fieldset>
+
+      <div class="filter-switches">
+        <label class="switch">
+          <input type="checkbox" formControlName="onSale" />
+          <span class="switch__track" aria-hidden="true"></span>
+          {{ t().filterOnSale }}
+        </label>
+
+        <label class="switch">
+          <input type="checkbox" formControlName="inStock" />
+          <span class="switch__track" aria-hidden="true"></span>
+          {{ t().filterInStock }}
+        </label>
+      </div>
+
+      <button class="shop__filters-done" type="button" (click)="filtersOpen.set(false)">
+        {{ t().filtersDone }}
+      </button>
+    </aside>
+
+    <div class="shop__results">
+      <div class="shop__toolbar" [formGroup]="form">
+        <span class="shop__count">
+          {{ productsResource.value()?.count ?? 0 }} {{ t().resultsSuffix }}
+        </span>
+
+        <select class="shop__sort" formControlName="ordering" [attr.aria-label]="t().filterSort">
+          <option value="">{{ t().filterSort }}</option>
+          <option value="-created_at">{{ t().sortNewest }}</option>
+          <option value="created_at">{{ t().sortOldest }}</option>
+          <option value="price">{{ t().sortPriceLow }}</option>
+          <option value="-price">{{ t().sortPriceHigh }}</option>
+          <option value="-rating_avg">{{ t().sortRatingHigh }}</option>
+          <option value="name">{{ t().sortNameAZ }}</option>
+          <option value="-name">{{ t().sortNameZA }}</option>
+        </select>
+      </div>
+
+      @if (appliedFilters().length) {
+        <div class="applied">
+          @for (chip of appliedFilters(); track chip.control) {
+            <button
+              class="applied__chip"
+              type="button"
+              [attr.aria-label]="t().removeFilterAria + ': ' + chip.label"
+              (click)="removeFilter(chip.control)"
+            >
+              {{ chip.label }}
+              <span class="applied__x" aria-hidden="true">×</span>
+            </button>
+          }
+          <button class="applied__clear" type="button" (click)="clearFilters()">
+            {{ t().clearFilters }}
+          </button>
+        </div>
+      }
+
+      @if (loading()) {
+        <ul class="skeletons" aria-hidden="true">
+          @for (slot of skeletons; track slot) {
+            <li class="skeleton">
+              <div class="skeleton__media"></div>
+              <div class="skeleton__line skeleton__line--short"></div>
+              <div class="skeleton__line"></div>
+            </li>
+          }
+        </ul>
+      } @else if (!products().length) {
+        <div class="empty">
+          <p class="empty__title">{{ t().emptyProducts }}</p>
+          <p class="empty__hint">{{ t().emptyProductsHint }}</p>
+          <button class="empty__action" type="button" (click)="clearFilters()">
+            {{ t().clearFilters }}
+          </button>
+        </div>
+      } @else {
+        <app-generic-list [items]="products()" [emptyMessage]="t().emptyProducts">
+          <ng-template #item let-product>
+            <app-generic-card [item]="product">
+              <ng-template #body let-value>
+                <a
+                  class="product-tile"
+                  [class.product-tile--sold-out]="!value.in_stock"
+                  [routerLink]="['/shop', value.slug]"
+                >
+                  <div class="product-tile__media">
+                    @if (value.primary_image) {
+                      <img
+                        class="product-tile__image"
+                        loading="lazy"
+                        [src]="value.primary_image.image"
+                        [alt]="value.primary_image.alt_text"
+                      />
+                    }
+                    @if (value.is_on_sale) {
+                      <span class="product-tile__badge">{{ t().badgeOnSale }}</span>
+                    }
+                    @if (!value.in_stock) {
+                      <span class="product-tile__stock">{{ t().outOfStock }}</span>
+                    }
+                  </div>
+                  <div class="product-tile__body">
+                    <span class="product-tile__category">{{ value.category.name }}</span>
+                    <h3 class="product-tile__name">{{ value.name }}</h3>
+                    <p class="product-tile__description">{{ value.short_description }}</p>
+                    <div class="product-tile__footer">
+                      <span class="product-tile__price">
+                        @if (value.compare_at_price_from) {
+                          <span class="product-tile__price-before">
+                            {{ value.compare_at_price_from }} <app-riyal-symbol />
+                          </span>
+                        }
+                        {{ value.price_from }} <app-riyal-symbol />
+                      </span>
+                      @if (value.rating_count > 0) {
+                        <span class="product-tile__rating">
+                          <span class="product-tile__star" aria-hidden="true">★</span>
+                          {{ value.rating_avg }}
+                          <span class="product-tile__rating-count">({{ value.rating_count }})</span>
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </a>
+              </ng-template>
+            </app-generic-card>
+          </ng-template>
+        </app-generic-list>
+      }
+
+      @if (totalPages() > 1) {
+        <nav class="shop__pagination">
+          <button
+            type="button"
+            [disabled]="currentPage() <= 1"
+            (click)="goToPage(currentPage() - 1)"
+          >
+            {{ t().prevPage }}
+          </button>
+          <span class="shop__page-label">
+            {{ t().pageLabel }} {{ currentPage() }} / {{ totalPages() }}
+          </span>
+          <button
+            type="button"
+            [disabled]="currentPage() >= totalPages()"
+            (click)="goToPage(currentPage() + 1)"
+          >
+            {{ t().nextPage }}
+          </button>
+        </nav>
+      }
+    </div>
+  </div>
+</div>

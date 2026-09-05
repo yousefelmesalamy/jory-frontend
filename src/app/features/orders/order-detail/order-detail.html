@@ -1,0 +1,9 @@
+<article class="order-detail">
+  @if (order(); as value) {
+    <app-generic-list [items]="value.items" emptyMessage="">
+      <ng-template #item let-line>
+        <!-- TODO: fill in once the order line fields are submitted. -->
+      </ng-template>
+    </app-generic-list>
+  }
+</article>

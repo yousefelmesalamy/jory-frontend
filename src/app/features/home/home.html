@@ -1,0 +1,19 @@
+<app-home-hero />
+<app-home-perks />
+<app-home-featured-products />
+<app-home-marquee />
+<app-home-origins />
+<app-home-loyalty />
+<app-home-reviews />
+
+<app-generic-section [items]="featured()" heading="" emptyMessage="">
+  <ng-template #item let-product>
+    <a [routerLink]="['/shop', product.slug]"></a>
+  </ng-template>
+</app-generic-section>
+
+<app-generic-section [items]="newArrivals()" heading="" emptyMessage="">
+  <ng-template #item let-product>
+    <a [routerLink]="['/shop', product.slug]"></a>
+  </ng-template>
+</app-generic-section>

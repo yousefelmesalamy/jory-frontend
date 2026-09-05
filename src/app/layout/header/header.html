@@ -1,0 +1,126 @@
+<header class="header" (mouseleave)="closeMenu()" (keydown.escape)="closeMenu()">
+  <div class="header__bar">
+    <a class="header__brand" routerLink="/" [attr.aria-label]="t().home">
+      <img src="logo-jory.svg" alt="Jory" width="76" height="62" />
+    </a>
+
+    <nav class="header__nav" [attr.aria-label]="t().navAria">
+      @for (item of nav; track item.link) {
+        <a
+          class="header__link"
+          [routerLink]="item.link"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.exact }"
+          (mouseenter)="syncMenu(item)"
+          (focus)="openMenu(item)"
+        >
+          {{ t()[item.key] }}
+          @if (item.mega) {
+            <span class="header__caret" aria-hidden="true">▼</span>
+          }
+        </a>
+      }
+    </nav>
+
+    <div class="header__actions">
+      <button
+        class="header__lang"
+        type="button"
+        [attr.aria-label]="t().langSwitchAria"
+        (click)="toggleLanguage()"
+      >
+        {{ t().langSwitch }}
+      </button>
+
+      <label class="header__search">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#b39a72"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-3.5-3.5" />
+        </svg>
+        <input type="search" name="q" [placeholder]="t().search" [attr.aria-label]="t().search" />
+      </label>
+
+      <a
+        class="header__cart"
+        routerLink="/cart"
+        [attr.aria-label]="t().cart + ' (' + cartCount() + ')'"
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#f4e6cd"
+          stroke-width="1.8"
+          aria-hidden="true"
+        >
+          <path d="M5 8h14l-1.2 11.2a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8z" />
+          <path d="M9 8V6.5a3 3 0 016 0V8" />
+        </svg>
+        <span class="header__cart-total">{{ cartTotal() }} <app-riyal-symbol /></span>
+        <span class="header__cart-count" aria-hidden="true">{{ cartCount() }}</span>
+      </a>
+
+      <button
+        class="header__burger"
+        type="button"
+        [attr.aria-label]="t().browseShop"
+        aria-controls="header-mega"
+        [attr.aria-expanded]="menuOpen()"
+        (click)="toggleMenu()"
+      >
+        ≡
+      </button>
+    </div>
+  </div>
+
+  <div class="header__mega" id="header-mega" [class.is-open]="menuOpen()">
+    <div class="header__mega-inner">
+      @for (column of megaColumns; track column.titleKey) {
+        <div>
+          <div class="header__mega-title">{{ t()[column.titleKey] }}</div>
+          <div class="header__mega-links">
+            @for (link of column.links; track link.key) {
+              <a
+                class="header__mega-link"
+                [routerLink]="link.link"
+                [queryParams]="link.queryParams"
+                (click)="closeMenu()"
+                >{{ t()[link.key] }}</a
+              >
+            }
+          </div>
+        </div>
+      }
+
+      <div class="header__promo">
+        <span class="header__promo-tag">{{ t().megaPromoTag }}</span>
+        <span class="header__promo-title">{{ t().megaPromoTitle }}</span>
+        <span class="header__promo-text">{{ t().megaPromoText }}</span>
+        <a class="header__promo-cta" routerLink="/shop" (click)="closeMenu()">{{
+          t().megaPromoCta
+        }}</a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="header__chips" [attr.aria-label]="t().navAriaCompact">
+    @for (item of nav; track item.link) {
+      <a
+        class="header__chip"
+        [routerLink]="item.link"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: item.exact }"
+        >{{ t()[item.key] }}</a
+      >
+    }
+  </nav>
+</header>

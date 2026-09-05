@@ -1,0 +1,14 @@
+<section class="generic-section">
+  @if (heading()) {
+    <h2 class="generic-section__heading">{{ heading() }}</h2>
+  }
+
+  <app-generic-list [items]="items()" [emptyMessage]="emptyMessage()">
+    <ng-template #item let-value let-index="index">
+      <ng-container
+        [ngTemplateOutlet]="itemTemplate() ?? null"
+        [ngTemplateOutletContext]="{ $implicit: value, index: index }"
+      />
+    </ng-template>
+  </app-generic-list>
+</section>

@@ -1,0 +1,662 @@
+$cream: #faf3e7;
+$panel: #f3e7d2;
+$card: #fffdf8;
+$line: #eddfc4;
+$line-soft: #f0e2c6;
+$maroon: #7a2a2a;
+$maroon-dark: #5e1e1e;
+$gold: #d3a45f;
+$ink: #3a2418;
+$ink-muted: #6a5346;
+$label: #a08659;
+
+:host {
+  display: block;
+}
+
+.pd {
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: 40px 56px 88px;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+/* ---------- breadcrumb ---------- */
+
+.pd__crumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: $label;
+
+  a {
+    color: $label;
+    text-decoration: none;
+
+    &:hover {
+      color: $maroon;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $gold;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+}
+
+.pd__crumb-current {
+  color: $ink;
+}
+
+/* ---------- hero ---------- */
+
+.pd__hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 44px;
+  align-items: start;
+}
+
+.pd__gallery {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.pd__main-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 24px;
+  overflow: hidden;
+  background: $panel;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms ease;
+  }
+}
+
+@media (hover: hover) {
+  .pd__main-image:hover img {
+    transform: scale(1.035);
+  }
+}
+
+.pd__image-fallback {
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 35% 30%, #e6d2b0, #cdae83);
+}
+
+.pd__badge {
+  position: absolute;
+  inset-block-start: 16px;
+  inset-inline-start: 16px;
+  background: $maroon;
+  color: $cream;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.pd__badge--featured {
+  background: $gold;
+  color: #3a1414;
+}
+
+.pd__stock-tag {
+  position: absolute;
+  inset-block-end: 16px;
+  inset-inline: 16px;
+  padding: 8px;
+  border-radius: 999px;
+  background: rgba(255, 250, 241, 0.94);
+  color: $maroon;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.pd__thumbs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.pd__thumb {
+  padding: 0;
+  height: 76px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: $panel;
+  border: 2px solid transparent;
+  cursor: pointer;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &:hover {
+    border-color: $line;
+  }
+
+  &--active {
+    border-color: $gold;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $gold;
+    outline-offset: 2px;
+  }
+}
+
+/* ---------- info column ---------- */
+
+.pd__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pd__rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: $ink-muted;
+  margin-block-end: 12px;
+}
+
+.pd__rating-value {
+  font-weight: 700;
+  color: $ink;
+}
+
+.pd__name {
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 32px;
+  line-height: 1.2;
+  color: $ink;
+  margin: 0 0 12px;
+}
+
+.pd__description {
+  font-size: 15px;
+  line-height: 1.85;
+  color: $ink-muted;
+  margin: 0 0 24px;
+  max-width: 52ch;
+}
+
+.pd__specs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-block-end: 24px;
+
+  // An odd count would otherwise leave the last card floating beside empty space.
+  &:has(.pd__spec:last-child:nth-child(odd)) .pd__spec:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.pd__spec {
+  background: $card;
+  border: 1px solid $line;
+  border-radius: 14px;
+  padding: 11px 14px;
+}
+
+.pd__spec-key {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: $label;
+}
+
+.pd__spec-value {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: $ink;
+  margin-block-start: 3px;
+}
+
+.pd__variants {
+  margin-block-end: 24px;
+}
+
+.pd__variants-label {
+  display: block;
+  font-size: 13px;
+  color: $ink-muted;
+  margin-block-end: 10px;
+}
+
+.pd__variants-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pd__variant {
+  background: $card;
+  color: $ink;
+  border: 1px solid $line;
+  border-radius: 999px;
+  padding: 9px 16px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: $gold;
+  }
+
+  &--active {
+    background: $maroon;
+    border-color: $maroon;
+    color: $cream;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    text-decoration: line-through;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $gold;
+    outline-offset: 2px;
+  }
+}
+
+/* ---------- buy box ---------- */
+
+.pd__buybox {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-block-start: 22px;
+  border-block-start: 1px solid $line;
+}
+
+.pd__price {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: $maroon;
+}
+
+.pd__price-before {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 15px;
+  font-weight: 400;
+  color: #a8927c;
+  text-decoration: line-through;
+}
+
+.pd__discount {
+  font-size: 12px;
+  font-weight: 700;
+  color: $maroon;
+  background: $panel;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.pd__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 240px;
+}
+
+.pd__qty {
+  display: flex;
+  align-items: center;
+  border: 1px solid $line;
+  border-radius: 999px;
+  overflow: hidden;
+
+  button {
+    background: none;
+    border: 0;
+    width: 40px;
+    height: 44px;
+    font-size: 18px;
+    color: $maroon;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $gold;
+      outline-offset: -2px;
+    }
+  }
+}
+
+.pd__qty-value {
+  min-width: 30px;
+  text-align: center;
+  font-weight: 700;
+  color: $ink;
+}
+
+.pd__add {
+  flex: 1;
+  min-width: 160px;
+  background: $maroon;
+  color: $cream;
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 26px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 150ms ease;
+
+  &:hover:not(:disabled) {
+    background: $maroon-dark;
+  }
+
+  &--done {
+    background: #3a7a4a;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $gold;
+    outline-offset: 2px;
+  }
+}
+
+/* ---------- coffee profile ---------- */
+
+.pd__profile {
+  background: $panel;
+  border-radius: 26px;
+  padding: 36px 40px;
+}
+
+.pd__profile-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-block-end: 18px;
+}
+
+.pd__profile-origin {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #a3762c;
+}
+
+.pd__profile-notes {
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 19px;
+  line-height: 1.6;
+  color: $maroon;
+  margin: 0 0 22px;
+  max-width: 60ch;
+}
+
+.pd__profile-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 18px;
+}
+
+.pd__profile-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-inline-start: 14px;
+  border-inline-start: 2px solid rgba(122, 42, 42, 0.18);
+}
+
+/* ---------- reviews ---------- */
+
+.pd__section-title {
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 26px;
+  color: $ink;
+  margin: 0;
+}
+
+.pd__reviews-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-block-end: 26px;
+}
+
+.pd__reviews-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.pd__reviews-avg {
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: $maroon;
+}
+
+.pd__reviews-summary-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: $ink-muted;
+}
+
+.pd__reviews-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+}
+
+/* ---------- recommended ---------- */
+
+.pd__recommended-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-block-start: 26px;
+}
+
+.pd__rec-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: $card;
+  border: 1px solid $line;
+  border-radius: 20px;
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+
+  &:hover {
+    border-color: $gold;
+    box-shadow: 0 16px 32px rgba(45, 20, 12, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $gold;
+    outline-offset: 2px;
+  }
+}
+
+.pd__rec-media {
+  flex: none;
+  width: 104px;
+  height: 104px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: $panel;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.pd__rec-body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.pd__rec-category {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  color: #a3762c;
+  font-weight: 700;
+}
+
+.pd__rec-name {
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+  color: $ink;
+}
+
+.pd__rec-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: $ink-muted;
+}
+
+.pd__rec-price {
+  margin-block-start: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: $maroon;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 1080px) {
+  .pd {
+    padding: 32px 32px 72px;
+    gap: 52px;
+  }
+
+  .pd__hero {
+    gap: 32px;
+  }
+}
+
+@media (max-width: 900px) {
+  .pd__hero {
+    grid-template-columns: 1fr;
+  }
+
+  .pd__gallery {
+    position: static;
+  }
+
+  .pd__reviews-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .pd__recommended-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .pd {
+    padding: 24px 18px 100px;
+    gap: 44px;
+  }
+
+  .pd__name {
+    font-size: 26px;
+  }
+
+  .pd__profile {
+    padding: 26px 22px;
+  }
+
+  .pd__specs {
+    grid-template-columns: 1fr;
+  }
+
+  .pd__buybox {
+    position: sticky;
+    inset-block-end: 0;
+    margin-inline: -18px;
+    padding: 14px 18px;
+    background: $cream;
+    box-shadow: 0 -8px 24px rgba(45, 20, 12, 0.1);
+    z-index: 5;
+  }
+
+  .pd__rec-card {
+    flex-direction: column;
+  }
+
+  .pd__rec-media {
+    width: 100%;
+    height: 160px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pd__main-image img,
+  .pd__add {
+    transition: none;
+  }
+}

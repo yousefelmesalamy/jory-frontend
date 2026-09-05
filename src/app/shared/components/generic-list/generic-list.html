@@ -1,0 +1,14 @@
+@if (items().length) {
+  <ul class="generic-list">
+    @for (item of items(); track $index) {
+      <li class="generic-list__item">
+        <ng-container
+          [ngTemplateOutlet]="itemTemplate() ?? null"
+          [ngTemplateOutletContext]="{ $implicit: item, index: $index }"
+        />
+      </li>
+    }
+  </ul>
+} @else {
+  <p class="generic-list__empty">{{ emptyMessage() }}</p>
+}

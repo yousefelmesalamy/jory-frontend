@@ -1,0 +1,9 @@
+<app-generic-list [items]="items()" emptyMessage="">
+  <ng-template #item let-line>
+    <!-- TODO: fill in once the cart line fields are submitted. -->
+  </ng-template>
+</app-generic-list>
+
+<app-voucher-form />
+
+<a routerLink="/checkout"></a>

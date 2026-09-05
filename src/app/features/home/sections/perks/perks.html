@@ -1,0 +1,18 @@
+<section class="perks">
+  <div class="perks__inner">
+    @for (perk of perks; track perk.titleKey) {
+      <div class="perks__item">
+        <span class="perks__icon" aria-hidden="true">{{ perk.icon }}</span>
+        <div>
+          <div class="perks__title">
+            {{ t()[perk.titleKey] }}
+            @if (perk.hasCurrency) {
+              <app-riyal-symbol />
+            }
+          </div>
+          <div class="perks__sub">{{ t()[perk.subKey] }}</div>
+        </div>
+      </div>
+    }
+  </div>
+</section>

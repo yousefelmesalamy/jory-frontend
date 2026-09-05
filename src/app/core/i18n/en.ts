@@ -1,0 +1,340 @@
+/**
+ * The English copy deck, and the source of truth for the key set — `ar.ts` is
+ * typed against it, so a key added here and forgotten there fails the build.
+ *
+ * Most of this is lifted from the design file at
+ * `Coffee & Roaster E-commerce Design/Jouri Cafe standalone-src.dc.html`. Keys
+ * with no consumer yet are deliberate: every feature template is still a stub,
+ * and this is what they fill from.
+ *
+ * Catalog content — product names, descriptions, category names — is NOT here.
+ * The Django catalog stores one language per row, so those render as the API
+ * returns them.
+ */
+export const EN = {
+  // Screen names, also used for breadcrumbs and aria labels.
+  home: 'Home',
+  shop: 'Shop',
+  product: 'Product',
+  cart: 'Cart',
+  checkout: 'Checkout',
+  about: 'About',
+
+  // Header
+  navHome: 'Home',
+  navCoffee: 'Our coffee',
+  navSub: 'Subscriptions',
+  navRoastery: 'Roastery',
+  navContact: 'Contact',
+  navAria: 'Main navigation',
+  navAriaCompact: 'Main navigation, compact',
+  search: 'Search coffee…',
+  browseShop: 'Browse the shop',
+  // TODO: not rendered yet — when it is, append <app-riyal-symbol> after "150".
+  announce: 'Free shipping over 150 · Roasted daily in Riyadh',
+  track: 'Track your order',
+  langSwitch: 'عربي',
+  langSwitchAria: 'Switch to Arabic',
+
+  // Mega menu
+  megaOrigins: 'By origin',
+  megaBrew: 'By brew method',
+  megaShop: 'Shop',
+  // Hardcoded rather than fetched: the API returns Origin rows in one language.
+  originUganda: 'Uganda',
+  originColombia: 'Colombia',
+  originEthiopia: 'Ethiopia',
+  originBrazil: 'Brazil',
+  originKenya: 'Kenya',
+  brewEspresso: 'Espresso',
+  brewV60: 'V60 pour-over',
+  brewChemex: 'Chemex',
+  brewFrench: 'French press',
+  megaAllCoffee: 'All coffee',
+  megaCategories: 'Categories',
+  megaYourCart: 'Your cart',
+  megaYourWishlist: 'Your wishlist',
+  megaPromoTag: 'New',
+  megaPromoTitle: 'Tasting box',
+  megaPromoText: 'Four origins × 100g with tasting cards.',
+  megaPromoCta: 'Order the box →',
+
+  // Home — hero
+  heroTag: 'Jouri Roastery · Specialty Coffee',
+  heroTitle: 'Slow-roasted coffee, from the farm to your cup',
+  heroText:
+    'We source from selected farms across Africa and South America and roast in small batches every morning, so every bag reaches you at its peak.',
+  shopNow: 'Shop coffee',
+  ourStory: 'Our story',
+  reviewsCount: '840 reviews',
+  roastedDaily: 'Roasted daily in Riyadh',
+  freshBadge: 'Roasted today',
+  freshSub: 'Ships within 24h',
+  dropHero: 'Drop hero image',
+  heroStatFarms: 'Partner farms',
+  heroStatBatch: 'Batch size',
+  heroStatDispatch: 'To dispatch',
+  heroUnitKg: 'kg',
+  heroUnitHours: 'h',
+
+  // Home — perks strip
+  perkFreshTitle: 'Roasted fresh daily',
+  perkFreshSub: 'Ships within 24 hours',
+  // Rendered with <app-riyal-symbol> appended after "150" — see perks.html.
+  perkShippingTitle: 'Free shipping over 150',
+  perkShippingSub: 'Across the Kingdom',
+  perkPointsTitle: 'Points on every order',
+  perkPointsSub: 'Redeem for free bags',
+
+  // Home — sections
+  selection: 'Our selection',
+  featured: 'Most ordered this week',
+  viewAll: 'View all →',
+  origins: 'Origins',
+  originsTitle: 'From Uganda to Colombia',
+  originsText:
+    'Every origin carries its own signature: citric acidity from Kenya, caramel sweetness from Brazil, tropical fruit from Ugandan Mananasi. We publish the farm, altitude and process behind every bag.',
+  // Home — origin cards (editorial copy about the origin, not catalog data)
+  originUgandaAlt: '1,750 m',
+  originUgandaNotes: 'Pineapple, mango, cane sugar',
+  originColombiaAlt: '1,600 m',
+  originColombiaNotes: 'Caramel, hazelnut, apple acidity',
+  originEthiopiaAlt: '2,000 m',
+  originEthiopiaNotes: 'Jasmine, lemon, honey',
+  loyaltyTitle: 'Jouri points',
+  loyaltyText:
+    'Earn points on every order and redeem them for free bags or cupping sessions at the roastery.',
+  tierBag: 'Free 250g bag',
+  tierCupping: 'Cupping session',
+  tierSubscription: 'One month subscription',
+  reviewsTitle: 'What our customers say',
+  review1Quote:
+    'My first Ugandan coffee this clean. It arrived in two days and the roast aroma was still in the bag.',
+  review1Who: 'Noura — Riyadh',
+  review1Initial: 'N',
+  review2Quote:
+    'The biweekly subscription solved my forgetting to reorder, and the espresso grind is spot on.',
+  review2Who: 'Fahad — Jeddah',
+  review2Initial: 'F',
+  review3Quote:
+    'I asked about the roast level and got an answer within the hour — they changed my order before it shipped.',
+  review3Who: 'Lama — Khobar',
+  review3Initial: 'L',
+
+  // Home — marquee strip
+  marquee1: 'Roasted daily',
+  marquee2: 'Direct trade',
+  marquee3: 'Small batches',
+  marquee4: 'Natural process',
+  marquee5: 'Specialty grade',
+
+  // Home — featured product badges and roast labels
+  // TODO: catalog content (names, notes, prices) is stub data, not from the copy deck —
+  // swap for real products once the backend ProductSerializer lands.
+  badgeBestSeller: 'Best seller',
+  badgeRecommended: 'Recommended',
+  badgeLimited: 'Limited',
+  badgeClassic: 'Classic',
+  badgeLargeBag: 'Large bag',
+  badgeNew: 'New',
+  roastLight: 'Light roast',
+  roastMedium: 'Medium roast',
+  roastDark: 'Dark roast',
+  reviewsSuffix: 'reviews',
+
+  // Home — subscription
+  subTag: 'Jouri subscription',
+  subTitle: 'Coffee arrives before you run out',
+  subText:
+    'Pick a frequency and a weight, and change or pause any time. Every shipment is roasted the day before it ships.',
+  subCta: 'Start a subscription',
+  subSave: 'Save 15% on every shipment',
+
+  // Shop
+  crumbShop: 'Home / Shop',
+  shopTitle: 'All coffee',
+  shopLead: 'Roasted to order in Riyadh and shipped within 48 hours.',
+
+  // Categories
+  crumbCategories: 'Home / Categories',
+  categoriesTitle: 'Shop by category',
+  categoriesLead: 'Coffee, equipment and everything in between, sorted the way you browse.',
+
+  priceRange: 'Price range',
+  // TODO: not rendered yet — when it is, append <app-riyal-symbol> after the number.
+  priceMin: '45',
+  priceMax: '190',
+  resultsCount: '6 products',
+  resultsSuffix: 'products',
+
+  // Shop — filters
+  filterSearch: 'Search',
+  filterSearchPlaceholder: 'Search coffee, gear, roasters…',
+  filterCategory: 'Category',
+  filterAllCategories: 'All categories',
+  filterType: 'Product type',
+  filterAllTypes: 'All types',
+  typeCoffee: 'Coffee',
+  typeEquipment: 'Equipment',
+  typeRoastingMachine: 'Roasting machine',
+  typeAccessory: 'Accessory',
+  filterOrigin: 'Origin',
+  filterOriginPlaceholder: 'e.g. ethiopia',
+  filterProcess: 'Process',
+  filterAllProcesses: 'All processes',
+  processWashed: 'Washed',
+  processNatural: 'Natural',
+  processHoney: 'Honey',
+  processAnaerobic: 'Anaerobic',
+  processWetHulled: 'Wet-hulled',
+  filterRoast: 'Roast',
+  filterAllRoasts: 'All roasts',
+  roastMediumDark: 'Medium-dark roast',
+  filterOnSale: 'On sale',
+  filterInStock: 'In stock only',
+  filterBestSelling: 'Best selling',
+  filterBestSellingAny: 'Any time',
+  bestSellingWeek: 'This week',
+  bestSellingMonth: 'This month',
+  bestSellingYear: 'This year',
+  filterSort: 'Sort by',
+  sortNewest: 'Newest',
+  sortOldest: 'Oldest',
+  sortPriceLow: 'Price: low to high',
+  sortPriceHigh: 'Price: high to low',
+  sortRatingHigh: 'Highest rated',
+  sortNameAZ: 'Name: A–Z',
+  sortNameZA: 'Name: Z–A',
+  clearFilters: 'Clear filters',
+  filtersTitle: 'Filters',
+  filtersToggle: 'Filters',
+  filtersDone: 'Show results',
+  removeFilterAria: 'Remove filter',
+  emptyProductsHint: 'Widen the price range or clear a filter to see more.',
+  badgeOnSale: 'On sale',
+  outOfStock: 'Out of stock',
+  prevPage: 'Previous',
+  nextPage: 'Next →',
+  pageLabel: 'Page',
+
+  // Product
+  crumbProduct: 'Home / Shop / Product',
+  grind: 'Grind',
+  add: 'Add',
+  details: 'Product details →',
+  addToCart: 'Add to cart',
+  qaTitle: 'Questions about this coffee',
+  qaSub: 'Answered by the roastery team within 24 hours',
+  askPlaceholder: 'Ask something about this coffee…',
+  ask: 'Send',
+  ratingTitle: 'Customer ratings',
+  recommended: 'You may also like',
+  specType: 'Type',
+  specRoaster: 'Roastery',
+  specSku: 'SKU',
+  specWeight: 'Weight',
+  unitGrams: 'g',
+  options: 'Options',
+  quantity: 'Quantity',
+  decreaseQuantity: 'Decrease quantity',
+  increaseQuantity: 'Increase quantity',
+  addedToCart: 'Added to cart',
+  productImage: 'Product image',
+  writeReview: 'Write a review',
+  reviewRatingLabel: 'Your rating',
+  reviewTitleLabel: 'Title',
+  reviewTitlePlaceholder: 'Sum it up in a few words',
+  reviewBodyLabel: 'Your review',
+  reviewBodyPlaceholder: 'What did you like or dislike?',
+  submitReview: 'Post review',
+  reviewPosted: 'Thanks — your review is live.',
+  reviewSignInRequired: 'Sign in to write a review.',
+  reviewNotPermitted: 'Only customers who received this product can review it.',
+  reviewAlreadySubmitted: "You've already reviewed this product.",
+  reviewSubmitError: 'Something went wrong — try again.',
+  profileTitle: 'Origin story',
+  profileVariety: 'Variety',
+  profileAltitude: 'Altitude',
+  profileHarvest: 'Harvest',
+  profileCupping: 'Cupping score',
+  profileTastingNotes: 'Tasting notes',
+  unitMasl: 'm',
+
+  // Cart
+  cartTitle: 'Shopping cart',
+  promo: 'Promo code',
+  apply: 'Apply',
+  summary: 'Order summary',
+  total: 'Total',
+  checkoutCta: 'Go to checkout',
+  continueShopping: 'Continue shopping',
+
+  // Checkout
+  checkoutTitle: 'Checkout',
+  shipping: 'Shipping address',
+  delivery: 'Delivery method',
+  payment: 'Payment',
+  orderSummary: 'Order summary',
+  placeOrder: 'Place order',
+  secureNote: 'Encrypted secure payment · 7-day returns',
+
+  // About
+  aboutTag: 'About Jouri',
+  aboutTitle: 'A small roastery that treats coffee as a craft',
+  aboutText:
+    'Jouri started in 2018 with a single 5 kg roaster. Today we work directly with eleven growers, pay above market for selective picking, and roast every batch to a profile written for it alone.',
+  processTitle: 'How we work',
+
+  // Account
+  account: 'Account',
+  signIn: 'Sign in',
+  signOut: 'Sign out',
+  registerCta: 'Create an account',
+  email: 'Email',
+  password: 'Password',
+  profile: 'Profile',
+  addresses: 'Addresses',
+  orders: 'Orders',
+  wishlist: 'Wishlist',
+  haveAccount: 'Already have an account?',
+  noAccount: 'No account yet?',
+
+  // Empty and error states
+  loading: 'Loading…',
+  retry: 'Try again',
+  emptyProducts: 'No products match that.',
+  emptyCategories: 'No categories yet.',
+  emptyCart: 'Your cart is empty.',
+  emptyWishlist: 'Nothing in your wishlist yet.',
+  emptyOrders: "You haven't placed an order yet.",
+  emptyReviews: 'No reviews yet. Be the first to write one.',
+  emptyAddresses: "You haven't added an address yet.",
+  notFoundTitle: 'Page not found',
+  notFoundText: 'The link you opened no longer exists, or its address changed.',
+  backHome: 'Back to home',
+
+  // Footer
+  footerAbout:
+    'Jouri specialty coffee roastery — sourced, roasted and shipped fresh from Riyadh to your door.',
+  footerShop: 'Shop',
+  footerAllCoffee: 'All coffee',
+  footerSubscriptions: 'Subscriptions',
+  footerBrewingGear: 'Brewing gear',
+  footerGiftCards: 'Gift cards',
+  footerRoastery: 'Roastery',
+  footerOurStory: 'Our story',
+  footerOrigins: 'Origins',
+  footerCupping: 'Cupping sessions',
+  footerWholesale: 'Wholesale',
+  footerHelp: 'Help',
+  footerShippingReturns: 'Shipping & returns',
+  footerFaq: 'FAQ',
+  footerContact: 'Contact us',
+  footerLoyalty: 'Loyalty points',
+  footerFollow: 'Follow Jouri',
+  copyright: '© 2026 Jouri Roastery. All rights reserved.',
+  terms: 'Terms · Privacy · Shipping & returns',
+};
+
+/** The shape every locale must supply in full. */
+export type Copy = typeof EN;

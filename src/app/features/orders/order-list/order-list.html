@@ -1,0 +1,5 @@
+<app-generic-list [items]="orders()" emptyMessage="">
+  <ng-template #item let-order>
+    <a [routerLink]="['/orders', order.id]"></a>
+  </ng-template>
+</app-generic-list>

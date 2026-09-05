@@ -1,0 +1,17 @@
+<section class="loyalty">
+  <div class="loyalty__panel">
+    <div>
+      <h2 class="loyalty__heading">{{ t().loyaltyTitle }}</h2>
+      <p class="loyalty__text">{{ t().loyaltyText }}</p>
+    </div>
+
+    <div class="loyalty__tiers">
+      @for (tier of tiers; track tier.labelKey) {
+        <div class="loyalty__tier">
+          <div class="loyalty__tier-points">{{ tier.points }}</div>
+          <div class="loyalty__tier-label">{{ t()[tier.labelKey] }}</div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

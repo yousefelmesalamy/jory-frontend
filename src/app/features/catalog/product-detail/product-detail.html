@@ -1,0 +1,210 @@
+@if (product(); as value) {
+  <article class="pd">
+    <nav class="pd__crumb" [attr.aria-label]="t().crumbProduct">
+      <a routerLink="/">{{ t().home }}</a>
+      <span aria-hidden="true">/</span>
+      <a routerLink="/shop">{{ t().shop }}</a>
+      <span aria-hidden="true">/</span>
+      <a [routerLink]="['/shop']" [queryParams]="{ category: value.category.slug }">{{
+        value.category.name
+      }}</a>
+      <span aria-hidden="true">/</span>
+      <span class="pd__crumb-current">{{ value.name }}</span>
+    </nav>
+
+    <section class="pd__hero">
+      <div class="pd__gallery">
+        <div class="pd__main-image">
+          @if (activeImage(); as image) {
+            <img [src]="image.image" [alt]="image.alt_text || t().productImage" />
+          } @else {
+            <div class="pd__image-fallback" aria-hidden="true"></div>
+          }
+          @if (badge(); as tag) {
+            <span class="pd__badge" [class.pd__badge--featured]="tag.tone === 'featured'">{{
+              tag.text
+            }}</span>
+          }
+          @if (!price().inStock) {
+            <span class="pd__stock-tag">{{ t().outOfStock }}</span>
+          }
+        </div>
+
+        @if (images().length > 1) {
+          <div class="pd__thumbs">
+            @for (image of images(); track image.id; let i = $index) {
+              <button
+                type="button"
+                class="pd__thumb"
+                [class.pd__thumb--active]="i === activeImageIndex()"
+                [attr.aria-label]="t().productImage"
+                (click)="selectImage(i)"
+              >
+                <img [src]="image.image" [alt]="image.alt_text || t().productImage" />
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="pd__info">
+        @if (value.rating_count > 0) {
+          <div class="pd__rating-row">
+            <app-star-rating [value]="+value.rating_avg" />
+            <span class="pd__rating-value">{{ value.rating_avg }}</span>
+            <span class="pd__rating-count">({{ value.rating_count }} {{ t().reviewsSuffix }})</span>
+          </div>
+        }
+
+        <h1 class="pd__name">{{ value.name }}</h1>
+        <p class="pd__description">{{ value.short_description || value.description }}</p>
+
+        @if (specs().length) {
+          <div class="pd__specs">
+            @for (spec of specs(); track spec.k) {
+              <div class="pd__spec">
+                <span class="pd__spec-key">{{ spec.k }}</span>
+                <span class="pd__spec-value">{{ spec.v }}</span>
+              </div>
+            }
+          </div>
+        }
+
+        @if (variants().length > 1) {
+          <div class="pd__variants">
+            <span class="pd__variants-label">{{ variantPickerLabel() }}</span>
+            <div class="pd__variants-list">
+              @for (variant of variants(); track variant.id) {
+                <button
+                  type="button"
+                  class="pd__variant"
+                  [class.pd__variant--active]="selectedVariant()?.id === variant.id"
+                  [disabled]="!variant.in_stock"
+                  (click)="selectVariant(variant)"
+                >
+                  {{ variant.label }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <div class="pd__buybox">
+          <div class="pd__price">
+            @if (price().before) {
+              <span class="pd__price-before">{{ price().before }} <app-riyal-symbol /></span>
+            }
+            <span class="pd__price-current">{{ price().current }} <app-riyal-symbol /></span>
+            @if (price().onSale && price().discountPercent) {
+              <span class="pd__discount">-{{ price().discountPercent }}%</span>
+            }
+          </div>
+
+          <div class="pd__actions">
+            <div class="pd__qty" role="group" [attr.aria-label]="t().quantity">
+              <button
+                type="button"
+                [attr.aria-label]="t().decreaseQuantity"
+                [disabled]="quantity() <= 1"
+                (click)="decrementQuantity()"
+              >
+                −
+              </button>
+              <span class="pd__qty-value">{{ quantity() }}</span>
+              <button
+                type="button"
+                [attr.aria-label]="t().increaseQuantity"
+                [disabled]="quantity() >= price().stock"
+                (click)="incrementQuantity()"
+              >
+                +
+              </button>
+            </div>
+
+            <button
+              type="button"
+              class="pd__add"
+              [class.pd__add--done]="justAdded()"
+              [disabled]="!price().inStock"
+              (click)="addToCart()"
+            >
+              {{ justAdded() ? t().addedToCart : t().addToCart }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    @if (value.coffee_profile; as profile) {
+      <section class="pd__profile">
+        <div class="pd__profile-head">
+          <span class="pd__profile-origin">{{ originLabel() }}</span>
+          <h2 class="pd__section-title">{{ t().profileTitle }}</h2>
+        </div>
+
+        @if (profile.tasting_notes) {
+          <p class="pd__profile-notes">{{ profile.tasting_notes }}</p>
+        }
+
+        @if (coffeeStats().length) {
+          <div class="pd__profile-stats">
+            @for (stat of coffeeStats(); track stat.k) {
+              <div class="pd__profile-stat">
+                <span class="pd__spec-key">{{ stat.k }}</span>
+                <span class="pd__spec-value">{{ stat.v }}</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    <section class="pd__reviews">
+      <div class="pd__reviews-head">
+        <h2 class="pd__section-title">{{ t().ratingTitle }}</h2>
+        <div class="pd__reviews-summary">
+          <span class="pd__reviews-avg">{{ value.rating_avg }}</span>
+          <div class="pd__reviews-summary-detail">
+            <app-star-rating [value]="+value.rating_avg" />
+            <span class="pd__reviews-count">{{ value.rating_count }} {{ t().reviewsSuffix }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pd__reviews-layout">
+        <app-review-list [slug]="slug()" [refresh]="reviewsVersion()" />
+        <app-review-form [slug]="slug()" (posted)="onReviewPosted()" />
+      </div>
+    </section>
+
+    @if (recommended().length) {
+      <section class="pd__recommended">
+        <h2 class="pd__section-title">{{ t().recommended }}</h2>
+        <div class="pd__recommended-grid">
+          @for (item of recommended(); track item.id) {
+            <a class="pd__rec-card" [routerLink]="['/shop', item.slug]">
+              <div class="pd__rec-media">
+                @if (item.primary_image) {
+                  <img [src]="item.primary_image.image" [alt]="item.primary_image.alt_text || t().productImage" />
+                } @else {
+                  <div class="pd__image-fallback" aria-hidden="true"></div>
+                }
+              </div>
+              <div class="pd__rec-body">
+                <span class="pd__rec-category">{{ item.category.name }}</span>
+                <h3 class="pd__rec-name">{{ item.name }}</h3>
+                @if (item.rating_count > 0) {
+                  <span class="pd__rec-rating">
+                    <app-star-rating [value]="+item.rating_avg" />
+                    {{ item.rating_avg }}
+                  </span>
+                }
+                <span class="pd__rec-price">{{ item.price_from }} <app-riyal-symbol /></span>
+              </div>
+            </a>
+          }
+        </div>
+      </section>
+    }
+  </article>
+}

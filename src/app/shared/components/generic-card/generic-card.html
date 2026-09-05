@@ -1,0 +1,8 @@
+<article class="generic-card">
+  @if (item(); as value) {
+    <ng-container
+      [ngTemplateOutlet]="bodyTemplate() ?? null"
+      [ngTemplateOutletContext]="{ $implicit: value }"
+    />
+  }
+</article>

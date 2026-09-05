@@ -1,0 +1,4 @@
+<form class="voucher-form" [formGroup]="form" (ngSubmit)="apply()">
+  <input type="text" formControlName="code" />
+  <button type="submit" [disabled]="form.invalid"></button>
+</form>

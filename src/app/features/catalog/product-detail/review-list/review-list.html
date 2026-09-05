@@ -1,0 +1,39 @@
+@if (loading()) {
+  <ul class="review-skeletons" aria-hidden="true">
+    @for (slot of [0, 1, 2]; track slot) {
+      <li class="review-skeleton">
+        <div class="review-skeleton__line review-skeleton__line--short"></div>
+        <div class="review-skeleton__line"></div>
+        <div class="review-skeleton__line"></div>
+      </li>
+    }
+  </ul>
+} @else {
+  <app-generic-list [items]="reviews()" [emptyMessage]="t().emptyReviews">
+    <ng-template #item let-review>
+      <article class="review">
+        <div class="review__head">
+          <app-star-rating [value]="review.rating" />
+          <span class="review__date">{{ formatDate(review.created_at) }}</span>
+        </div>
+        <h3 class="review__title">{{ review.title }}</h3>
+        @if (review.body) {
+          <p class="review__body">{{ review.body }}</p>
+        }
+        <span class="review__author">{{ review.user.full_name }}</span>
+      </article>
+    </ng-template>
+  </app-generic-list>
+
+  @if (totalPages() > 1) {
+    <nav class="review-pagination">
+      <button type="button" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+        {{ t().prevPage }}
+      </button>
+      <span class="review-pagination__label">{{ t().pageLabel }} {{ page() }} / {{ totalPages() }}</span>
+      <button type="button" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+        {{ t().nextPage }}
+      </button>
+    </nav>
+  }
+}

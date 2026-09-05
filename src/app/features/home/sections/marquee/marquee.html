@@ -1,0 +1,10 @@
+<section class="marquee">
+  <div class="marquee__inner">
+    @for (key of phraseKeys; track key) {
+      <span class="marquee__item">
+        {{ t()[key] }}
+        <span class="marquee__dot" aria-hidden="true"></span>
+      </span>
+    }
+  </div>
+</section>

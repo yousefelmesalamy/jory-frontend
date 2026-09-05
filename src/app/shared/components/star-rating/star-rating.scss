@@ -1,0 +1,24 @@
+:host {
+  display: inline-flex;
+}
+
+.star-rating {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  font-size: 1em;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.star-rating__track {
+  color: #e0cba6;
+}
+
+.star-rating__fill {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  overflow: hidden;
+  color: #d3a45f;
+}

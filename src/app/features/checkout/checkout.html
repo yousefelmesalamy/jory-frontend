@@ -1,0 +1,8 @@
+<form class="checkout" [formGroup]="form" (ngSubmit)="place()">
+  <select formControlName="addressId">
+    @for (address of addresses(); track address.id) {
+      <option [ngValue]="address.id"></option>
+    }
+  </select>
+  <button type="submit" [disabled]="form.invalid"></button>
+</form>

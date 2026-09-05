@@ -1,0 +1,24 @@
+<section class="origins">
+  <div class="origins__head">
+    <div>
+      <span class="origins__eyebrow">{{ t().origins }}</span>
+      <h2 class="origins__heading">{{ t().originsTitle }}</h2>
+    </div>
+    <p class="origins__text">{{ t().originsText }}</p>
+  </div>
+
+  <div class="origins__grid">
+    @for (card of cards; track card.nameKey) {
+      <article class="origin-card">
+        <span class="origin-card__image-placeholder">{{ t()[card.nameKey] }}</span>
+        <div class="origin-card__panel">
+          <div class="origin-card__row">
+            <span class="origin-card__name">{{ t()[card.nameKey] }}</span>
+            <span class="origin-card__alt">{{ t()[card.altKey] }}</span>
+          </div>
+          <div class="origin-card__notes">{{ t()[card.notesKey] }}</div>
+        </div>
+      </article>
+    }
+  </div>
+</section>

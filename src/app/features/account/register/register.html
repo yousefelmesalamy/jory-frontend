@@ -1,0 +1,7 @@
+<form class="register" [formGroup]="form" (ngSubmit)="submit()">
+  <input type="email" formControlName="email" />
+  <input type="password" formControlName="password" />
+  <button type="submit" [disabled]="form.invalid"></button>
+</form>
+
+<a routerLink="/account/login"></a>

@@ -1,0 +1,33 @@
+<div class="categories">
+  <header class="categories__head">
+    <p class="categories__crumb">{{ t().crumbCategories }}</p>
+    <h1 class="categories__title">{{ t().categoriesTitle }}</h1>
+    <p class="categories__lead">{{ t().categoriesLead }}</p>
+  </header>
+
+  <app-generic-list [items]="categories()" [emptyMessage]="t().emptyCategories">
+    <ng-template #item let-category let-index="index">
+      <a
+        class="category-tile"
+        [routerLink]="['/shop']"
+        [queryParams]="{ category: category.slug }"
+      >
+        <span class="category-tile__avatar" [style.background]="swatch(index)">
+          @if (category.image) {
+            <img
+              class="category-tile__image"
+              loading="lazy"
+              [src]="category.image"
+              [alt]="category.name"
+            />
+          } @else {
+            <span class="category-tile__initial" aria-hidden="true">
+              {{ category.name.charAt(0) }}
+            </span>
+          }
+        </span>
+        <span class="category-tile__name">{{ category.name }}</span>
+      </a>
+    </ng-template>
+  </app-generic-list>
+</div>

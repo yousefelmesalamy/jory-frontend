@@ -1,0 +1,16 @@
+<section class="reviews">
+  <h2 class="reviews__heading">{{ t().reviewsTitle }}</h2>
+
+  <div class="reviews__grid">
+    @for (item of testimonials; track item.quoteKey) {
+      <figure class="review">
+        <span class="review__stars" aria-hidden="true">★★★★★</span>
+        <blockquote class="review__quote">{{ t()[item.quoteKey] }}</blockquote>
+        <figcaption class="review__caption">
+          <span class="review__initial">{{ t()[item.initialKey] }}</span>
+          <span>{{ t()[item.whoKey] }}</span>
+        </figcaption>
+      </figure>
+    }
+  </div>
+</section>

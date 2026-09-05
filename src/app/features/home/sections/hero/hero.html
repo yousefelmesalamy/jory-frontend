@@ -1,0 +1,46 @@
+<section class="hero">
+  <div class="hero__blob hero__blob--top" aria-hidden="true"></div>
+  <div class="hero__blob hero__blob--bottom" aria-hidden="true"></div>
+
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <div class="hero__eyebrow">
+        <span class="hero__rule" aria-hidden="true"></span>
+        <span>{{ t().heroTag }}</span>
+      </div>
+
+      <h1 class="hero__title">{{ t().heroTitle }}</h1>
+      <p class="hero__text">{{ t().heroText }}</p>
+
+      <div class="hero__ctas">
+        <a class="hero__cta hero__cta--primary" routerLink="/shop">{{ t().shopNow }}</a>
+        <a class="hero__cta hero__cta--ghost" routerLink="/about">{{ t().ourStory }}</a>
+      </div>
+
+      <div class="hero__stats">
+        @for (stat of stats; track stat.labelKey) {
+          <div class="hero__stat">
+            <span class="hero__stat-value"
+              >{{ stat.value }}{{ stat.unitKey ? ' ' + t()[stat.unitKey] : '' }}</span
+            >
+            <span class="hero__stat-label">{{ t()[stat.labelKey] }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="hero__media">
+      <div class="hero__frame" aria-hidden="true"></div>
+      <div class="hero__image" role="img" [attr.aria-label]="t().heroTitle">
+        <span class="hero__image-placeholder">{{ t().dropHero }}</span>
+      </div>
+      <div class="hero__badge">
+        <span class="hero__badge-rating">★ 4.8</span>
+        <span class="hero__badge-copy">
+          <span class="hero__badge-title">{{ t().freshBadge }}</span>
+          <span>{{ t().reviewsCount }}</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>

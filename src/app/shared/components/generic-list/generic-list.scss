@@ -1,0 +1,15 @@
+:host {
+  display: block;
+}
+
+.generic-list {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.generic-list__empty {
+  margin: 0;
+}
