@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
@@ -5,7 +7,18 @@ import { AR } from '../../core/i18n/ar';
 import { EN } from '../../core/i18n/en';
 import { LOCALE_COOKIE } from '../../core/i18n/locale';
 import { TranslationService } from '../../core/i18n/translation.service';
+import { User } from '../../core/models';
+import { AuthService } from '../../core/services/auth.service';
 import { Header } from './header';
+
+const USER: User = {
+  id: 12,
+  email: 'shopper@example.com',
+  username: 'shopper1',
+  full_name: 'Jane Shopper',
+  phone: '+201111111111',
+  date_joined: '2026-09-05T10:00:00Z',
+};
 
 describe('Header', () => {
   let fixture: ComponentFixture<Header>;
@@ -23,7 +36,7 @@ describe('Header', () => {
 
     await TestBed.configureTestingModule({
       imports: [Header],
-      providers: [provideRouter([])],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Header);
@@ -72,5 +85,81 @@ describe('Header', () => {
 
     expect(cartTotal().textContent.trim()).toBe('0');
     expect(cartTotal().querySelector('svg.riyal-symbol')).toBeTruthy();
+  });
+});
+
+describe('Header — auth', () => {
+  let fixture: ComponentFixture<Header>;
+  let httpMock: HttpTestingController;
+
+  beforeEach(async () => {
+    document.cookie = `${LOCALE_COOKIE}=en; path=/`;
+
+    await TestBed.configureTestingModule({
+      imports: [Header],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Header);
+    httpMock = TestBed.inject(HttpTestingController);
+    await fixture.whenStable();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it('shows login and register buttons when signed out', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('.header__account-login')?.textContent?.trim()).toBe(EN.authLogin);
+    expect(el.querySelector('.header__account-register')).toBeTruthy();
+    expect(el.querySelector('.header__account-logout')).toBeNull();
+  });
+
+  it('shows a greeting and logout button once signed in', async () => {
+    TestBed.inject(AuthService).user.set(USER);
+    await fixture.whenStable();
+
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('.header__account-name')?.textContent).toContain(USER.full_name);
+    expect(el.querySelector('.header__account-logout')).toBeTruthy();
+    expect(el.querySelector('.header__account-login')).toBeNull();
+  });
+
+  it('opens the login modal from the navbar and closes it on request', async () => {
+    const el: HTMLElement = fixture.nativeElement;
+
+    (el.querySelector('.header__account-login') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(el.querySelector('app-auth-modal')).toBeTruthy();
+
+    (el.querySelector('.auth-modal__close') as HTMLButtonElement).click();
+    await fixture.whenStable();
+    expect(el.querySelector('app-auth-modal')).toBeNull();
+  });
+
+  it('opens the register modal from the navbar', async () => {
+    const el: HTMLElement = fixture.nativeElement;
+
+    (el.querySelector('.header__account-register') as HTMLButtonElement).click();
+    await fixture.whenStable();
+
+    expect(el.querySelector('app-auth-modal')).toBeTruthy();
+    expect(el.querySelector('#auth-modal-title')?.textContent?.trim()).toBe(EN.authRegisterTitle);
+  });
+
+  it('blacklists the refresh token and clears the session on logout', async () => {
+    TestBed.inject(AuthService).user.set(USER);
+    await fixture.whenStable();
+
+    (fixture.nativeElement.querySelector('.header__account-logout') as HTMLButtonElement).click();
+
+    httpMock.expectOne('/api/auth/logout/').flush(null, { status: 205, statusText: 'Reset Content' });
+    await fixture.whenStable();
+
+    expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);
+    expect(fixture.nativeElement.querySelector('.header__account-login')).toBeTruthy();
+
+    httpMock.verify();
   });
 });

@@ -109,6 +109,51 @@ $on-gold: #3a1414;
   }
 }
 
+.header__account {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.header__account-name {
+  font-size: 13px;
+  color: $ink-soft;
+}
+
+.header__account-login,
+.header__account-register,
+.header__account-logout {
+  flex: 0 0 auto;
+  padding: 9px 14px;
+  background: none;
+  border: 1px solid $line-strong;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: $maroon;
+  white-space: nowrap;
+
+  &:hover {
+    background: $maroon;
+    border-color: $maroon;
+    color: $on-maroon;
+  }
+}
+
+.header__account-register {
+  background: $maroon;
+  color: $on-maroon;
+
+  &:hover {
+    background: $maroon-dark;
+    border-color: $maroon-dark;
+  }
+}
+
 .header__search {
   display: flex;
   align-items: center;
@@ -305,7 +350,8 @@ $on-gold: #3a1414;
   }
 
   .header__search,
-  .header__cart-total {
+  .header__cart-total,
+  .header__account-name {
     display: none;
   }
 }

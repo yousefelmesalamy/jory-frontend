@@ -1,3 +1,31 @@
+$maroon: #7a2a2a;
+$ink-muted: #6a5346;
+
 :host {
   display: block;
+}
+
+.register {
+  max-width: 400px;
+  margin: 48px auto;
+  padding: 0 24px;
+}
+
+.register__title {
+  margin: 0 0 20px;
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 24px;
+  color: $maroon;
+}
+
+.register__switch {
+  margin: 18px 0 0;
+  font-size: 13px;
+  color: $ink-muted;
+  text-align: center;
+}
+
+.register__switch-link {
+  color: $maroon;
+  font-weight: 700;
 }

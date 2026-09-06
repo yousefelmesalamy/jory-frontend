@@ -32,6 +32,24 @@
         {{ t().langSwitch }}
       </button>
 
+      @if (isAuthenticated()) {
+        <div class="header__account">
+          <span class="header__account-name">{{ t().authHi }} {{ user()?.full_name }}</span>
+          <button class="header__account-logout" type="button" (click)="logout()">
+            {{ t().authLogout }}
+          </button>
+        </div>
+      } @else {
+        <div class="header__account">
+          <button class="header__account-login" type="button" (click)="openLogin()">
+            {{ t().authLogin }}
+          </button>
+          <button class="header__account-register" type="button" (click)="openRegister()">
+            {{ t().authSwitchToRegister }}
+          </button>
+        </div>
+      }
+
       <label class="header__search">
         <svg
           width="15"
@@ -124,3 +142,11 @@
     }
   </nav>
 </header>
+
+@if (authModalMode(); as mode) {
+  <app-auth-modal
+    [mode]="mode"
+    (closed)="closeAuthModal()"
+    (authenticated)="closeAuthModal()"
+  />
+}

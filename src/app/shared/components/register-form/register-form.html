@@ -1,0 +1,92 @@
+<form class="register-form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="register-form__field">
+    <label class="register-form__label" for="register-email">{{ t().authEmail }}</label>
+    <input
+      id="register-email"
+      class="register-form__input"
+      type="email"
+      autocomplete="email"
+      formControlName="email"
+    />
+    @if (fieldError('email'); as message) {
+      <p class="register-form__field-error">{{ message }}</p>
+    }
+  </div>
+
+  <div class="register-form__field">
+    <label class="register-form__label" for="register-username">{{ t().authUsername }}</label>
+    <input
+      id="register-username"
+      class="register-form__input"
+      type="text"
+      autocomplete="username"
+      formControlName="username"
+    />
+    @if (fieldError('username'); as message) {
+      <p class="register-form__field-error">{{ message }}</p>
+    }
+  </div>
+
+  <div class="register-form__field">
+    <label class="register-form__label" for="register-full-name">{{ t().authFullName }}</label>
+    <input
+      id="register-full-name"
+      class="register-form__input"
+      type="text"
+      autocomplete="name"
+      formControlName="full_name"
+    />
+  </div>
+
+  <div class="register-form__field">
+    <label class="register-form__label" for="register-phone">{{ t().authPhone }}</label>
+    <input
+      id="register-phone"
+      class="register-form__input"
+      type="tel"
+      autocomplete="tel"
+      formControlName="phone"
+    />
+    @if (fieldError('phone'); as message) {
+      <p class="register-form__field-error">{{ message }}</p>
+    }
+  </div>
+
+  <div class="register-form__field">
+    <label class="register-form__label" for="register-password">{{ t().authPassword }}</label>
+    <input
+      id="register-password"
+      class="register-form__input"
+      type="password"
+      autocomplete="new-password"
+      formControlName="password"
+    />
+    @if (fieldError('password'); as message) {
+      <p class="register-form__field-error">{{ message }}</p>
+    }
+  </div>
+
+  <div class="register-form__field">
+    <label class="register-form__label" for="register-password-confirm">{{
+      t().authPasswordConfirm
+    }}</label>
+    <input
+      id="register-password-confirm"
+      class="register-form__input"
+      type="password"
+      autocomplete="new-password"
+      formControlName="password_confirm"
+    />
+    @if (fieldError('password_confirm'); as message) {
+      <p class="register-form__field-error">{{ message }}</p>
+    }
+  </div>
+
+  @if (errorMessage()) {
+    <p class="register-form__message register-form__message--error">{{ errorMessage() }}</p>
+  }
+
+  <button class="register-form__submit" type="submit" [disabled]="submitting()">
+    {{ t().authRegisterSubmit }}
+  </button>
+</form>

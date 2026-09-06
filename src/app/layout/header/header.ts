@@ -3,7 +3,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import type { Copy } from '../../core/i18n/en';
 import { TranslationService } from '../../core/i18n/translation.service';
+import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
+import { AuthModal, AuthModalMode } from '../../shared/components/auth-modal/auth-modal';
 import { RiyalSymbol } from '../../shared/components/riyal-symbol/riyal-symbol';
 
 /**
@@ -38,15 +40,22 @@ interface MegaColumn {
  */
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, RiyalSymbol],
+  imports: [RouterLink, RouterLinkActive, RiyalSymbol, AuthModal],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
 export class Header {
   private readonly cartService = inject(CartService);
+  private readonly authService = inject(AuthService);
   private readonly translation = inject(TranslationService);
 
   readonly t = this.translation.t;
+
+  readonly user = this.authService.user;
+  readonly isAuthenticated = this.authService.isAuthenticated;
+
+  /** `null` keeps the modal out of the DOM entirely when it's closed. */
+  readonly authModalMode = signal<AuthModalMode | null>(null);
 
   /** Hover opens the panel on desktop, the burger toggles it on mobile. */
   readonly menuOpen = signal(false);
@@ -126,5 +135,21 @@ export class Header {
 
   closeMenu(): void {
     this.menuOpen.set(false);
+  }
+
+  openLogin(): void {
+    this.authModalMode.set('login');
+  }
+
+  openRegister(): void {
+    this.authModalMode.set('register');
+  }
+
+  closeAuthModal(): void {
+    this.authModalMode.set(null);
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe();
   }
 }

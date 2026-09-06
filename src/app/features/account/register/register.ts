@@ -1,25 +1,25 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { AuthService } from '../../../core/services/auth.service';
+import { TranslationService } from '../../../core/i18n/translation.service';
+import { RegisterForm } from '../../../shared/components/register-form/register-form';
 
+/** Direct-link fallback for the navbar's register modal. */
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [RegisterForm, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.scss',
 })
 export class Register {
-  private readonly auth = inject(AuthService);
-  private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly translation = inject(TranslationService);
 
-  protected readonly form = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required],
-  });
+  readonly t = this.translation.t;
 
-  protected submit(): void {
-    // TODO: call auth.register() once the endpoint contract is submitted.
+  protected onSuccess(): void {
+    const next = this.route.snapshot.queryParamMap.get('next');
+    this.router.navigateByUrl(next ?? '/account/profile');
   }
 }

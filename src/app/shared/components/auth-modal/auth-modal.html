@@ -1,0 +1,39 @@
+<div class="auth-modal__backdrop" (click)="onBackdropClick($event)">
+  <div
+    class="auth-modal__dialog"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="auth-modal-title"
+  >
+    <button
+      class="auth-modal__close"
+      type="button"
+      [attr.aria-label]="t().authClose"
+      (click)="close()"
+    >
+      ✕
+    </button>
+
+    <h2 id="auth-modal-title" class="auth-modal__title">
+      {{ activeMode() === 'login' ? t().authLoginTitle : t().authRegisterTitle }}
+    </h2>
+
+    @if (activeMode() === 'login') {
+      <app-login-form (success)="onSuccess($event)" />
+      <p class="auth-modal__switch">
+        {{ t().authNoAccount }}
+        <button type="button" class="auth-modal__switch-link" (click)="switchTo('register')">
+          {{ t().authSwitchToRegister }}
+        </button>
+      </p>
+    } @else {
+      <app-register-form (success)="onSuccess($event)" />
+      <p class="auth-modal__switch">
+        {{ t().authHaveAccount }}
+        <button type="button" class="auth-modal__switch-link" (click)="switchTo('login')">
+          {{ t().authSwitchToLogin }}
+        </button>
+      </p>
+    }
+  </div>
+</div>

@@ -334,6 +334,31 @@ export const EN = {
   footerFollow: 'Follow Jouri',
   copyright: '© 2026 Jouri Roastery. All rights reserved.',
   terms: 'Terms · Privacy · Shipping & returns',
+
+  // Auth: navbar entry, modal and routed pages
+  authLogin: 'Log in',
+  authLogout: 'Log out',
+  authHi: 'Hi',
+  authLoginTitle: 'Log in',
+  authRegisterTitle: 'Create your account',
+  authEmailOrUsername: 'Email or username',
+  authEmail: 'Email',
+  authUsername: 'Username',
+  authFullName: 'Full name',
+  authPhone: 'Phone',
+  authPassword: 'Password',
+  authPasswordConfirm: 'Confirm password',
+  authLoginSubmit: 'Log in',
+  authRegisterSubmit: 'Create account',
+  authNoAccount: "Don't have an account?",
+  authHaveAccount: 'Already have an account?',
+  authSwitchToRegister: 'Register',
+  authSwitchToLogin: 'Log in',
+  authClose: 'Close',
+  authFieldRequired: 'This field is required.',
+  authFieldEmail: 'Enter a valid email address.',
+  authPasswordMismatch: 'Passwords do not match.',
+  authGenericError: 'Something went wrong. Please try again.',
 };
 
 /** The shape every locale must supply in full. */

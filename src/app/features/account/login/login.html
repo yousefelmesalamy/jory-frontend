@@ -1,7 +1,10 @@
-<form class="login" [formGroup]="form" (ngSubmit)="submit()">
-  <input type="email" formControlName="email" />
-  <input type="password" formControlName="password" />
-  <button type="submit" [disabled]="form.invalid"></button>
-</form>
+<section class="login">
+  <h1 class="login__title">{{ t().authLoginTitle }}</h1>
 
-<a routerLink="/account/register"></a>
+  <app-login-form (success)="onSuccess()" />
+
+  <p class="login__switch">
+    {{ t().authNoAccount }}
+    <a class="login__switch-link" routerLink="/account/register">{{ t().authSwitchToRegister }}</a>
+  </p>
+</section>
