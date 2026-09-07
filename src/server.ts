@@ -10,7 +10,27 @@ import { join } from 'node:path';
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
-const angularApp = new AngularNodeAppEngine();
+
+/**
+ * `trustProxyHeaders` is spelled out because the default set is only
+ * `x-forwarded-host` and `x-forwarded-proto`. Any *other* `x-forwarded-*` header
+ * on an incoming request is treated as untrusted, and the response silently
+ * degrades to client-side rendering — no error, just a page that lost SSR.
+ * Vercel puts `x-forwarded-for` on every request, so the default set would
+ * disable SSR in production while local `node server.mjs` looked perfect.
+ *
+ * The host allowlist is deliberately NOT passed here: leaving it undefined lets
+ * `@angular/ssr` read `NG_ALLOWED_HOSTS` at runtime, which is merged with the
+ * `security.allowedHosts` list in angular.json. See docs/deployment.md.
+ */
+const angularApp = new AngularNodeAppEngine({
+  trustProxyHeaders: [
+    'x-forwarded-host',
+    'x-forwarded-proto',
+    'x-forwarded-for',
+    'x-forwarded-port',
+  ],
+});
 
 /**
  * Example Express Rest API endpoints can be defined here.
