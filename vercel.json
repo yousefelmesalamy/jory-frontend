@@ -8,10 +8,9 @@
       "includeFiles": "dist/jory/server/**"
     }
   },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/api/index"
-    }
+  "routes": [
+    { "src": "/", "dest": "/api/index" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/api/index" }
   ]
 }
