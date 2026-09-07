@@ -121,6 +121,8 @@ export interface ProductFilters {
   origin?: string;
   process?: CoffeeProcess;
   roast?: RoastLevel;
+  brand?: string;
+  machine_type?: MachineType;
   min_price?: number;
   max_price?: number;
   on_sale?: boolean;
@@ -129,4 +131,38 @@ export interface ProductFilters {
   ordering?: ProductOrdering;
   page?: number;
   page_size?: number;
+}
+
+export type MachineType =
+  | 'DRUM_ROASTER'
+  | 'FLUID_BED_ROASTER'
+  | 'SAMPLE_ROASTER'
+  | 'GRINDER'
+  | 'BREWER'
+  | 'KETTLE'
+  | 'OTHER';
+
+/** How the rail draws a facet: `range` is the price pair, `boolean` a switch. */
+export type FacetKind = 'choice' | 'range' | 'boolean';
+
+export interface FacetOption {
+  readonly value: string;
+  readonly label: string;
+}
+
+/**
+ * One filter group, as the backend says it should appear for this category.
+ * Labels arrive already localized, so the frontend holds no second copy of the
+ * roast/process/machine copy deck.
+ */
+export interface Facet {
+  readonly key: string;
+  readonly label: string;
+  readonly kind: FacetKind;
+  readonly options: readonly FacetOption[];
+}
+
+export interface FacetResponse {
+  readonly product_type: ProductType | null;
+  readonly facets: readonly Facet[];
 }

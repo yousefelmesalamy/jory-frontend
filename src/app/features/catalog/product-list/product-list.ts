@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { debounceTime, firstValueFrom } from 'rxjs';
 
 import { TranslationService } from '../../../core/i18n/translation.service';
-import { Category, Product, ProductFilters } from '../../../core/models';
+import { Category, Facet, Product, ProductFilters } from '../../../core/models';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { GenericCard } from '../../../shared/components/generic-card/generic-card';
 import { GenericList } from '../../../shared/components/generic-list/generic-list';
@@ -20,10 +20,36 @@ interface Choice {
   readonly label: string;
 }
 
-/** A roast choice also carries the bean colour its chip is painted with. */
-interface RoastChoice extends Choice {
-  readonly shade: string;
-}
+/**
+ * Facets whose control is bespoke, so they stay as static markup: price is two
+ * number inputs, the switches share a wrapper, sort lives in the results
+ * toolbar. The rail loop draws everything else.
+ */
+const STATIC_FACETS = new Set(['type', 'price', 'on_sale', 'in_stock', 'best_selling', 'ordering']);
+
+/** Facet key -> the form control it drives, where the names differ. */
+const CONTROL_BY_FACET: Record<string, string> = {
+  machine_type: 'machineType',
+};
+
+/** Facet key -> the query param to drop when that facet stops being offered. */
+const PARAMS_BY_FACET: Record<string, string> = {
+  roast: 'roast',
+  process: 'process',
+  origin: 'origin',
+  roaster: 'roaster',
+  brand: 'brand',
+  machine_type: 'machine_type',
+};
+
+/** A colour is presentation, not data, so the shades stay here rather than
+ * riding along in the API response. */
+const ROAST_SHADES: Record<string, string> = {
+  LIGHT: '#c89b62',
+  MEDIUM: '#a06a3c',
+  MEDIUM_DARK: '#6f4525',
+  DARK: '#402614',
+};
 
 /** One applied filter, shown as a removable chip above the grid. */
 interface AppliedFilter {
@@ -59,6 +85,8 @@ export class ProductList {
   readonly origin = input('');
   readonly process = input('');
   readonly roast = input('');
+  readonly brand = input('');
+  readonly machineType = input('', { alias: 'machine_type' });
   readonly minPrice = input('', { alias: 'min_price' });
   readonly maxPrice = input('', { alias: 'max_price' });
   readonly onSale = input('', { alias: 'on_sale' });
@@ -68,6 +96,28 @@ export class ProductList {
   readonly page = input('1');
 
   protected readonly categories = signal<readonly Category[]>([]);
+
+  /** Roots plus their children, flattened one level — for looking a category up by slug
+   * regardless of whether it's a parent or a child (the `category` filter accepts both,
+   * though the sidebar `<select>` below only lists roots). */
+  protected readonly flatCategories = computed<readonly Category[]>(() =>
+    this.categories().flatMap((root) => [root, ...root.children]),
+  );
+
+  /**
+   * The subcategory row shown above the grid once a category is selected: a
+   * parent's own children, or — when the selected slug is itself a child —
+   * its siblings, so picking any category surfaces the same lateral row.
+   */
+  protected readonly subcategories = computed<readonly Category[]>(() => {
+    const slug = this.category();
+    if (!slug) return [];
+    for (const root of this.categories()) {
+      if (root.slug === slug) return root.children;
+      if (root.children.some((child) => child.slug === slug)) return root.children;
+    }
+    return [];
+  });
 
   /** Drives the mobile filter drawer only; the rail is always open from 900px up. */
   protected readonly filtersOpen = signal(false);
@@ -80,6 +130,8 @@ export class ProductList {
     origin: [''],
     process: [''],
     roast: [''],
+    brand: [''],
+    machineType: [''],
     minPrice: [''],
     maxPrice: [''],
     onSale: [false],
@@ -95,20 +147,19 @@ export class ProductList {
     { value: 'ACCESSORY', label: this.t().typeAccessory },
   ]);
 
-  protected readonly roastChoices = computed<readonly RoastChoice[]>(() => [
-    { value: 'LIGHT', label: this.t().roastLight, shade: '#c89b62' },
-    { value: 'MEDIUM', label: this.t().roastMedium, shade: '#a06a3c' },
-    { value: 'MEDIUM_DARK', label: this.t().roastMediumDark, shade: '#6f4525' },
-    { value: 'DARK', label: this.t().roastDark, shade: '#402614' },
-  ]);
+  /**
+   * Which filters this category actually has. Keyed on the category alone — the
+   * facet list does not depend on the other filters.
+   */
+  protected readonly facetsResource = resource({
+    params: () => ({ category: this.category() }),
+    loader: ({ params }) => firstValueFrom(this.catalog.getFacets(params.category)),
+  });
 
-  protected readonly processChoices = computed<readonly Choice[]>(() => [
-    { value: 'WASHED', label: this.t().processWashed },
-    { value: 'NATURAL', label: this.t().processNatural },
-    { value: 'HONEY', label: this.t().processHoney },
-    { value: 'ANAEROBIC', label: this.t().processAnaerobic },
-    { value: 'WET_HULLED', label: this.t().processWetHulled },
-  ]);
+  /** The facets the rail loop draws: everything with a bespoke control removed. */
+  protected readonly railFacets = computed<readonly Facet[]>(() =>
+    (this.facetsResource.value()?.facets ?? []).filter((facet) => !STATIC_FACETS.has(facet.key)),
+  );
 
   protected readonly bestSellingChoices = computed<readonly Choice[]>(() => [
     { value: 'week', label: this.t().bestSellingWeek },
@@ -124,6 +175,8 @@ export class ProductList {
     origin: this.origin() || undefined,
     process: (this.process() || undefined) as ProductFilters['process'],
     roast: (this.roast() || undefined) as ProductFilters['roast'],
+    brand: this.brand() || undefined,
+    machine_type: (this.machineType() || undefined) as ProductFilters['machine_type'],
     min_price: this.minPrice() ? Number(this.minPrice()) : undefined,
     max_price: this.maxPrice() ? Number(this.maxPrice()) : undefined,
     on_sale: this.onSale() === 'true' || undefined,
@@ -164,21 +217,39 @@ export class ProductList {
     const label = (choices: readonly Choice[], value: string) =>
       choices.find((choice) => choice.value === value)?.label ?? value;
 
+    /** A chip's label comes from the live facet options, so a brand the frontend
+     * has never heard of still reads as its name rather than its slug. */
+    const optionLabel = (facetKey: string, value: string) =>
+      this.railFacets()
+        .find((facet) => facet.key === facetKey)
+        ?.options.find((option) => option.value === value)?.label ?? value;
+
     if (this.search()) chips.push({ control: 'search', label: this.search() });
     if (this.category()) {
-      const match = this.categories().find((cat) => cat.slug === this.category());
+      const match = this.flatCategories().find((cat) => cat.slug === this.category());
       chips.push({ control: 'category', label: match?.name ?? this.category() });
     }
     if (this.type()) {
       chips.push({ control: 'type', label: label(this.typeChoices(), this.type()) });
     }
     if (this.roast()) {
-      chips.push({ control: 'roast', label: label(this.roastChoices(), this.roast()) });
+      chips.push({ control: 'roast', label: optionLabel('roast', this.roast()) });
     }
     if (this.process()) {
-      chips.push({ control: 'process', label: label(this.processChoices(), this.process()) });
+      chips.push({ control: 'process', label: optionLabel('process', this.process()) });
     }
-    if (this.origin()) chips.push({ control: 'origin', label: this.origin() });
+    if (this.brand()) {
+      chips.push({ control: 'brand', label: optionLabel('brand', this.brand()) });
+    }
+    if (this.machineType()) {
+      chips.push({
+        control: 'machineType',
+        label: optionLabel('machine_type', this.machineType()),
+      });
+    }
+    if (this.origin()) {
+      chips.push({ control: 'origin', label: optionLabel('origin', this.origin()) });
+    }
     if (this.bestSelling()) {
       chips.push({
         control: 'bestSelling',
@@ -212,6 +283,8 @@ export class ProductList {
           origin: this.origin(),
           process: this.process(),
           roast: this.roast(),
+          brand: this.brand(),
+          machineType: this.machineType(),
           minPrice: this.minPrice(),
           maxPrice: this.maxPrice(),
           onSale: this.onSale() === 'true',
@@ -221,6 +294,31 @@ export class ProductList {
         },
         { emitEvent: false },
       );
+    });
+
+    // Leaving Coffee for Roasting Machines with `roast=DARK` still in the URL
+    // would silently empty the grid — the param is valid, it just cannot match
+    // a machine. `replaceUrl` so the cleanup is not a history entry the back
+    // button has to walk through.
+    effect(() => {
+      const response = this.facetsResource.value();
+      if (!response) return;
+
+      const offered = new Set(response.facets.map((facet) => facet.key));
+      const stale: Record<string, null> = {};
+      for (const [key, param] of Object.entries(PARAMS_BY_FACET)) {
+        if (!offered.has(key) && this.route.snapshot.queryParamMap.get(param)) {
+          stale[param] = null;
+        }
+      }
+      if (!Object.keys(stale).length) return;
+
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParamsHandling: 'merge',
+        queryParams: stale,
+        replaceUrl: true,
+      });
     });
 
     // Form -> route. Any filter change re-navigates and resets to page 1.
@@ -236,6 +334,8 @@ export class ProductList {
           origin: value.origin || null,
           process: value.process || null,
           roast: value.roast || null,
+          brand: value.brand || null,
+          machine_type: value.machineType || null,
           min_price: value.minPrice || null,
           max_price: value.maxPrice || null,
           on_sale: value.onSale ? 'true' : null,
@@ -248,14 +348,26 @@ export class ProductList {
     });
   }
 
-  /** Pill groups are single-select: clicking the active pill turns the filter off. */
-  protected toggleChoice(control: 'type' | 'roast' | 'process' | 'bestSelling', value: string) {
-    const field = this.form.controls[control];
+  /** Pill groups are single-select: clicking the active pill turns the filter off.
+   * Keyed by facet key rather than a closed union, since the rail's groups now
+   * come from the API and include brand and machine type. */
+  protected toggleChoice(facetKey: string, value: string): void {
+    const field = this.form.get(CONTROL_BY_FACET[facetKey] ?? facetKey);
+    if (!field) return;
     field.setValue(field.value === value ? '' : value);
   }
 
-  protected isChosen(control: 'type' | 'roast' | 'process' | 'bestSelling', value: string) {
-    return this.form.controls[control].value === value;
+  protected isChosen(facetKey: string, value: string): boolean {
+    return this.form.get(CONTROL_BY_FACET[facetKey] ?? facetKey)?.value === value;
+  }
+
+  protected roastShade(value: string): string {
+    return ROAST_SHADES[value] ?? ROAST_SHADES['MEDIUM'];
+  }
+
+  /** Clicking a subcategory tile always selects it (never toggles off), like a breadcrumb. */
+  protected selectCategory(slug: string): void {
+    this.form.controls.category.setValue(slug);
   }
 
   /** Clears the one control behind a chip. `price` covers both ends of the range. */

@@ -46,6 +46,78 @@ $label: #8a7361;
   color: $ink-muted;
 }
 
+/* ---------- subcategory row ---------- */
+
+.subcats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px 22px;
+  margin-block-end: 32px;
+}
+
+.subcat-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100px;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.subcat-tile__avatar {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: $panel;
+  border: 2px solid transparent;
+  transition: transform 200ms ease, border-color 200ms ease;
+}
+
+.subcat-tile:hover .subcat-tile__avatar {
+  transform: scale(1.05);
+}
+
+.subcat-tile:focus-visible .subcat-tile__avatar {
+  outline: 2px solid $gold;
+  outline-offset: 3px;
+}
+
+.subcat-tile--on .subcat-tile__avatar {
+  border-color: $maroon;
+}
+
+.subcat-tile__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.subcat-tile__initial {
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 30px;
+  color: $ink;
+  opacity: 0.55;
+}
+
+.subcat-tile__name {
+  font-size: 13px;
+  line-height: 1.35;
+  color: $ink;
+  text-align: center;
+}
+
+.subcat-tile--on .subcat-tile__name {
+  font-weight: 700;
+}
+
 .shop__layout {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
@@ -657,5 +729,30 @@ $label: #8a7361;
   .skeletons {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 26px 16px;
+  }
+
+  .subcats {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 18px;
+    padding-block-end: 4px;
+  }
+
+  .subcat-tile {
+    flex: 0 0 auto;
+    width: 84px;
+  }
+
+  .subcat-tile__avatar {
+    width: 68px;
+    height: 68px;
+  }
+
+  .subcat-tile__initial {
+    font-size: 24px;
+  }
+
+  .subcat-tile__name {
+    font-size: 12px;
   }
 }

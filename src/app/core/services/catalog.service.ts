@@ -2,7 +2,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Category, Paginated, Product, ProductDetail, ProductFilters } from '../models';
+import {
+  Category,
+  FacetResponse,
+  Paginated,
+  Product,
+  ProductDetail,
+  ProductFilters,
+} from '../models';
 import { API_URL } from '../tokens/api-url.token';
 
 /** Read side of the catalog. */
@@ -24,6 +31,18 @@ export class CatalogService {
 
   getProduct(slug: string): Observable<ProductDetail> {
     return this.http.get<ProductDetail>(`${this.apiUrl}/products/${slug}/`);
+  }
+
+  /**
+   * Which filters apply to a category — a roasting machine is asked about its
+   * brand, not its roast level. No category means the universal set.
+   */
+  getFacets(category = ''): Observable<FacetResponse> {
+    let params = new HttpParams();
+    if (category) {
+      params = params.set('category', category);
+    }
+    return this.http.get<FacetResponse>(`${this.apiUrl}/facets/`, { params });
   }
 
   /** Unpaginated — the taxonomy is small enough to render whole. */

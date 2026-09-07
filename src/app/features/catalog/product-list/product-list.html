@@ -5,6 +5,35 @@
     <p class="shop__lead">{{ t().shopLead }}</p>
   </header>
 
+  @if (subcategories().length) {
+    <div class="subcats">
+      @for (subcat of subcategories(); track subcat.id) {
+        <button
+          class="subcat-tile"
+          type="button"
+          [class.subcat-tile--on]="category() === subcat.slug"
+          (click)="selectCategory(subcat.slug)"
+        >
+          <span class="subcat-tile__avatar">
+            @if (subcat.image) {
+              <img
+                class="subcat-tile__image"
+                loading="lazy"
+                [src]="subcat.image"
+                [alt]="subcat.name"
+              />
+            } @else {
+              <span class="subcat-tile__initial" aria-hidden="true">
+                {{ subcat.name.charAt(0) }}
+              </span>
+            }
+          </span>
+          <span class="subcat-tile__name">{{ subcat.name }}</span>
+        </button>
+      }
+    </div>
+  }
+
   <button
     class="shop__filters-toggle"
     type="button"
@@ -47,41 +76,45 @@
         </div>
       </fieldset>
 
-      <!-- The one filter drawn as what it measures: chips run light to dark. -->
-      <fieldset class="filter-group">
-        <legend class="filter-group__label">{{ t().filterRoast }}</legend>
-        <div class="roast">
-          @for (choice of roastChoices(); track choice.value) {
-            <button
-              class="roast__chip"
-              type="button"
-              [class.roast__chip--on]="isChosen('roast', choice.value)"
-              [attr.aria-pressed]="isChosen('roast', choice.value)"
-              [attr.aria-label]="choice.label"
-              [attr.title]="choice.label"
-              [style.--bean]="choice.shade"
-              (click)="toggleChoice('roast', choice.value)"
-            ></button>
-          }
-        </div>
-      </fieldset>
+      <!-- Drawn from GET /api/facets/: a roasting machine is asked about its
+           brand, not its roast level. -->
+      @for (facet of railFacets(); track facet.key) {
+        <fieldset class="filter-group">
+          <legend class="filter-group__label">{{ facet.label }}</legend>
 
-      <fieldset class="filter-group">
-        <legend class="filter-group__label">{{ t().filterProcess }}</legend>
-        <div class="pills">
-          @for (choice of processChoices(); track choice.value) {
-            <button
-              class="pill"
-              type="button"
-              [class.pill--on]="isChosen('process', choice.value)"
-              [attr.aria-pressed]="isChosen('process', choice.value)"
-              (click)="toggleChoice('process', choice.value)"
-            >
-              {{ choice.label }}
-            </button>
+          @if (facet.key === 'roast') {
+            <!-- The one filter drawn as what it measures: chips run light to dark. -->
+            <div class="roast">
+              @for (option of facet.options; track option.value) {
+                <button
+                  class="roast__chip"
+                  type="button"
+                  [class.roast__chip--on]="isChosen('roast', option.value)"
+                  [attr.aria-pressed]="isChosen('roast', option.value)"
+                  [attr.aria-label]="option.label"
+                  [attr.title]="option.label"
+                  [style.--bean]="roastShade(option.value)"
+                  (click)="toggleChoice('roast', option.value)"
+                ></button>
+              }
+            </div>
+          } @else {
+            <div class="pills">
+              @for (option of facet.options; track option.value) {
+                <button
+                  class="pill"
+                  type="button"
+                  [class.pill--on]="isChosen(facet.key, option.value)"
+                  [attr.aria-pressed]="isChosen(facet.key, option.value)"
+                  (click)="toggleChoice(facet.key, option.value)"
+                >
+                  {{ option.label }}
+                </button>
+              }
+            </div>
           }
-        </div>
-      </fieldset>
+        </fieldset>
+      }
 
       <fieldset class="filter-group">
         <legend class="filter-group__label">{{ t().priceRange }}</legend>
@@ -114,17 +147,6 @@
             <option [value]="cat.slug">{{ cat.name }}</option>
           }
         </select>
-      </div>
-
-      <div class="filter-group">
-        <label class="filter-group__label" for="filter-origin">{{ t().filterOrigin }}</label>
-        <input
-          id="filter-origin"
-          class="filter-group__input"
-          type="text"
-          formControlName="origin"
-          [placeholder]="t().filterOriginPlaceholder"
-        />
       </div>
 
       <fieldset class="filter-group">
