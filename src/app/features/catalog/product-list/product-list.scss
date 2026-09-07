@@ -78,7 +78,9 @@ $label: #8a7361;
   overflow: hidden;
   background: $panel;
   border: 2px solid transparent;
-  transition: transform 200ms ease, border-color 200ms ease;
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease;
 }
 
 .subcat-tile:hover .subcat-tile__avatar {

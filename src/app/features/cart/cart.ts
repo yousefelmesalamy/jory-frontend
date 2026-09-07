@@ -11,7 +11,16 @@ import { VoucherForm } from './voucher-form/voucher-form';
 
 /** Pastel fills for a line's monogram tile, cycled by index — the cart API
  * carries no product image, same gap `category-list` fills the same way. */
-const SWATCHES = ['#cfe3ea', '#e8ddc8', '#d8c3ad', '#f3dfa5', '#d7e5d0', '#ddd0e6', '#f1d9c0', '#cfe6da'];
+const SWATCHES = [
+  '#cfe3ea',
+  '#e8ddc8',
+  '#d8c3ad',
+  '#f3dfa5',
+  '#d7e5d0',
+  '#ddd0e6',
+  '#f1d9c0',
+  '#cfe6da',
+];
 
 @Component({
   selector: 'app-cart',

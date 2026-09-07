@@ -29,7 +29,12 @@ const CART: Cart = {
   id: 3,
   items: [ITEM],
   voucher: null,
-  totals: { subtotal: '500.00', discount_total: '0.00', shipping_cost: '30.00', grand_total: '530.00' },
+  totals: {
+    subtotal: '500.00',
+    discount_total: '0.00',
+    shipping_cost: '30.00',
+    grand_total: '530.00',
+  },
 };
 
 const EMPTY_CART: Cart = {
@@ -101,7 +106,10 @@ describe('CartService — construction', () => {
     await Promise.resolve();
     httpMock
       .expectOne('/api/cart/')
-      .flush({ error: { code: 'error', message: 'boom', details: {} } }, { status: 500, statusText: 'Server Error' });
+      .flush(
+        { error: { code: 'error', message: 'boom', details: {} } },
+        { status: 500, statusText: 'Server Error' },
+      );
 
     expect(service.loading()).toBe(false);
   });

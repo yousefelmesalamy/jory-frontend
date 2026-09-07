@@ -45,7 +45,11 @@ interface FeaturedProduct {
 const FEATURED_PRODUCTS: readonly FeaturedProduct[] = [
   {
     id: 'uganda',
-    en: { name: 'Uganda — Mananasi', country: 'Uganda', notes: ['Pineapple', 'Mango', 'Cane sugar'] },
+    en: {
+      name: 'Uganda — Mananasi',
+      country: 'Uganda',
+      notes: ['Pineapple', 'Mango', 'Cane sugar'],
+    },
     ar: { name: 'أوغندا — ماناناسي', country: 'أوغندا', notes: ['أناناس', 'مانجو', 'قصب السكر'] },
     badgeKey: 'badgeBestSeller',
     badgeBg: '#7a2a2a',
@@ -80,7 +84,11 @@ const FEATURED_PRODUCTS: readonly FeaturedProduct[] = [
       country: 'Colombia',
       notes: ['White peach', 'Florals', 'Black tea'],
     },
-    ar: { name: 'ميلو يلو — كولومبيا', country: 'كولومبيا', notes: ['خوخ أبيض', 'زهور', 'شاي أسود'] },
+    ar: {
+      name: 'ميلو يلو — كولومبيا',
+      country: 'كولومبيا',
+      notes: ['خوخ أبيض', 'زهور', 'شاي أسود'],
+    },
     badgeKey: 'badgeLimited',
     badgeBg: '#3a2418',
     badgeFg: '#e8cd9b',
@@ -94,7 +102,11 @@ const FEATURED_PRODUCTS: readonly FeaturedProduct[] = [
   },
   {
     id: 'ethiopia',
-    en: { name: 'Ethiopia — Yirgacheffe', country: 'Ethiopia', notes: ['Jasmine', 'Lemon', 'Honey'] },
+    en: {
+      name: 'Ethiopia — Yirgacheffe',
+      country: 'Ethiopia',
+      notes: ['Jasmine', 'Lemon', 'Honey'],
+    },
     ar: { name: 'إثيوبيا — يرغاتشيف', country: 'إثيوبيا', notes: ['ياسمين', 'ليمون', 'عسل'] },
     badgeKey: 'badgeClassic',
     badgeBg: '#d3a45f',

@@ -7,11 +7,7 @@
 
   <app-generic-list [items]="categories()" [emptyMessage]="t().emptyCategories">
     <ng-template #item let-category let-index="index">
-      <a
-        class="category-tile"
-        [routerLink]="['/shop']"
-        [queryParams]="{ category: category.slug }"
-      >
+      <a class="category-tile" [routerLink]="['/shop']" [queryParams]="{ category: category.slug }">
         <span class="category-tile__avatar" [style.background]="swatch(index)">
           @if (category.image) {
             <img

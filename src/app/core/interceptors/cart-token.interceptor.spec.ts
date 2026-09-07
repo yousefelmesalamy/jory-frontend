@@ -28,7 +28,12 @@ async function setup() {
     id: 1,
     items: [],
     voucher: null,
-    totals: { subtotal: '0.00', discount_total: '0.00', shipping_cost: '0.00', grand_total: '0.00' },
+    totals: {
+      subtotal: '0.00',
+      discount_total: '0.00',
+      shipping_cost: '0.00',
+      grand_total: '0.00',
+    },
   });
 
   return { cart, httpMock, http };
@@ -67,9 +72,7 @@ describe('cartTokenInterceptor', () => {
 
     http.get('/api/cart/').subscribe();
 
-    httpMock
-      .expectOne('/api/cart/')
-      .flush({}, { headers: { 'X-Cart-Token': 'fresh-token-456' } });
+    httpMock.expectOne('/api/cart/').flush({}, { headers: { 'X-Cart-Token': 'fresh-token-456' } });
 
     expect(cart.cartToken).toBe('fresh-token-456');
     expect(localStorage.getItem('jory.cart.token')).toBe('fresh-token-456');

@@ -110,7 +110,8 @@ export class Profile {
       return;
     }
 
-    const { current_password, new_password, new_password_confirm } = this.passwordForm.getRawValue();
+    const { current_password, new_password, new_password_confirm } =
+      this.passwordForm.getRawValue();
 
     if (new_password !== new_password_confirm) {
       this.passwordForm.controls.new_password_confirm.setErrors({ mismatch: true });
@@ -184,7 +185,9 @@ export class Profile {
     }
 
     if (!matched) {
-      message.set((error.error as ApiError | undefined)?.error?.message ?? this.t().authGenericError);
+      message.set(
+        (error.error as ApiError | undefined)?.error?.message ?? this.t().authGenericError,
+      );
     }
   }
 }

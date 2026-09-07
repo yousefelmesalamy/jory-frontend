@@ -27,11 +27,29 @@ export const AR: Copy = {
   navAriaCompact: 'التنقل الرئيسي، مختصر',
   search: 'ابحث عن قهوة…',
   browseShop: 'تصفح المتجر',
-  // TODO: not rendered yet — when it is, append <app-riyal-symbol> after "150".
-  announce: 'شحن مجاني للطلبات فوق 150 · تحميص يومي في الرياض',
+  browseCategories: 'تسوّق حسب التصنيف',
+  browseOffers: 'العروض',
+  browseNew: 'وصل حديثاً',
+  // TODO: append <app-riyal-symbol> after "150" once the strip renders it.
+  announce: 'شحن مجاني للطلبات فوق 150',
+  announceRoast: 'تحميص يومي في الرياض',
+  announceTrack: 'تتبّع طلبك في أي وقت من حسابك',
+  announcePrev: 'الإعلان السابق',
+  announceNext: 'الإعلان التالي',
   track: 'تتبّع طلبك',
-  langSwitch: 'English',
+  langSwitch: 'EN',
   langSwitchAria: 'التبديل إلى الإنجليزية',
+
+  // Header — search type-ahead
+  searchSubmit: 'بحث',
+  searchAll: 'عرض كل النتائج عن',
+  searchNoResults: 'لا نتائج لـ',
+  searchRecent: 'عمليات البحث الأخيرة',
+  searchClearRecent: 'مسح',
+  searchClear: 'مسح البحث',
+  searchInCategory: 'تصنيف',
+  searchResultCount: 'نتيجة',
+  searchResultsAria: 'اقتراحات البحث',
 
   // Mega menu
   megaOrigins: 'حسب المنشأ',

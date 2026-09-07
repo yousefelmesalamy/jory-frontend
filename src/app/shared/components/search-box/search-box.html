@@ -1,0 +1,148 @@
+<div class="search-box" [class.is-open]="panelOpen()">
+  <div
+    class="search-box__field"
+    role="combobox"
+    [attr.aria-expanded]="panelOpen()"
+    aria-haspopup="listbox"
+    aria-owns="search-box-panel"
+  >
+    <svg
+      class="search-box__icon"
+      width="17"
+      height="17"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="7" />
+      <path d="M20 20l-3.5-3.5" />
+    </svg>
+
+    <input
+      #field
+      type="search"
+      name="q"
+      autocomplete="off"
+      spellcheck="false"
+      class="search-box__input"
+      [value]="term()"
+      [placeholder]="t().search"
+      [attr.aria-label]="t().search"
+      aria-controls="search-box-panel"
+      [attr.aria-activedescendant]="activeRowId()"
+      (input)="onInput($any($event.target).value)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      (keydown)="onKeydown($event)"
+    />
+
+    @if (loading()) {
+      <span class="search-box__spinner" aria-hidden="true"></span>
+    } @else if (term()) {
+      <button
+        class="search-box__clear"
+        type="button"
+        [attr.aria-label]="t().searchClear"
+        (click)="clear()"
+      >
+        ×
+      </button>
+    }
+
+    <button class="search-box__submit" type="button" (click)="submit()">
+      {{ t().searchSubmit }}
+    </button>
+  </div>
+
+  <!-- Screen readers get the count; sighted users get the list itself. -->
+  <p class="search-box__status" role="status" aria-live="polite">
+    @if (querying() && !loading()) {
+      {{ resultCount() }} {{ t().searchResultCount }}
+    }
+  </p>
+
+  @if (panelOpen() && (querying() || showingRecent())) {
+    <div class="search-box__panel" id="search-box-panel">
+      @if (showingRecent()) {
+        <div class="search-box__section">
+          <span class="search-box__section-title">{{ t().searchRecent }}</span>
+          <button class="search-box__section-clear" type="button" (click)="clearRecent()">
+            {{ t().searchClearRecent }}
+          </button>
+        </div>
+      }
+
+      @if (empty()) {
+        <p class="search-box__empty">{{ t().searchNoResults }} "{{ term() }}"</p>
+      }
+
+      <ul class="search-box__list" role="listbox" [attr.aria-label]="t().searchResultsAria">
+        @for (row of rows(); track row.key; let i = $index) {
+          <li
+            class="search-box__row"
+            [class.is-active]="activeIndex() === i"
+            [class.search-box__row--all]="row.kind === 'all'"
+            [id]="'search-row-' + row.key"
+            role="option"
+            [attr.aria-selected]="activeIndex() === i"
+            (mouseenter)="activeIndex.set(i)"
+            (mousedown)="choose(row)"
+          >
+            @switch (row.kind) {
+              @case ('product') {
+                @if (row.product.primary_image; as image) {
+                  <img
+                    class="search-box__thumb"
+                    [src]="image.image"
+                    [alt]="image.alt_text || row.product.name"
+                    width="40"
+                    height="40"
+                    loading="lazy"
+                  />
+                } @else {
+                  <span
+                    class="search-box__thumb search-box__thumb--empty"
+                    aria-hidden="true"
+                  ></span>
+                }
+
+                @let productName = highlight(row.product.name);
+                <span class="search-box__label">
+                  {{ productName.before }}<mark>{{ productName.match }}</mark
+                  >{{ productName.after }}
+                </span>
+
+                <span class="search-box__price">
+                  {{ row.product.price_from }} <app-riyal-symbol />
+                </span>
+              }
+
+              @case ('category') {
+                <span class="search-box__thumb search-box__thumb--tag" aria-hidden="true">#</span>
+
+                @let categoryName = highlight(row.category.name);
+                <span class="search-box__label">
+                  {{ categoryName.before }}<mark>{{ categoryName.match }}</mark
+                  >{{ categoryName.after }}
+                </span>
+
+                <span class="search-box__kind">{{ t().searchInCategory }}</span>
+              }
+
+              @case ('recent') {
+                <span class="search-box__thumb search-box__thumb--tag" aria-hidden="true">↺</span>
+                <span class="search-box__label">{{ row.term }}</span>
+              }
+
+              @case ('all') {
+                <span class="search-box__all">{{ t().searchAll }} "{{ row.term }}" →</span>
+              }
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  }
+</div>

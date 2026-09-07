@@ -30,7 +30,10 @@ export class AddressService {
   /** Also the "set as default" route — `{ is_default: true }` — see the
    * manifest's default-address rules: it clears every other address's flag
    * in the same request, so the caller never has to. */
-  patch(id: number, payload: Partial<AddressPayload & { is_default: boolean }>): Observable<Address> {
+  patch(
+    id: number,
+    payload: Partial<AddressPayload & { is_default: boolean }>,
+  ): Observable<Address> {
     return this.http.patch<Address>(`${this.apiUrl}/addresses/${id}/`, payload);
   }
 

@@ -53,7 +53,10 @@ describe('authInterceptor — 401 refresh-and-retry', () => {
 
     const first = httpMock.expectOne('/api/orders/');
     expect(first.request.headers.get('Authorization')).toBe('Bearer expiring-access-token');
-    first.flush({ detail: 'Given token not valid for any token type' }, { status: 401, statusText: 'Unauthorized' });
+    first.flush(
+      { detail: 'Given token not valid for any token type' },
+      { status: 401, statusText: 'Unauthorized' },
+    );
 
     const refreshReq = httpMock.expectOne('/api/auth/refresh/');
     refreshReq.flush({ access: 'new-access-token' });
@@ -75,14 +78,22 @@ describe('authInterceptor — 401 refresh-and-retry', () => {
 
     httpMock
       .expectOne('/api/orders/')
-      .flush({ detail: 'Given token not valid for any token type' }, { status: 401, statusText: 'Unauthorized' });
+      .flush(
+        { detail: 'Given token not valid for any token type' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
 
     httpMock
       .expectOne('/api/auth/refresh/')
-      .flush({ detail: 'Token is invalid or expired' }, { status: 401, statusText: 'Unauthorized' });
+      .flush(
+        { detail: 'Token is invalid or expired' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
 
     // logout() blacklists best-effort even though the session is already dead.
-    httpMock.expectOne('/api/auth/logout/').flush(null, { status: 205, statusText: 'Reset Content' });
+    httpMock
+      .expectOne('/api/auth/logout/')
+      .flush(null, { status: 205, statusText: 'Reset Content' });
 
     expect(error).toBeTruthy();
     expect(auth.isAuthenticated()).toBe(false);
@@ -101,7 +112,10 @@ describe('authInterceptor — 401 refresh-and-retry', () => {
 
     httpMock
       .expectOne('/api/auth/login/')
-      .flush({ detail: 'No active account found with the given credentials' }, { status: 401, statusText: 'Unauthorized' });
+      .flush(
+        { detail: 'No active account found with the given credentials' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
 
     expect(error).toBeTruthy();
 

@@ -7,7 +7,7 @@ import { AR } from '../../core/i18n/ar';
 import { EN } from '../../core/i18n/en';
 import { LOCALE_COOKIE } from '../../core/i18n/locale';
 import { TranslationService } from '../../core/i18n/translation.service';
-import { User } from '../../core/models';
+import { Category, User } from '../../core/models';
 import { AuthService } from '../../core/services/auth.service';
 import { Header } from './header';
 
@@ -27,13 +27,35 @@ const EMPTY_CART = {
   totals: { subtotal: '0.00', discount_total: '0.00', shipping_cost: '0.00', grand_total: '0.00' },
 };
 
+function category(id: number, name: string, slug: string): Category {
+  return { id, name, slug, description: '', image: null, display_order: id, children: [] };
+}
+
+const CATEGORIES: Category[] = [category(1, 'Beans', 'beans'), category(2, 'Grinders', 'grinders')];
+
+/**
+ * Drains the two calls the header makes on construction — the cart, and the
+ * taxonomy the browse bar renders. Both must be answered before any assertion,
+ * or `httpMock.verify()` fails on the leftover.
+ */
+async function bootstrap(
+  fixture: ComponentFixture<Header>,
+  httpMock: HttpTestingController,
+  categories: Category[] = CATEGORIES,
+): Promise<void> {
+  await fixture.whenStable();
+  httpMock.expectOne('/api/cart/').flush(EMPTY_CART);
+  httpMock.expectOne('/api/categories/').flush(categories);
+  await fixture.whenStable();
+}
+
 describe('Header', () => {
   let fixture: ComponentFixture<Header>;
   let httpMock: HttpTestingController;
 
-  function navLabels(): string[] {
-    return [...fixture.nativeElement.querySelectorAll('.header__link')].map((link) =>
-      (link as HTMLElement).textContent!.replace('▼', '').trim(),
+  function browseLabels(): string[] {
+    return [...fixture.nativeElement.querySelectorAll('.header__browse-link')].map((link) =>
+      (link as HTMLElement).textContent!.trim(),
     );
   }
 
@@ -49,17 +71,39 @@ describe('Header', () => {
 
     fixture = TestBed.createComponent(Header);
     httpMock = TestBed.inject(HttpTestingController);
-    await fixture.whenStable();
-    // CartService loads its own cart on construction; drain that first.
-    httpMock.expectOne('/api/cart/').flush(EMPTY_CART);
+    await bootstrap(fixture, httpMock);
   });
 
   afterEach(() => {
     localStorage.clear();
   });
 
-  it('renders the nav in Arabic when Arabic is active', () => {
-    expect(navLabels()).toEqual([AR.navHome, AR.navCoffee, AR.wishlist, AR.orders, AR.account]);
+  it('renders all three bars', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('.header__utility')).toBeTruthy();
+    expect(el.querySelector('.header__main')).toBeTruthy();
+    expect(el.querySelector('.header__browse')).toBeTruthy();
+  });
+
+  it('puts the search box in the main bar', () => {
+    expect(fixture.nativeElement.querySelector('app-search-box')).toBeTruthy();
+  });
+
+  it('lists the live categories on the browse bar, framed by the fixed links', () => {
+    expect(browseLabels()).toEqual([
+      AR.megaAllCoffee,
+      'Beans',
+      'Grinders',
+      AR.browseOffers,
+      AR.browseNew,
+    ]);
+  });
+
+  it('keeps account destinations out of the browse bar', () => {
+    const labels = browseLabels();
+    for (const accountLabel of [AR.orders, AR.wishlist, AR.profile, AR.addresses]) {
+      expect(labels).not.toContain(accountLabel);
+    }
   });
 
   it('offers the other language on the switch button', async () => {
@@ -76,18 +120,74 @@ describe('Header', () => {
     fixture.nativeElement.querySelector('.header__lang').click();
     await fixture.whenStable();
 
-    expect(navLabels()).toEqual([EN.navHome, EN.navCoffee, EN.wishlist, EN.orders, EN.account]);
+    expect(browseLabels()).toEqual([
+      EN.megaAllCoffee,
+      'Beans',
+      'Grinders',
+      EN.browseOffers,
+      EN.browseNew,
+    ]);
   });
 
-  it('translates the mega panel and the promo card', async () => {
+  it('translates the mega panel and the promo card', () => {
     const titles = [...fixture.nativeElement.querySelectorAll('.header__mega-title')].map((el) =>
       (el as HTMLElement).textContent!.trim(),
     );
-    expect(titles).toEqual([AR.megaOrigins, AR.megaBrew, AR.megaShop]);
+    // The live-category column leads, then the three hardcoded ones.
+    expect(titles).toEqual([AR.megaCategories, AR.megaOrigins, AR.megaBrew, AR.megaShop]);
 
     expect(fixture.nativeElement.querySelector('.header__promo-title').textContent.trim()).toBe(
       AR.megaPromoTitle,
     );
+  });
+
+  it('opens the mega panel from the browse trigger and closes it again', async () => {
+    const trigger: HTMLButtonElement =
+      fixture.nativeElement.querySelector('.header__browse-trigger');
+    const panel = () => fixture.nativeElement.querySelector('.header__mega');
+
+    expect(panel().classList).not.toContain('is-open');
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
+
+    trigger.click();
+    await fixture.whenStable();
+
+    expect(panel().classList).toContain('is-open');
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+
+    trigger.click();
+    await fixture.whenStable();
+
+    expect(panel().classList).not.toContain('is-open');
+  });
+
+  it('keeps the mega panel open while the pointer travels from bar 3 into it', async () => {
+    const panel = () => fixture.nativeElement.querySelector('.header__mega');
+    fixture.nativeElement.querySelector('.header__browse-trigger').click();
+    await fixture.whenStable();
+    expect(panel().classList).toContain('is-open');
+
+    // The panel is a sibling of bar 3, so reaching it means leaving bar 3.
+    // That crossing must not close what the pointer is heading for.
+    fixture.nativeElement
+      .querySelector('.header__browse')
+      .dispatchEvent(new MouseEvent('mouseleave'));
+    await fixture.whenStable();
+
+    expect(panel().classList).toContain('is-open');
+  });
+
+  it('closes the mega panel once the pointer leaves the browse shell entirely', async () => {
+    const panel = () => fixture.nativeElement.querySelector('.header__mega');
+    fixture.nativeElement.querySelector('.header__browse-trigger').click();
+    await fixture.whenStable();
+
+    fixture.nativeElement
+      .querySelector('.header__browse-shell')
+      .dispatchEvent(new MouseEvent('mouseleave'));
+    await fixture.whenStable();
+
+    expect(panel().classList).not.toContain('is-open');
   });
 
   it('shows the cart total with the Riyal glyph', async () => {
@@ -103,9 +203,93 @@ describe('Header', () => {
   });
 });
 
+describe('Header — announcement strip', () => {
+  let fixture: ComponentFixture<Header>;
+
+  beforeEach(async () => {
+    document.cookie = `${LOCALE_COOKIE}=en; path=/`;
+
+    await TestBed.configureTestingModule({
+      imports: [Header],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Header);
+    await bootstrap(fixture, TestBed.inject(HttpTestingController));
+  });
+
+  afterEach(() => localStorage.clear());
+
+  function message(): string {
+    return fixture.nativeElement.querySelector('.header__announce-text').textContent.trim();
+  }
+
+  async function step(direction: 'prev' | 'next'): Promise<void> {
+    const buttons = fixture.nativeElement.querySelectorAll('.header__announce-step');
+    (buttons[direction === 'prev' ? 0 : 1] as HTMLButtonElement).click();
+    await fixture.whenStable();
+  }
+
+  it('opens on the first message', () => {
+    expect(message()).toBe(EN.announce);
+  });
+
+  it('advances to the next message', async () => {
+    await step('next');
+    expect(message()).toBe(EN.announceRoast);
+  });
+
+  it('wraps backwards from the first message to the last', async () => {
+    await step('prev');
+    expect(message()).toBe(EN.announceTrack);
+  });
+
+  it('wraps forwards off the end', async () => {
+    await step('next');
+    await step('next');
+    await step('next');
+    expect(message()).toBe(EN.announce);
+  });
+});
+
+describe('Header — degraded catalog', () => {
+  let fixture: ComponentFixture<Header>;
+
+  beforeEach(async () => {
+    document.cookie = `${LOCALE_COOKIE}=en; path=/`;
+
+    await TestBed.configureTestingModule({
+      imports: [Header],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Header);
+    const httpMock = TestBed.inject(HttpTestingController);
+
+    await fixture.whenStable();
+    httpMock.expectOne('/api/cart/').flush(EMPTY_CART);
+    httpMock.expectOne('/api/categories/').flush(null, { status: 500, statusText: 'Server Error' });
+    await fixture.whenStable();
+  });
+
+  afterEach(() => localStorage.clear());
+
+  it('still renders the browse bar when the taxonomy call fails', () => {
+    const labels = [...fixture.nativeElement.querySelectorAll('.header__browse-link')].map((link) =>
+      (link as HTMLElement).textContent!.trim(),
+    );
+    expect(labels).toEqual([EN.megaAllCoffee, EN.browseOffers, EN.browseNew]);
+  });
+});
+
 describe('Header — auth', () => {
   let fixture: ComponentFixture<Header>;
   let httpMock: HttpTestingController;
+
+  async function openAccountMenu(): Promise<void> {
+    (fixture.nativeElement.querySelector('.header__account-button') as HTMLButtonElement).click();
+    await fixture.whenStable();
+  }
 
   beforeEach(async () => {
     document.cookie = `${LOCALE_COOKIE}=en; path=/`;
@@ -117,9 +301,7 @@ describe('Header — auth', () => {
 
     fixture = TestBed.createComponent(Header);
     httpMock = TestBed.inject(HttpTestingController);
-    await fixture.whenStable();
-    // CartService loads its own cart on construction; drain that first.
-    httpMock.expectOne('/api/cart/').flush(EMPTY_CART);
+    await bootstrap(fixture, httpMock);
   });
 
   afterEach(() => {
@@ -129,18 +311,68 @@ describe('Header — auth', () => {
   it('shows only a login button when signed out', () => {
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('.header__account-login')?.textContent?.trim()).toBe(EN.authLogin);
-    expect(el.querySelector('.header__account-register')).toBeNull();
-    expect(el.querySelector('.header__account-logout')).toBeNull();
+    expect(el.querySelector('.header__account-button')).toBeNull();
+    expect(el.querySelector('.header__account-menu')).toBeNull();
   });
 
-  it('shows a greeting and logout button once signed in', async () => {
+  it('swaps the login button for the account menu once signed in', async () => {
     TestBed.inject(AuthService).user.set(USER);
     await fixture.whenStable();
 
     const el: HTMLElement = fixture.nativeElement;
-    expect(el.querySelector('.header__account-name')?.textContent).toContain(USER.full_name);
-    expect(el.querySelector('.header__account-logout')).toBeTruthy();
     expect(el.querySelector('.header__account-login')).toBeNull();
+    expect(el.querySelector('.header__account-name')?.textContent).toContain(USER.full_name);
+  });
+
+  it('keeps the account menu closed until it is asked for', async () => {
+    TestBed.inject(AuthService).user.set(USER);
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('.header__account-menu')).toBeNull();
+
+    await openAccountMenu();
+
+    const items = [...fixture.nativeElement.querySelectorAll('.header__account-item')].map((el) =>
+      (el as HTMLElement).textContent!.trim(),
+    );
+    expect(items).toEqual([EN.profile, EN.orders, EN.wishlist, EN.addresses]);
+  });
+
+  it('keeps the account menu open when the pointer crosses the gap below the button', async () => {
+    TestBed.inject(AuthService).user.set(USER);
+    await fixture.whenStable();
+    await openAccountMenu();
+
+    fixture.nativeElement
+      .querySelector('.header__account')
+      .dispatchEvent(new MouseEvent('mouseleave'));
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('.header__account-menu')).toBeTruthy();
+  });
+
+  it('closes the account menu on a click elsewhere on the page', async () => {
+    TestBed.inject(AuthService).user.set(USER);
+    await fixture.whenStable();
+    await openAccountMenu();
+
+    document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('.header__account-menu')).toBeNull();
+  });
+
+  it('does not close the account menu on a click inside it', async () => {
+    TestBed.inject(AuthService).user.set(USER);
+    await fixture.whenStable();
+    await openAccountMenu();
+
+    fixture.nativeElement
+      .querySelector('.header__account-menu')
+      .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('.header__account-menu')).toBeTruthy();
   });
 
   it('opens the login modal from the navbar and closes it on request', async () => {
@@ -158,10 +390,13 @@ describe('Header — auth', () => {
   it('blacklists the refresh token and clears the session on logout', async () => {
     TestBed.inject(AuthService).user.set(USER);
     await fixture.whenStable();
+    await openAccountMenu();
 
     (fixture.nativeElement.querySelector('.header__account-logout') as HTMLButtonElement).click();
 
-    httpMock.expectOne('/api/auth/logout/').flush(null, { status: 205, statusText: 'Reset Content' });
+    httpMock
+      .expectOne('/api/auth/logout/')
+      .flush(null, { status: 205, statusText: 'Reset Content' });
     await fixture.whenStable();
 
     expect(TestBed.inject(AuthService).isAuthenticated()).toBe(false);

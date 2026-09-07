@@ -30,7 +30,9 @@
       <button type="button" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
         {{ t().prevPage }}
       </button>
-      <span class="review-pagination__label">{{ t().pageLabel }} {{ page() }} / {{ totalPages() }}</span>
+      <span class="review-pagination__label"
+        >{{ t().pageLabel }} {{ page() }} / {{ totalPages() }}</span
+      >
       <button type="button" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
         {{ t().nextPage }}
       </button>

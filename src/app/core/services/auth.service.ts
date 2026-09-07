@@ -122,19 +122,15 @@ export class AuthService {
 
   /** Best-effort: the session clears locally even if the blacklist call fails. */
   logout(): Observable<void> {
-    return this.http
-      .post<void>(`${this.apiUrl}/auth/logout/`, { refresh: this.refreshTok() })
-      .pipe(
-        catchError(() => of(void 0)),
-        map(() => void 0),
-        tap(() => this.clearSession()),
-      );
+    return this.http.post<void>(`${this.apiUrl}/auth/logout/`, { refresh: this.refreshTok() }).pipe(
+      catchError(() => of(void 0)),
+      map(() => void 0),
+      tap(() => this.clearSession()),
+    );
   }
 
   me(): Observable<User> {
-    return this.http
-      .get<User>(`${this.apiUrl}/auth/me/`)
-      .pipe(tap((user) => this.user.set(user)));
+    return this.http.get<User>(`${this.apiUrl}/auth/me/`).pipe(tap((user) => this.user.set(user)));
   }
 
   updateMe(patch: Partial<Pick<User, 'full_name' | 'phone'>>): Observable<User> {

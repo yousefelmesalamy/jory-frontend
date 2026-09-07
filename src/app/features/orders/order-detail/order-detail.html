@@ -76,7 +76,9 @@
           <p class="order-detail__address-notes">{{ t().addressNotes }}: {{ value.notes }}</p>
         }
 
-        <h2 class="order-detail__panel-title order-detail__panel-title--spaced">{{ t().payment }}</h2>
+        <h2 class="order-detail__panel-title order-detail__panel-title--spaced">
+          {{ t().payment }}
+        </h2>
         <p class="order-detail__address-line">
           {{ t().paymentCod }} ·
           {{ value.payment_status === 'PAID' ? t().paymentPaid : t().paymentUnpaid }}

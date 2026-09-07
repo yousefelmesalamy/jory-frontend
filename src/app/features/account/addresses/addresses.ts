@@ -43,7 +43,13 @@ export class Addresses {
   }
 
   protected addressLine(address: Address): string {
-    return [address.street_address, address.area, address.city, address.country, address.postal_code]
+    return [
+      address.street_address,
+      address.area,
+      address.city,
+      address.country,
+      address.postal_code,
+    ]
       .filter((part) => part)
       .join(', ');
   }

@@ -1,28 +1,54 @@
-<header class="header" (mouseleave)="closeMenu()" (keydown.escape)="closeMenu()">
-  <div class="header__bar">
-    <a class="header__brand" routerLink="/" [attr.aria-label]="t().home">
-      <img src="logo-jory.svg" alt="Jory" width="76" height="62" />
-    </a>
+<header class="header" (keydown.escape)="closeAll()">
+  <!-- Bar 1: utility. Socials, the rotating notice, the language switch. -->
+  <div class="header__utility">
+    <div class="header__utility-inner">
+      <nav class="header__socials" [attr.aria-label]="t().footerFollow">
+        @for (social of socials; track social.label) {
+          <a
+            class="header__social"
+            [href]="social.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            [attr.aria-label]="social.label"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path [attr.d]="social.path" />
+            </svg>
+          </a>
+        }
+      </nav>
 
-    <nav class="header__nav" [attr.aria-label]="t().navAria">
-      @for (item of nav; track item.link) {
-        <a
-          class="header__link"
-          [routerLink]="item.link"
-          routerLinkActive="is-active"
-          [routerLinkActiveOptions]="{ exact: item.exact }"
-          (mouseenter)="syncMenu(item)"
-          (focus)="openMenu(item)"
+      <div
+        class="header__announce"
+        (mouseenter)="announcePaused.set(true)"
+        (mouseleave)="announcePaused.set(false)"
+        (focusin)="announcePaused.set(true)"
+        (focusout)="announcePaused.set(false)"
+      >
+        <button
+          class="header__announce-step"
+          type="button"
+          [attr.aria-label]="t().announcePrev"
+          (click)="stepAnnounce(-1)"
         >
-          {{ t()[item.key] }}
-          @if (item.mega) {
-            <span class="header__caret" aria-hidden="true">▼</span>
-          }
-        </a>
-      }
-    </nav>
+          ‹
+        </button>
 
-    <div class="header__actions">
+        <!-- Polite, not assertive: a shipping notice must never interrupt. -->
+        <p class="header__announce-text" role="status" aria-live="polite">
+          {{ t()[announcements[announceIndex()]] }}
+        </p>
+
+        <button
+          class="header__announce-step"
+          type="button"
+          [attr.aria-label]="t().announceNext"
+          (click)="stepAnnounce(1)"
+        >
+          ›
+        </button>
+      </div>
+
       <button
         class="header__lang"
         type="button"
@@ -31,119 +57,276 @@
       >
         {{ t().langSwitch }}
       </button>
+    </div>
+  </div>
 
-      @if (isAuthenticated()) {
-        <div class="header__account">
-          <span class="header__account-name">{{ t().authHi }} {{ user()?.full_name }}</span>
-          <button class="header__account-logout" type="button" (click)="logout()">
-            {{ t().authLogout }}
-          </button>
-        </div>
-      } @else {
-        <div class="header__account">
-          <button class="header__account-login" type="button" (click)="openLogin()">
-            {{ t().authLogin }}
-          </button>
-        </div>
-      }
-
-      <label class="header__search">
-        <svg
-          width="15"
-          height="15"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#b39a72"
-          stroke-width="2"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="7" />
-          <path d="M20 20l-3.5-3.5" />
-        </svg>
-        <input type="search" name="q" [placeholder]="t().search" [attr.aria-label]="t().search" />
-      </label>
-
-      <a
-        class="header__cart"
-        routerLink="/cart"
-        [attr.aria-label]="t().cart + ' (' + cartCount() + ')'"
-      >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#f4e6cd"
-          stroke-width="1.8"
-          aria-hidden="true"
-        >
-          <path d="M5 8h14l-1.2 11.2a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8z" />
-          <path d="M9 8V6.5a3 3 0 016 0V8" />
-        </svg>
-        <span class="header__cart-total">{{ cartTotal() }} <app-riyal-symbol /></span>
-        <span class="header__cart-count" aria-hidden="true">{{ cartCount() }}</span>
-      </a>
-
+  <!-- Bar 2: the main row. Search is the widest thing here by design. -->
+  <div class="header__main">
+    <div class="header__main-inner">
       <button
         class="header__burger"
         type="button"
         [attr.aria-label]="t().browseShop"
-        aria-controls="header-mega"
-        [attr.aria-expanded]="menuOpen()"
-        (click)="toggleMenu()"
+        aria-controls="header-drawer"
+        [attr.aria-expanded]="drawerOpen()"
+        (click)="toggleDrawer()"
       >
-        ≡
+        <span aria-hidden="true">☰</span>
       </button>
-    </div>
-  </div>
 
-  <div class="header__mega" id="header-mega" [class.is-open]="menuOpen()">
-    <div class="header__mega-inner">
-      @for (column of megaColumns; track column.titleKey) {
-        <div>
-          <div class="header__mega-title">{{ t()[column.titleKey] }}</div>
-          <div class="header__mega-links">
-            @for (link of column.links; track link.key) {
-              <a
-                class="header__mega-link"
-                [routerLink]="link.link"
-                [queryParams]="link.queryParams"
-                (click)="closeMenu()"
-                >{{ t()[link.key] }}</a
+      <a class="header__brand" routerLink="/" [attr.aria-label]="t().home">
+        <img src="logo-jory.svg" alt="Jory" width="76" height="62" />
+      </a>
+
+      <app-search-box class="header__search" />
+
+      <div class="header__actions">
+        <div class="header__account">
+          @if (isAuthenticated()) {
+            <button
+              class="header__account-button"
+              type="button"
+              aria-controls="header-account-menu"
+              [attr.aria-expanded]="accountOpen()"
+              (click)="toggleAccount()"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                aria-hidden="true"
               >
-            }
-          </div>
-        </div>
-      }
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+              </svg>
+              <span class="header__account-name">{{ user()?.full_name || t().account }}</span>
+              <span class="header__caret" aria-hidden="true">▾</span>
+            </button>
 
-      <div class="header__promo">
-        <span class="header__promo-tag">{{ t().megaPromoTag }}</span>
-        <span class="header__promo-title">{{ t().megaPromoTitle }}</span>
-        <span class="header__promo-text">{{ t().megaPromoText }}</span>
-        <a class="header__promo-cta" routerLink="/shop" (click)="closeMenu()">{{
-          t().megaPromoCta
-        }}</a>
+            @if (accountOpen()) {
+              <div class="header__account-menu" id="header-account-menu">
+                @for (link of accountLinks; track link.link) {
+                  <a class="header__account-item" [routerLink]="link.link" (click)="closeAccount()">
+                    {{ t()[link.key] }}
+                  </a>
+                }
+                <button class="header__account-logout" type="button" (click)="logout()">
+                  {{ t().authLogout }}
+                </button>
+              </div>
+            }
+          } @else {
+            <button class="header__account-login" type="button" (click)="openLogin()">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+              </svg>
+              <span class="header__account-name">{{ t().authLogin }}</span>
+            </button>
+          }
+        </div>
+
+        <a
+          class="header__cart"
+          routerLink="/cart"
+          [attr.aria-label]="t().cart + ' (' + cartCount() + ')'"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            aria-hidden="true"
+          >
+            <path d="M5 8h14l-1.2 11.2a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8z" />
+            <path d="M9 8V6.5a3 3 0 016 0V8" />
+          </svg>
+          <span class="header__cart-total">{{ cartTotal() }} <app-riyal-symbol /></span>
+          <span class="header__cart-count" aria-hidden="true">{{ cartCount() }}</span>
+        </a>
       </div>
     </div>
   </div>
 
-  <nav class="header__chips" [attr.aria-label]="t().navAriaCompact">
-    @for (item of nav; track item.link) {
-      <a
-        class="header__chip"
-        [routerLink]="item.link"
-        routerLinkActive="is-active"
-        [routerLinkActiveOptions]="{ exact: item.exact }"
-        >{{ t()[item.key] }}</a
-      >
-    }
-  </nav>
+  <!--
+    Bar 3: browse. The mega trigger, then the live taxonomy.
+
+    Bar and panel share one shell, and the shell alone owns the close-on-leave.
+    The panel is positioned out of flow, so it is a sibling rather than a child
+    of the bar — hanging `mouseleave` on the bar itself would shut the panel the
+    instant the pointer crossed the bar's bottom edge on its way into it.
+  -->
+  <div class="header__browse-shell" (mouseleave)="closeMenu()">
+    <div class="header__browse">
+      <nav class="header__browse-inner" [attr.aria-label]="t().navAria">
+        <button
+          class="header__browse-trigger"
+          type="button"
+          aria-controls="header-mega"
+          [attr.aria-expanded]="menuOpen()"
+          (click)="toggleMenu()"
+          (mouseenter)="openMenu()"
+        >
+          {{ t().browseCategories }}
+          <span class="header__caret" aria-hidden="true">▾</span>
+        </button>
+
+        @for (link of browseLead; track link.key) {
+          <a
+            class="header__browse-link"
+            [routerLink]="link.link"
+            [queryParams]="link.queryParams"
+            routerLinkActive="is-active"
+            (mouseenter)="closeMenu()"
+            >{{ t()[link.key] }}</a
+          >
+        }
+
+        @for (category of browseCategories(); track category.id) {
+          <a
+            class="header__browse-link"
+            routerLink="/shop"
+            [queryParams]="{ category: category.slug }"
+            (mouseenter)="closeMenu()"
+            >{{ category.name }}</a
+          >
+        }
+
+        @for (link of browseTail; track link.key) {
+          <a
+            class="header__browse-link header__browse-link--accent"
+            [routerLink]="link.link"
+            [queryParams]="link.queryParams"
+            (mouseenter)="closeMenu()"
+            >{{ t()[link.key] }}</a
+          >
+        }
+      </nav>
+    </div>
+
+    <div class="header__mega" id="header-mega" [class.is-open]="menuOpen()">
+      <div class="header__mega-inner">
+        @if (allCategories().length) {
+          <div>
+            <div class="header__mega-title">{{ t().megaCategories }}</div>
+            <div class="header__mega-links">
+              @for (category of allCategories(); track category.id) {
+                <a
+                  class="header__mega-link"
+                  routerLink="/shop"
+                  [queryParams]="{ category: category.slug }"
+                  (click)="closeMenu()"
+                  >{{ category.name }}</a
+                >
+              }
+            </div>
+          </div>
+        }
+
+        @for (column of megaColumns; track column.titleKey) {
+          <div>
+            <div class="header__mega-title">{{ t()[column.titleKey] }}</div>
+            <div class="header__mega-links">
+              @for (link of column.links; track link.key) {
+                <a
+                  class="header__mega-link"
+                  [routerLink]="link.link"
+                  [queryParams]="link.queryParams"
+                  (click)="closeMenu()"
+                  >{{ t()[link.key] }}</a
+                >
+              }
+            </div>
+          </div>
+        }
+
+        <div class="header__promo">
+          <span class="header__promo-tag">{{ t().megaPromoTag }}</span>
+          <span class="header__promo-title">{{ t().megaPromoTitle }}</span>
+          <span class="header__promo-text">{{ t().megaPromoText }}</span>
+          <a class="header__promo-cta" routerLink="/shop" (click)="closeMenu()">{{
+            t().megaPromoCta
+          }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile: bars 1 and 3 fold into this, so bar 2 keeps search visible. -->
+  @if (drawerOpen()) {
+    <div class="header__drawer" id="header-drawer">
+      <div class="header__drawer-section">
+        <span class="header__drawer-title">{{ t().browseCategories }}</span>
+        @for (category of allCategories(); track category.id) {
+          <a
+            class="header__drawer-link"
+            routerLink="/shop"
+            [queryParams]="{ category: category.slug }"
+            (click)="closeDrawer()"
+            >{{ category.name }}</a
+          >
+        }
+        @for (link of browseTail; track link.key) {
+          <a
+            class="header__drawer-link"
+            [routerLink]="link.link"
+            [queryParams]="link.queryParams"
+            (click)="closeDrawer()"
+            >{{ t()[link.key] }}</a
+          >
+        }
+      </div>
+
+      <div class="header__drawer-section">
+        <span class="header__drawer-title">{{ t().account }}</span>
+        @if (isAuthenticated()) {
+          @for (link of accountLinks; track link.link) {
+            <a class="header__drawer-link" [routerLink]="link.link" (click)="closeDrawer()">
+              {{ t()[link.key] }}
+            </a>
+          }
+          <button class="header__drawer-action" type="button" (click)="logout()">
+            {{ t().authLogout }}
+          </button>
+        } @else {
+          <button class="header__drawer-action" type="button" (click)="openLogin()">
+            {{ t().authLogin }}
+          </button>
+        }
+      </div>
+
+      <nav class="header__drawer-socials" [attr.aria-label]="t().footerFollow">
+        @for (social of socials; track social.label) {
+          <a
+            class="header__social"
+            [href]="social.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            [attr.aria-label]="social.label"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path [attr.d]="social.path" />
+            </svg>
+          </a>
+        }
+      </nav>
+    </div>
+  }
 </header>
 
 @if (authModalMode(); as mode) {
-  <app-auth-modal
-    [mode]="mode"
-    (closed)="closeAuthModal()"
-    (authenticated)="onAuthenticated()"
-  />
+  <app-auth-modal [mode]="mode" (closed)="closeAuthModal()" (authenticated)="onAuthenticated()" />
 }

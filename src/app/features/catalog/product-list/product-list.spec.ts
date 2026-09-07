@@ -73,8 +73,8 @@ describe('ProductList facets', () => {
   }
 
   function legends(): string[] {
-    return [...fixture.nativeElement.querySelectorAll('.filter-group__label')].map((node: Element) =>
-      node.textContent!.trim(),
+    return [...fixture.nativeElement.querySelectorAll('.filter-group__label')].map(
+      (node: Element) => node.textContent!.trim(),
     );
   }
 
@@ -140,8 +140,9 @@ describe('ProductList facets', () => {
 
     const cleared = navigate.mock.calls.some(
       ([, extras]) =>
-        (extras as { queryParams?: Record<string, unknown> } | undefined)?.queryParams?.['roast'] ===
-        null,
+        (extras as { queryParams?: Record<string, unknown> } | undefined)?.queryParams?.[
+          'roast'
+        ] === null,
     );
     expect(cleared).toBe(true);
   });
@@ -160,8 +161,9 @@ describe('ProductList facets', () => {
 
     const cleared = navigate.mock.calls.some(
       ([, extras]) =>
-        (extras as { queryParams?: Record<string, unknown> } | undefined)?.queryParams?.['roast'] ===
-        null,
+        (extras as { queryParams?: Record<string, unknown> } | undefined)?.queryParams?.[
+          'roast'
+        ] === null,
     );
     expect(cleared).toBe(false);
   });

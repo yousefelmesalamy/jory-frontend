@@ -9,11 +9,7 @@
   </header>
 
   @if (editing() !== null) {
-    <app-address-form
-      [address]="editingAddress()"
-      (saved)="onSaved()"
-      (cancelled)="cancelEdit()"
-    />
+    <app-address-form [address]="editingAddress()" (saved)="onSaved()" (cancelled)="cancelEdit()" />
   } @else if (loading()) {
     <p class="addresses__loading">{{ t().loading }}</p>
   } @else {

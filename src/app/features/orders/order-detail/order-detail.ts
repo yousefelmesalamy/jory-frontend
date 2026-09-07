@@ -35,7 +35,9 @@ export class OrderDetail {
   protected readonly orderResource = resource({
     params: () => ({ orderNumber: this.orderNumber() }),
     loader: ({ params }) =>
-      params.orderNumber ? firstValueFrom(this.ordersService.get(params.orderNumber)) : Promise.resolve(null),
+      params.orderNumber
+        ? firstValueFrom(this.ordersService.get(params.orderNumber))
+        : Promise.resolve(null),
   });
 
   /** Cancel returns the updated order — stored here so the page reflects it

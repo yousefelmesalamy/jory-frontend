@@ -65,7 +65,10 @@ describe('AuthService — login', () => {
 
     httpMock
       .expectOne('/api/auth/login/')
-      .flush({ detail: 'No active account found with the given credentials' }, { status: 401, statusText: 'Unauthorized' });
+      .flush(
+        { detail: 'No active account found with the given credentials' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
 
     expect(error).toBeTruthy();
     expect(service.user()).toBeNull();
@@ -187,7 +190,10 @@ describe('AuthService — logout', () => {
 
     httpMock
       .expectOne('/api/auth/logout/')
-      .flush({ error: { code: 'invalid_token', message: 'bad', details: {} } }, { status: 400, statusText: 'Bad Request' });
+      .flush(
+        { error: { code: 'invalid_token', message: 'bad', details: {} } },
+        { status: 400, statusText: 'Bad Request' },
+      );
 
     expect(completed).toBe(true);
     expect(service.isAuthenticated()).toBe(false);
@@ -287,7 +293,10 @@ describe('AuthService — hydration on construction', () => {
 
     httpMock
       .expectOne('/api/auth/me/')
-      .flush({ detail: 'Given token not valid for any token type' }, { status: 401, statusText: 'Unauthorized' });
+      .flush(
+        { detail: 'Given token not valid for any token type' },
+        { status: 401, statusText: 'Unauthorized' },
+      );
 
     expect(service.user()).toBeNull();
     expect(service.accessToken).toBeNull();

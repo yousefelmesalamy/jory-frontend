@@ -30,11 +30,29 @@ export const EN = {
   navAriaCompact: 'Main navigation, compact',
   search: 'Search coffee…',
   browseShop: 'Browse the shop',
-  // TODO: not rendered yet — when it is, append <app-riyal-symbol> after "150".
-  announce: 'Free shipping over 150 · Roasted daily in Riyadh',
+  browseCategories: 'Shop by category',
+  browseOffers: 'Offers',
+  browseNew: 'New arrivals',
+  // TODO: append <app-riyal-symbol> after "150" once the strip renders it.
+  announce: 'Free shipping over 150',
+  announceRoast: 'Roasted daily in Riyadh',
+  announceTrack: 'Track your order any time from your account',
+  announcePrev: 'Previous announcement',
+  announceNext: 'Next announcement',
   track: 'Track your order',
-  langSwitch: 'عربي',
+  langSwitch: 'ع',
   langSwitchAria: 'Switch to Arabic',
+
+  // Header — search type-ahead
+  searchSubmit: 'Search',
+  searchAll: 'See all results for',
+  searchNoResults: 'No matches for',
+  searchRecent: 'Recent searches',
+  searchClearRecent: 'Clear',
+  searchClear: 'Clear search',
+  searchInCategory: 'Category',
+  searchResultCount: 'results',
+  searchResultsAria: 'Search suggestions',
 
   // Mega menu
   megaOrigins: 'By origin',

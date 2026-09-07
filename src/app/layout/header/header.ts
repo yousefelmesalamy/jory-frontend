@@ -1,24 +1,27 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import {
+  Component,
+  DestroyRef,
+  HostListener,
+  PLATFORM_ID,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { catchError, of, shareReplay } from 'rxjs';
 
 import type { Copy } from '../../core/i18n/en';
 import { TranslationService } from '../../core/i18n/translation.service';
+import { Category } from '../../core/models';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
+import { CatalogService } from '../../core/services/catalog.service';
 import { AuthModal, AuthModalMode } from '../../shared/components/auth-modal/auth-modal';
 import { RiyalSymbol } from '../../shared/components/riyal-symbol/riyal-symbol';
-
-/**
- * A top level nav entry. `mega` marks the single item that opens the panel.
- * Labels are held as copy-deck keys rather than strings, so a bad key is a
- * compile error and the nav re-renders on a language switch for free.
- */
-interface NavItem {
-  key: keyof Copy;
-  link: string;
-  exact: boolean;
-  mega: boolean;
-}
+import { SearchBox } from '../../shared/components/search-box/search-box';
+import { SOCIAL_LINKS } from '../../shared/social-links';
 
 /** One link inside the mega panel. */
 interface MegaLink {
@@ -34,19 +37,50 @@ interface MegaColumn {
 }
 
 /**
- * Site chrome. Owns the route map, the shop mega panel, the cart strip and the
- * language switch. Copy comes from `TranslationService`, counts from
- * `CartService`.
+ * A link on the browse bar that is not a catalog category — the evergreen
+ * entries that sit either side of the live ones.
+ */
+interface BrowseLink {
+  key: keyof Copy;
+  link: string;
+  queryParams?: Record<string, string>;
+}
+
+/** An entry in the account dropdown. */
+interface AccountLink {
+  key: keyof Copy;
+  link: string;
+}
+
+/** How many root categories the browse bar shows before the rest fall into the
+ * mega panel. Beyond this the bar wraps and stops reading as one line. */
+const BROWSE_CATEGORY_LIMIT = 5;
+
+/** Long enough to read a short line twice over. */
+const ANNOUNCE_INTERVAL_MS = 6000;
+
+/**
+ * Site chrome, in three bars:
+ *
+ *   1. utility — socials, the rotating announcement, the language switch
+ *   2. main    — logo, search, account, cart
+ *   3. browse  — the category mega panel and the live category list
+ *
+ * The split exists because the old single bar mixed three unrelated jobs.
+ * Account destinations (orders, wishlist, profile) in particular were sitting in
+ * top level nav, crowding out the shopping links a storefront nav is for; they
+ * now live behind the account button in bar 2.
  */
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, RiyalSymbol, AuthModal],
+  imports: [RouterLink, RouterLinkActive, RiyalSymbol, AuthModal, SearchBox],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
 export class Header {
   private readonly cartService = inject(CartService);
   private readonly authService = inject(AuthService);
+  private readonly catalog = inject(CatalogService);
   private readonly translation = inject(TranslationService);
 
   readonly t = this.translation.t;
@@ -57,16 +91,64 @@ export class Header {
   /** `null` keeps the modal out of the DOM entirely when it's closed. */
   readonly authModalMode = signal<AuthModalMode | null>(null);
 
-  /** Hover opens the panel on desktop, the burger toggles it on mobile. */
+  /** Hover opens the mega panel on desktop, the burger toggles it on mobile. */
   readonly menuOpen = signal(false);
 
-  readonly nav: readonly NavItem[] = [
-    { key: 'navHome', link: '/', exact: true, mega: false },
-    { key: 'navCoffee', link: '/shop', exact: false, mega: true },
-    { key: 'wishlist', link: '/wishlist', exact: false, mega: false },
-    { key: 'orders', link: '/orders', exact: false, mega: false },
-    { key: 'account', link: '/account/profile', exact: false, mega: false },
+  /** The account dropdown, which is click-driven — a hover menu holding a
+   * logout button is too easy to trigger by accident. */
+  readonly accountOpen = signal(false);
+
+  /** The mobile drawer, standing in for bars 1 and 3 on a narrow screen. */
+  readonly drawerOpen = signal(false);
+
+  readonly socials = SOCIAL_LINKS;
+
+  /**
+   * The utility strip rotates through these. Three short lines beat one long
+   * one: each gets read on its own rather than scanned past as a banner.
+   */
+  readonly announcements: readonly (keyof Copy)[] = ['announce', 'announceRoast', 'announceTrack'];
+
+  readonly announceIndex = signal(0);
+
+  /** Hover or focus holds the current message, so the strip can't rotate out
+   * from under someone in the middle of reading it. */
+  readonly announcePaused = signal(false);
+
+  readonly browseLead: readonly BrowseLink[] = [{ key: 'megaAllCoffee', link: '/shop' }];
+
+  readonly browseTail: readonly BrowseLink[] = [
+    { key: 'browseOffers', link: '/shop', queryParams: { on_sale: 'true' } },
+    { key: 'browseNew', link: '/shop', queryParams: { ordering: '-created_at' } },
   ];
+
+  readonly accountLinks: readonly AccountLink[] = [
+    { key: 'profile', link: '/account/profile' },
+    { key: 'orders', link: '/orders' },
+    { key: 'wishlist', link: '/wishlist' },
+    { key: 'addresses', link: '/account/addresses' },
+  ];
+
+  /**
+   * The live taxonomy, for the browse bar and the mega panel's first column.
+   *
+   * A failure degrades to an empty list rather than an error: the bar simply
+   * renders its hardcoded links, which is a far better outcome than the whole
+   * site chrome failing over a nav decoration. `shareReplay` keeps the header's
+   * two consumers (bar and drawer) on one request.
+   */
+  private readonly categories = toSignal(
+    this.catalog.listCategories().pipe(
+      catchError(() => of<Category[]>([])),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    ),
+    { initialValue: [] as Category[] },
+  );
+
+  readonly browseCategories = computed(() => this.categories().slice(0, BROWSE_CATEGORY_LIMIT));
+
+  /** Everything, for the panel — the bar shows a slice, the panel the rest. */
+  readonly allCategories = this.categories;
 
   readonly megaColumns: readonly MegaColumn[] = [
     {
@@ -111,32 +193,82 @@ export class Header {
 
   readonly cartTotal = computed(() => this.cartService.cart()?.totals.subtotal ?? '0.00');
 
+  constructor() {
+    // Browser only: the server renders the first message and stops there, which
+    // is also what a visitor with JS disabled keeps.
+    if (isPlatformBrowser(inject(PLATFORM_ID))) {
+      const timer = setInterval(() => {
+        if (!this.announcePaused()) {
+          this.stepAnnounce(1);
+        }
+      }, ANNOUNCE_INTERVAL_MS);
+
+      inject(DestroyRef).onDestroy(() => clearInterval(timer));
+    }
+  }
+
   toggleLanguage(): void {
     this.translation.toggle();
   }
 
-  /** Pointer move across the bar: the shop item opens the panel, the rest shut it. */
-  syncMenu(item: NavItem): void {
-    this.menuOpen.set(item.mega);
-  }
-
-  /** Keyboard focus only ever opens, so tabbing onward doesn't yank the panel away. */
-  openMenu(item: NavItem): void {
-    if (item.mega) {
-      this.menuOpen.set(true);
-    }
+  /** Wraps, so the strip cycles rather than dead-ending on the last message. */
+  stepAnnounce(delta: number): void {
+    const total = this.announcements.length;
+    this.announceIndex.update((index) => (index + delta + total) % total);
   }
 
   toggleMenu(): void {
     this.menuOpen.update((open) => !open);
+    this.accountOpen.set(false);
+  }
+
+  openMenu(): void {
+    this.menuOpen.set(true);
   }
 
   closeMenu(): void {
     this.menuOpen.set(false);
   }
 
+  /**
+   * The account menu opens on click, so it closes on a click elsewhere — not on
+   * pointer-leave. Hover-to-close left an 8px dead strip between the button and
+   * the menu that dismissed the menu on the way to it.
+   */
+  @HostListener('document:click', ['$event.target'])
+  onDocumentClick(target: EventTarget | null): void {
+    if (target instanceof Element && !target.closest('.header__account')) {
+      this.closeAccount();
+    }
+  }
+
+  toggleAccount(): void {
+    this.accountOpen.update((open) => !open);
+    this.menuOpen.set(false);
+  }
+
+  closeAccount(): void {
+    this.accountOpen.set(false);
+  }
+
+  toggleDrawer(): void {
+    this.drawerOpen.update((open) => !open);
+  }
+
+  closeDrawer(): void {
+    this.drawerOpen.set(false);
+  }
+
+  /** Escape and pointer-exit both mean "put everything away". */
+  closeAll(): void {
+    this.menuOpen.set(false);
+    this.accountOpen.set(false);
+  }
+
   openLogin(): void {
     this.authModalMode.set('login');
+    this.accountOpen.set(false);
+    this.drawerOpen.set(false);
   }
 
   closeAuthModal(): void {
@@ -151,6 +283,8 @@ export class Header {
   }
 
   logout(): void {
+    this.closeAll();
+    this.closeDrawer();
     this.authService.logout().subscribe();
   }
 }

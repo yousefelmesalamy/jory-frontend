@@ -2,7 +2,12 @@ import { Component, computed, effect, inject, input, resource, signal } from '@a
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
-import { Product, ProductDetail as ProductDetailModel, ProductImage, ProductVariant } from '../../../core/models';
+import {
+  Product,
+  ProductDetail as ProductDetailModel,
+  ProductImage,
+  ProductVariant,
+} from '../../../core/models';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { CartService } from '../../../core/services/cart.service';
 import { CatalogService } from '../../../core/services/catalog.service';
@@ -236,7 +241,9 @@ export class ProductDetail {
 
     this.catalog.getProduct(slug).subscribe((product) => {
       this.product.set(product);
-      this.selectedVariant.set(product.variants.find((v) => v.in_stock) ?? product.variants[0] ?? null);
+      this.selectedVariant.set(
+        product.variants.find((v) => v.in_stock) ?? product.variants[0] ?? null,
+      );
       this.activeImageIndex.set(0);
       this.quantity.set(1);
     });

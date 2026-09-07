@@ -40,12 +40,10 @@ describe('CatalogService.getFacets', () => {
     service.getFacets('coffee').subscribe((response) => {
       received = response.facets.map((facet) => facet.key);
     });
-    httpMock
-      .expectOne('/api/facets/?category=coffee')
-      .flush({
-        product_type: 'COFFEE',
-        facets: [{ key: 'roast', label: 'Roast', kind: 'choice', options: [] }],
-      });
+    httpMock.expectOne('/api/facets/?category=coffee').flush({
+      product_type: 'COFFEE',
+      facets: [{ key: 'roast', label: 'Roast', kind: 'choice', options: [] }],
+    });
     expect(received).toEqual(['roast']);
   });
 });

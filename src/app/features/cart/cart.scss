@@ -200,7 +200,9 @@ $danger: #a13a3a;
   font-size: 18px;
   color: #b98a8a;
   cursor: pointer;
-  transition: color 150ms ease, background 150ms ease;
+  transition:
+    color 150ms ease,
+    background 150ms ease;
 
   &:hover:not(:disabled) {
     color: $danger;
