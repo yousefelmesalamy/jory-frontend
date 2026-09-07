@@ -332,6 +332,25 @@ export const AR: Copy = {
   haveAccount: 'لديك حساب بالفعل؟',
   noAccount: 'ليس لديك حساب؟',
 
+  // Account: the profile page (/account/profile)
+  profilePageTitle: 'حسابك',
+  profileDetailsTitle: 'بياناتك',
+  profileMemberSince: 'عضو منذ',
+  profileNotSet: 'غير محدد',
+  profileEdit: 'تعديل البيانات',
+  profileSave: 'حفظ التغييرات',
+  profileSaving: 'جارٍ الحفظ…',
+  profileSaved: 'تم حفظ بياناتك.',
+  profileCancel: 'إلغاء',
+  profilePasswordTitle: 'كلمة المرور',
+  profilePasswordCurrent: 'كلمة المرور الحالية',
+  profilePasswordNew: 'كلمة المرور الجديدة',
+  profilePasswordConfirm: 'تأكيد كلمة المرور الجديدة',
+  profilePasswordSubmit: 'تحديث كلمة المرور',
+  profilePasswordSaving: 'جارٍ التحديث…',
+  profilePasswordSaved: 'تم تحديث كلمة المرور.',
+  profileLinksTitle: 'اختصارات',
+
   // Empty and error states
   loading: 'جارٍ التحميل…',
   retry: 'إعادة المحاولة',

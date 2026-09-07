@@ -1,7 +1,174 @@
 <section class="profile">
+  <h1 class="profile__title">{{ t().profilePageTitle }}</h1>
+
   @if (user(); as value) {
-    <!-- TODO: fill in once the profile fields are submitted. -->
+    <article class="profile__card">
+      <header class="profile__card-head">
+        <h2 class="profile__card-title">{{ t().profileDetailsTitle }}</h2>
+        @if (!editing()) {
+          <button type="button" class="profile__ghost" (click)="startEdit()">
+            {{ t().profileEdit }}
+          </button>
+        }
+      </header>
+
+      @if (editing()) {
+        <form class="profile__form" [formGroup]="detailsForm" (ngSubmit)="saveDetails()">
+          <div class="profile__field">
+            <label class="profile__label" for="profile-full-name">{{ t().authFullName }}</label>
+            <input
+              id="profile-full-name"
+              class="profile__input"
+              type="text"
+              autocomplete="name"
+              formControlName="full_name"
+            />
+            @if (fieldError('details', 'full_name'); as message) {
+              <p class="profile__field-error">{{ message }}</p>
+            }
+          </div>
+
+          <div class="profile__field">
+            <label class="profile__label" for="profile-phone">{{ t().authPhone }}</label>
+            <input
+              id="profile-phone"
+              class="profile__input"
+              type="tel"
+              autocomplete="tel"
+              formControlName="phone"
+            />
+            @if (fieldError('details', 'phone'); as message) {
+              <p class="profile__field-error">{{ message }}</p>
+            }
+          </div>
+
+          @if (detailsError()) {
+            <p class="profile__message profile__message--error">{{ detailsError() }}</p>
+          }
+
+          <div class="profile__actions">
+            <button type="button" class="profile__cancel" (click)="cancelEdit()">
+              {{ t().profileCancel }}
+            </button>
+            <button type="submit" class="profile__submit" [disabled]="savingDetails()">
+              {{ savingDetails() ? t().profileSaving : t().profileSave }}
+            </button>
+          </div>
+        </form>
+      } @else {
+        <dl class="profile__rows">
+          <div class="profile__row">
+            <dt class="profile__term">{{ t().authFullName }}</dt>
+            <dd class="profile__value">{{ value.full_name || t().profileNotSet }}</dd>
+          </div>
+          <div class="profile__row">
+            <dt class="profile__term">{{ t().authPhone }}</dt>
+            <dd class="profile__value">{{ value.phone || t().profileNotSet }}</dd>
+          </div>
+          <div class="profile__row">
+            <dt class="profile__term">{{ t().authEmail }}</dt>
+            <dd class="profile__value">{{ value.email }}</dd>
+          </div>
+          <div class="profile__row">
+            <dt class="profile__term">{{ t().authUsername }}</dt>
+            <dd class="profile__value">{{ value.username }}</dd>
+          </div>
+          <div class="profile__row">
+            <dt class="profile__term">{{ t().profileMemberSince }}</dt>
+            <dd class="profile__value">{{ formatDate(value.date_joined) }}</dd>
+          </div>
+        </dl>
+
+        @if (detailsSaved()) {
+          <p class="profile__message profile__message--ok">{{ t().profileSaved }}</p>
+        }
+      }
+    </article>
+
+    <article class="profile__card">
+      <header class="profile__card-head">
+        <h2 class="profile__card-title">{{ t().profilePasswordTitle }}</h2>
+        @if (!changingPassword()) {
+          <button type="button" class="profile__ghost" (click)="startPasswordChange()">
+            {{ t().profilePasswordSubmit }}
+          </button>
+        }
+      </header>
+
+      @if (changingPassword()) {
+        <form class="profile__form" [formGroup]="passwordForm" (ngSubmit)="savePassword()">
+          <div class="profile__field">
+            <label class="profile__label" for="profile-current-password">
+              {{ t().profilePasswordCurrent }}
+            </label>
+            <input
+              id="profile-current-password"
+              class="profile__input"
+              type="password"
+              autocomplete="current-password"
+              formControlName="current_password"
+            />
+            @if (fieldError('password', 'current_password'); as message) {
+              <p class="profile__field-error">{{ message }}</p>
+            }
+          </div>
+
+          <div class="profile__field">
+            <label class="profile__label" for="profile-new-password">
+              {{ t().profilePasswordNew }}
+            </label>
+            <input
+              id="profile-new-password"
+              class="profile__input"
+              type="password"
+              autocomplete="new-password"
+              formControlName="new_password"
+            />
+            @if (fieldError('password', 'new_password'); as message) {
+              <p class="profile__field-error">{{ message }}</p>
+            }
+          </div>
+
+          <div class="profile__field">
+            <label class="profile__label" for="profile-new-password-confirm">
+              {{ t().profilePasswordConfirm }}
+            </label>
+            <input
+              id="profile-new-password-confirm"
+              class="profile__input"
+              type="password"
+              autocomplete="new-password"
+              formControlName="new_password_confirm"
+            />
+            @if (fieldError('password', 'new_password_confirm'); as message) {
+              <p class="profile__field-error">{{ message }}</p>
+            }
+          </div>
+
+          @if (passwordError()) {
+            <p class="profile__message profile__message--error">{{ passwordError() }}</p>
+          }
+
+          <div class="profile__actions">
+            <button type="button" class="profile__cancel" (click)="cancelPasswordChange()">
+              {{ t().profileCancel }}
+            </button>
+            <button type="submit" class="profile__submit" [disabled]="savingPassword()">
+              {{ savingPassword() ? t().profilePasswordSaving : t().profilePasswordSubmit }}
+            </button>
+          </div>
+        </form>
+      } @else if (passwordSaved()) {
+        <p class="profile__message profile__message--ok">{{ t().profilePasswordSaved }}</p>
+      }
+    </article>
+
+    <nav class="profile__links" [attr.aria-label]="t().profileLinksTitle">
+      <a class="profile__link" routerLink="/account/addresses">{{ t().addresses }}</a>
+      <a class="profile__link" routerLink="/orders">{{ t().orders }}</a>
+      <a class="profile__link" routerLink="/wishlist">{{ t().wishlist }}</a>
+    </nav>
+  } @else {
+    <p class="profile__loading">{{ t().loading }}</p>
   }
 </section>
-
-<a routerLink="/account/addresses"></a>

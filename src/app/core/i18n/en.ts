@@ -341,6 +341,25 @@ export const EN = {
   haveAccount: 'Already have an account?',
   noAccount: 'No account yet?',
 
+  // Account: the profile page (/account/profile)
+  profilePageTitle: 'Your account',
+  profileDetailsTitle: 'Your details',
+  profileMemberSince: 'Member since',
+  profileNotSet: 'Not set',
+  profileEdit: 'Edit details',
+  profileSave: 'Save changes',
+  profileSaving: 'Saving…',
+  profileSaved: 'Your details are saved.',
+  profileCancel: 'Cancel',
+  profilePasswordTitle: 'Password',
+  profilePasswordCurrent: 'Current password',
+  profilePasswordNew: 'New password',
+  profilePasswordConfirm: 'Confirm new password',
+  profilePasswordSubmit: 'Update password',
+  profilePasswordSaving: 'Updating…',
+  profilePasswordSaved: 'Your password has been updated.',
+  profileLinksTitle: 'Shortcuts',
+
   // Empty and error states
   loading: 'Loading…',
   retry: 'Try again',
