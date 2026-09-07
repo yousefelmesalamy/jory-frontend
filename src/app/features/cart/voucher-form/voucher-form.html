@@ -1,4 +1,33 @@
-<form class="voucher-form" [formGroup]="form" (ngSubmit)="apply()">
-  <input type="text" formControlName="code" />
-  <button type="submit" [disabled]="form.invalid"></button>
-</form>
+@if (cart()?.voucher; as voucher) {
+  <div class="voucher-chip">
+    <span class="voucher-chip__code">{{ voucher.code }}</span>
+    @if (voucher.description) {
+      <span class="voucher-chip__desc">{{ voucher.description }}</span>
+    }
+    <button
+      class="voucher-chip__remove"
+      type="button"
+      [attr.aria-label]="t().removeVoucherAria"
+      [disabled]="removing()"
+      (click)="remove()"
+    >
+      ×
+    </button>
+  </div>
+} @else {
+  <form class="voucher-form" [formGroup]="form" (ngSubmit)="apply()">
+    <input
+      class="voucher-form__input"
+      type="text"
+      formControlName="code"
+      [placeholder]="t().promo"
+      [attr.aria-label]="t().promo"
+    />
+    <button class="voucher-form__submit" type="submit" [disabled]="form.invalid || submitting()">
+      {{ t().apply }}
+    </button>
+  </form>
+  @if (errorMessage()) {
+    <p class="voucher-form__error" role="alert">{{ errorMessage() }}</p>
+  }
+}

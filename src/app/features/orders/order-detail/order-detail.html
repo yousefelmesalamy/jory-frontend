@@ -1,9 +1,98 @@
 <article class="order-detail">
-  @if (order(); as value) {
-    <app-generic-list [items]="value.items" emptyMessage="">
-      <ng-template #item let-line>
-        <!-- TODO: fill in once the order line fields are submitted. -->
-      </ng-template>
-    </app-generic-list>
+  @if (loading()) {
+    <p class="order-detail__loading">{{ t().loading }}</p>
+  } @else if (notFound()) {
+    <div class="order-detail__not-found">
+      <p class="order-detail__not-found-title">{{ t().notFoundTitle }}</p>
+      <p class="order-detail__not-found-text">{{ t().notFoundText }}</p>
+      <a class="order-detail__not-found-action" routerLink="/orders">{{ t().ordersTitle }}</a>
+    </div>
+  } @else if (order(); as value) {
+    <header class="order-detail__head">
+      <div>
+        <h1 class="order-detail__number">{{ value.order_number }}</h1>
+        <p class="order-detail__date">{{ t().orderPlacedOn }} {{ formatDate(value.placed_at) }}</p>
+      </div>
+      <span class="order-detail__status" [attr.data-status]="value.status">
+        {{ statusLabel(value.status) }}
+      </span>
+    </header>
+
+    @if (cancelError()) {
+      <p class="order-detail__error" role="alert">{{ cancelError() }}</p>
+    }
+
+    <div class="order-detail__grid">
+      <section class="order-detail__panel">
+        <h2 class="order-detail__panel-title">{{ t().orderItemsTitle }}</h2>
+        <app-generic-list [items]="value.items" emptyMessage="">
+          <ng-template #item let-line>
+            <div class="order-line">
+              <div class="order-line__body">
+                <span class="order-line__name">{{ line.product_name }}</span>
+                <span class="order-line__meta">{{ line.variant_label }} · {{ line.sku }}</span>
+              </div>
+              <span class="order-line__qty">{{ line.quantity }} ×</span>
+              <span class="order-line__price">{{ line.unit_price }} <app-riyal-symbol /></span>
+              <span class="order-line__total">{{ line.line_total }} <app-riyal-symbol /></span>
+            </div>
+          </ng-template>
+        </app-generic-list>
+
+        <div class="order-detail__totals">
+          <div class="order-detail__totals-row">
+            <span>{{ t().subtotal }}</span>
+            <span>{{ value.subtotal }} <app-riyal-symbol /></span>
+          </div>
+          @if (value.discount_total !== '0.00') {
+            <div class="order-detail__totals-row order-detail__totals-row--discount">
+              <span>{{ t().discount }}</span>
+              <span>−{{ value.discount_total }} <app-riyal-symbol /></span>
+            </div>
+          }
+          <div class="order-detail__totals-row">
+            <span>{{ t().shippingCost }}</span>
+            <span>
+              @if (value.shipping_cost === '0.00') {
+                {{ t().freeShipping }}
+              } @else {
+                {{ value.shipping_cost }} <app-riyal-symbol />
+              }
+            </span>
+          </div>
+          <div class="order-detail__totals-total">
+            <span>{{ t().total }}</span>
+            <span>{{ value.grand_total }} <app-riyal-symbol /></span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="order-detail__panel">
+        <h2 class="order-detail__panel-title">{{ t().orderShipTo }}</h2>
+        <p class="order-detail__address-name">{{ value.recipient_name }}</p>
+        <p class="order-detail__address-line">{{ value.phone }}</p>
+        <p class="order-detail__address-line">{{ shippingLine(value) }}</p>
+        @if (value.notes) {
+          <p class="order-detail__address-notes">{{ t().addressNotes }}: {{ value.notes }}</p>
+        }
+
+        <h2 class="order-detail__panel-title order-detail__panel-title--spaced">{{ t().payment }}</h2>
+        <p class="order-detail__address-line">
+          {{ t().paymentCod }} ·
+          {{ value.payment_status === 'PAID' ? t().paymentPaid : t().paymentUnpaid }}
+        </p>
+
+        @if (canCancel()) {
+          <button
+            type="button"
+            class="order-detail__cancel"
+            [disabled]="cancelling()"
+            (click)="cancel()"
+          >
+            {{ cancelling() ? t().orderCancelling : t().orderCancel }}
+          </button>
+        }
+      </aside>
+    </div>
   }
 </article>

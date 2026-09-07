@@ -223,50 +223,49 @@
           <ng-template #item let-product>
             <app-generic-card [item]="product">
               <ng-template #body let-value>
-                <a
-                  class="product-tile"
-                  [class.product-tile--sold-out]="!value.in_stock"
-                  [routerLink]="['/shop', value.slug]"
-                >
-                  <div class="product-tile__media">
-                    @if (value.primary_image) {
-                      <img
-                        class="product-tile__image"
-                        loading="lazy"
-                        [src]="value.primary_image.image"
-                        [alt]="value.primary_image.alt_text"
-                      />
-                    }
-                    @if (value.is_on_sale) {
-                      <span class="product-tile__badge">{{ t().badgeOnSale }}</span>
-                    }
-                    @if (!value.in_stock) {
-                      <span class="product-tile__stock">{{ t().outOfStock }}</span>
-                    }
-                  </div>
-                  <div class="product-tile__body">
-                    <span class="product-tile__category">{{ value.category.name }}</span>
-                    <h3 class="product-tile__name">{{ value.name }}</h3>
-                    <p class="product-tile__description">{{ value.short_description }}</p>
-                    <div class="product-tile__footer">
-                      <span class="product-tile__price">
-                        @if (value.compare_at_price_from) {
-                          <span class="product-tile__price-before">
-                            {{ value.compare_at_price_from }} <app-riyal-symbol />
-                          </span>
-                        }
-                        {{ value.price_from }} <app-riyal-symbol />
-                      </span>
-                      @if (value.rating_count > 0) {
-                        <span class="product-tile__rating">
-                          <span class="product-tile__star" aria-hidden="true">★</span>
-                          {{ value.rating_avg }}
-                          <span class="product-tile__rating-count">({{ value.rating_count }})</span>
-                        </span>
+                <div class="product-tile" [class.product-tile--sold-out]="!value.in_stock">
+                  <a class="product-tile__link" [routerLink]="['/shop', value.slug]">
+                    <div class="product-tile__media">
+                      @if (value.primary_image) {
+                        <img
+                          class="product-tile__image"
+                          loading="lazy"
+                          [src]="value.primary_image.image"
+                          [alt]="value.primary_image.alt_text"
+                        />
+                      }
+                      @if (value.is_on_sale) {
+                        <span class="product-tile__badge">{{ t().badgeOnSale }}</span>
+                      }
+                      @if (!value.in_stock) {
+                        <span class="product-tile__stock">{{ t().outOfStock }}</span>
                       }
                     </div>
-                  </div>
-                </a>
+                    <div class="product-tile__body">
+                      <span class="product-tile__category">{{ value.category.name }}</span>
+                      <h3 class="product-tile__name">{{ value.name }}</h3>
+                      <p class="product-tile__description">{{ value.short_description }}</p>
+                      <div class="product-tile__footer">
+                        <span class="product-tile__price">
+                          @if (value.compare_at_price_from) {
+                            <span class="product-tile__price-before">
+                              {{ value.compare_at_price_from }} <app-riyal-symbol />
+                            </span>
+                          }
+                          {{ value.price_from }} <app-riyal-symbol />
+                        </span>
+                        @if (value.rating_count > 0) {
+                          <span class="product-tile__rating">
+                            <span class="product-tile__star" aria-hidden="true">★</span>
+                            {{ value.rating_avg }}
+                            <span class="product-tile__rating-count">({{ value.rating_count }})</span>
+                          </span>
+                        }
+                      </div>
+                    </div>
+                  </a>
+                  <app-wishlist-toggle class="product-tile__wishlist" [productId]="value.id" />
+                </div>
               </ng-template>
             </app-generic-card>
           </ng-template>

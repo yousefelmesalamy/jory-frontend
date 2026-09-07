@@ -130,6 +130,8 @@
             >
               {{ justAdded() ? t().addedToCart : t().addToCart }}
             </button>
+
+            <app-wishlist-toggle class="pd__wishlist" [productId]="value.id" />
           </div>
         </div>
       </div>
@@ -182,26 +184,29 @@
         <h2 class="pd__section-title">{{ t().recommended }}</h2>
         <div class="pd__recommended-grid">
           @for (item of recommended(); track item.id) {
-            <a class="pd__rec-card" [routerLink]="['/shop', item.slug]">
-              <div class="pd__rec-media">
-                @if (item.primary_image) {
-                  <img [src]="item.primary_image.image" [alt]="item.primary_image.alt_text || t().productImage" />
-                } @else {
-                  <div class="pd__image-fallback" aria-hidden="true"></div>
-                }
-              </div>
-              <div class="pd__rec-body">
-                <span class="pd__rec-category">{{ item.category.name }}</span>
-                <h3 class="pd__rec-name">{{ item.name }}</h3>
-                @if (item.rating_count > 0) {
-                  <span class="pd__rec-rating">
-                    <app-star-rating [value]="+item.rating_avg" />
-                    {{ item.rating_avg }}
-                  </span>
-                }
-                <span class="pd__rec-price">{{ item.price_from }} <app-riyal-symbol /></span>
-              </div>
-            </a>
+            <div class="pd__rec-card">
+              <a class="pd__rec-link" [routerLink]="['/shop', item.slug]">
+                <div class="pd__rec-media">
+                  @if (item.primary_image) {
+                    <img [src]="item.primary_image.image" [alt]="item.primary_image.alt_text || t().productImage" />
+                  } @else {
+                    <div class="pd__image-fallback" aria-hidden="true"></div>
+                  }
+                </div>
+                <div class="pd__rec-body">
+                  <span class="pd__rec-category">{{ item.category.name }}</span>
+                  <h3 class="pd__rec-name">{{ item.name }}</h3>
+                  @if (item.rating_count > 0) {
+                    <span class="pd__rec-rating">
+                      <app-star-rating [value]="+item.rating_avg" />
+                      {{ item.rating_avg }}
+                    </span>
+                  }
+                  <span class="pd__rec-price">{{ item.price_from }} <app-riyal-symbol /></span>
+                </div>
+              </a>
+              <app-wishlist-toggle class="pd__rec-wishlist" [productId]="item.id" />
+            </div>
           }
         </div>
       </section>

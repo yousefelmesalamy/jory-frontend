@@ -1,9 +1,132 @@
-<app-generic-list [items]="items()" emptyMessage="">
-  <ng-template #item let-line>
-    <!-- TODO: fill in once the cart line fields are submitted. -->
-  </ng-template>
-</app-generic-list>
+<div class="cart">
+  <h1 class="cart__title">{{ t().cartTitle }}</h1>
 
-<app-voucher-form />
+  @if (loading()) {
+    <div class="cart__layout">
+      <ul class="skeletons" aria-hidden="true">
+        @for (slot of skeletons; track slot) {
+          <li class="skeleton-line">
+            <div class="skeleton-line__media"></div>
+            <div class="skeleton-line__body">
+              <div class="skeleton-line__bar skeleton-line__bar--short"></div>
+              <div class="skeleton-line__bar"></div>
+            </div>
+          </li>
+        }
+      </ul>
+      <div class="skeleton-summary"></div>
+    </div>
+  } @else if (!items().length) {
+    <div class="empty">
+      <p class="empty__title">{{ t().emptyCart }}</p>
+      <p class="empty__hint">{{ t().emptyCartHint }}</p>
+      <a class="empty__action" routerLink="/shop">{{ t().browseShop }}</a>
+    </div>
+  } @else {
+    <div class="cart__layout">
+      <div class="cart__lines">
+        <app-generic-list [items]="items()" [emptyMessage]="t().emptyCart">
+          <ng-template #item let-line let-index="index">
+            <article class="line" [class.line--sold-out]="!line.variant.in_stock">
+              <a
+                class="line__avatar"
+                [routerLink]="['/shop', line.variant.product_slug]"
+                [style.background]="swatch(index)"
+                [attr.aria-label]="line.variant.product_name"
+              >
+                <span aria-hidden="true">{{ initial(line.variant.product_name) }}</span>
+              </a>
 
-<a routerLink="/checkout"></a>
+              <div class="line__body">
+                <a class="line__name" [routerLink]="['/shop', line.variant.product_slug]">
+                  {{ line.variant.product_name }}
+                </a>
+                <div class="line__meta">
+                  {{ line.variant.label }}
+                  @if (line.variant.grind.label) {
+                    · {{ line.variant.grind.label }}
+                  }
+                </div>
+                @if (!line.variant.in_stock) {
+                  <span class="line__stock">{{ t().outOfStock }}</span>
+                }
+                @if (errorFor(line)) {
+                  <p class="line__error" role="alert">{{ errorFor(line) }}</p>
+                }
+              </div>
+
+              <div class="line__qty" role="group" [attr.aria-label]="t().quantity">
+                <button
+                  type="button"
+                  [attr.aria-label]="t().decreaseQuantity"
+                  [disabled]="pendingItemId() !== null || line.quantity <= 1"
+                  (click)="decrement(line)"
+                >
+                  −
+                </button>
+                <span class="line__qty-value">{{ line.quantity }}</span>
+                <button
+                  type="button"
+                  [attr.aria-label]="t().increaseQuantity"
+                  [disabled]="pendingItemId() !== null || line.quantity >= line.variant.stock_quantity"
+                  (click)="increment(line)"
+                >
+                  +
+                </button>
+              </div>
+
+              <div class="line__total">{{ line.line_total }} <app-riyal-symbol /></div>
+
+              <button
+                class="line__remove"
+                type="button"
+                [attr.aria-label]="t().removeItemAria"
+                [disabled]="pendingItemId() !== null"
+                (click)="remove(line)"
+              >
+                ×
+              </button>
+            </article>
+          </ng-template>
+        </app-generic-list>
+
+        <app-voucher-form />
+      </div>
+
+      @if (cart(); as value) {
+        <aside class="summary">
+          <h2 class="summary__title">{{ t().summary }}</h2>
+
+          <div class="summary__row">
+            <span>{{ t().subtotal }}</span>
+            <span>{{ value.totals.subtotal }} <app-riyal-symbol /></span>
+          </div>
+          @if (value.totals.discount_total !== '0.00') {
+            <div class="summary__row summary__row--discount">
+              <span>{{ t().discount }}</span>
+              <span>−{{ value.totals.discount_total }} <app-riyal-symbol /></span>
+            </div>
+          }
+          <div class="summary__row">
+            <span>{{ t().shippingCost }}</span>
+            <span>
+              @if (value.totals.shipping_cost === '0.00') {
+                {{ t().freeShipping }}
+              } @else {
+                {{ value.totals.shipping_cost }} <app-riyal-symbol />
+              }
+            </span>
+          </div>
+
+          <div class="summary__total">
+            <span>{{ t().total }}</span>
+            <span>{{ value.totals.grand_total }} <app-riyal-symbol /></span>
+          </div>
+
+          <a class="summary__checkout" routerLink="/checkout">{{ t().checkoutCta }}</a>
+          <a class="summary__continue" routerLink="/shop">{{ t().continueShopping }}</a>
+        </aside>
+      }
+    </div>
+  }
+</div>

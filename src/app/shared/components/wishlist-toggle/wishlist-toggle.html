@@ -1,0 +1,11 @@
+<button
+  type="button"
+  class="wishlist-toggle"
+  [class.wishlist-toggle--active]="active()"
+  [disabled]="pending()"
+  [attr.aria-pressed]="active()"
+  [attr.aria-label]="active() ? t().removeFromWishlistAria : t().addToWishlistAria"
+  (click)="onClick($event)"
+>
+  <span aria-hidden="true">{{ active() ? '♥' : '♡' }}</span>
+</button>

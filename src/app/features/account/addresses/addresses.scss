@@ -1,3 +1,146 @@
+$cream: #faf3e7;
+$card: #fffaf1;
+$line: #e6d3b2;
+$line-soft: #efe2cb;
+$maroon: #7a2a2a;
+$maroon-dark: #5e1e1e;
+$gold: #d3a45f;
+$ink: #3a2418;
+$ink-muted: #6a5346;
+
 :host {
   display: block;
+}
+
+.addresses {
+  max-width: 960px;
+  margin-inline: auto;
+  padding: 40px 24px 80px;
+}
+
+.addresses__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-block-end: 28px;
+}
+
+.addresses__title {
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 32px;
+  color: $ink;
+  margin: 0;
+}
+
+.addresses__add {
+  background: $maroon;
+  color: $cream;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 24px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    background: $maroon-dark;
+  }
+}
+
+.addresses__loading {
+  color: $ink-muted;
+  font-size: 14px;
+}
+
+::ng-deep .addresses .generic-list {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.address-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: 20px;
+  border: 1px solid $line;
+  border-radius: 16px;
+  background: $card;
+}
+
+.address-card__badge {
+  align-self: flex-start;
+  margin-block-end: 8px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: $gold;
+  color: $maroon-dark;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.address-card__name {
+  margin: 0;
+  font-weight: 700;
+  color: $ink;
+}
+
+.address-card__phone {
+  margin: 0;
+  color: $ink-muted;
+  font-size: 13.5px;
+}
+
+.address-card__lines {
+  margin: 6px 0 0;
+  color: $ink;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.address-card__notes {
+  margin: 6px 0 0;
+  color: $ink-muted;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.address-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-block-start: 16px;
+  padding-block-start: 14px;
+  border-block-start: 1px solid $line-soft;
+}
+
+.address-card__action {
+  background: none;
+  border: 1px solid $line;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: $ink;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: $maroon;
+    color: $maroon;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.address-card__action--danger:hover:not(:disabled) {
+  border-color: #a33a3a;
+  color: #a33a3a;
 }

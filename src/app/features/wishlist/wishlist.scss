@@ -1,3 +1,323 @@
+$cream: #faf3e7;
+$panel: #f3e7d2;
+$card: #fffaf1;
+$line: #e6d3b2;
+$line-soft: #efe2cb;
+$maroon: #7a2a2a;
+$maroon-dark: #5e1e1e;
+$gold: #d3a45f;
+$ink: #3a2418;
+$ink-muted: #6a5346;
+$label: #8a7361;
+
 :host {
   display: block;
+}
+
+.wishlist {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 40px 56px 80px;
+}
+
+.wishlist__head {
+  max-width: 60ch;
+  margin-block-end: 32px;
+}
+
+.wishlist__crumb {
+  color: $label;
+  font-size: 13px;
+  margin: 0 0 10px;
+}
+
+.wishlist__title {
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 38px;
+  line-height: 1.2;
+  color: $ink;
+  margin: 0 0 10px;
+}
+
+.wishlist__lead {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.8;
+  color: $ink-muted;
+}
+
+// `GenericList` only owns a single-column grid; the wishlist grid needs multiple columns.
+::ng-deep .generic-list,
+.skeletons {
+  grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
+  gap: 34px 24px;
+}
+
+.product-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-tile__link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+
+.product-tile__media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 16px;
+  overflow: hidden;
+  background: $panel;
+}
+
+.product-tile__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms ease;
+}
+
+.product-tile--sold-out .product-tile__image {
+  opacity: 0.55;
+}
+
+.product-tile__link:hover .product-tile__image {
+  transform: scale(1.04);
+}
+
+.product-tile__badge {
+  position: absolute;
+  inset-block-start: 12px;
+  inset-inline-start: 12px;
+  background: $maroon;
+  color: $cream;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+
+.product-tile__stock {
+  position: absolute;
+  inset-block-end: 12px;
+  inset-inline: 12px;
+  padding: 7px;
+  border-radius: 999px;
+  background: rgba(255, 250, 241, 0.94);
+  color: $maroon;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.product-tile__remove {
+  position: absolute;
+  inset-block-start: 12px;
+  inset-inline-end: 12px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 250, 241, 0.94);
+  color: $maroon;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $maroon;
+    color: $cream;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.product-tile__body {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-block-start: 14px;
+}
+
+.product-tile__category {
+  font-size: 12px;
+  color: $label;
+}
+
+.product-tile__name {
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: $ink;
+  margin: 0;
+}
+
+.product-tile__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-block-start: 8px;
+  padding-block-start: 10px;
+  border-block-start: 1px solid $line-soft;
+}
+
+.product-tile__price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-weight: 700;
+  color: $ink;
+}
+
+.product-tile__price-before {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 400;
+  font-size: 13px;
+  color: #a8927c;
+  text-decoration: line-through;
+}
+
+.product-tile__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: $ink-muted;
+}
+
+.product-tile__star {
+  color: $gold;
+}
+
+/* ---------- loading and empty ---------- */
+
+.skeletons {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton__media,
+.skeleton__line {
+  background: $panel;
+  animation: wishlist-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton__media {
+  aspect-ratio: 4 / 5;
+  border-radius: 16px;
+}
+
+.skeleton__line {
+  height: 11px;
+  border-radius: 999px;
+}
+
+.skeleton__line--short {
+  width: 45%;
+}
+
+@keyframes wishlist-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 56px 32px;
+  border: 1px dashed $line;
+  border-radius: 20px;
+  background: $card;
+}
+
+.empty__title {
+  margin: 0;
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 21px;
+  color: $ink;
+}
+
+.empty__hint {
+  margin: 0;
+  font-size: 14px;
+  color: $ink-muted;
+}
+
+.empty__action {
+  display: inline-block;
+  margin-block-start: 8px;
+  padding: 13px 26px;
+  border: none;
+  border-radius: 999px;
+  background: $maroon;
+  color: $cream;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background: $maroon-dark;
+  }
+}
+
+/* ---------- pagination ---------- */
+
+.wishlist__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding-block-start: 24px;
+  font-size: 14px;
+  color: $ink;
+}
+
+.wishlist__pagination button {
+  background: $card;
+  border: 1px solid $line;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  color: $ink;
+
+  &:hover:not(:disabled) {
+    border-color: $maroon;
+    color: $maroon;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-tile__image {
+    transition: none;
+  }
 }

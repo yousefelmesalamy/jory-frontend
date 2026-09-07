@@ -4,7 +4,7 @@ import { catchError, switchMap, throwError } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 
-const AUTH_ENDPOINT = /\/auth\/(login|register|refresh)\/$/;
+const AUTH_ENDPOINT = /\/auth\/(login|register|refresh|logout)\/$/;
 
 function withBearer(req: HttpRequest<unknown>, token: string | null): HttpRequest<unknown> {
   return token ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : req;
@@ -19,7 +19,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(withBearer(req, auth.accessToken)).pipe(
     catchError((error: unknown) => {
-      if (!(error instanceof HttpErrorResponse) || error.status !== 401 || AUTH_ENDPOINT.test(req.url)) {
+      if (
+        !(error instanceof HttpErrorResponse) ||
+        error.status !== 401 ||
+        AUTH_ENDPOINT.test(req.url) ||
+        !auth.refreshToken
+      ) {
         return throwError(() => error);
       }
 

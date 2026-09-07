@@ -1,0 +1,55 @@
+:host {
+  display: inline-flex;
+}
+
+.wishlist-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 250, 241, 0.94);
+  color: #7a2a2a;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    color 150ms ease;
+
+  &:hover:not(:disabled) {
+    background: #7a2a2a;
+    color: #faf3e7;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #d3a45f;
+    outline-offset: 2px;
+  }
+}
+
+.wishlist-toggle--active span {
+  animation: wishlist-toggle-pop 200ms ease;
+}
+
+@keyframes wishlist-toggle-pop {
+  0% {
+    transform: scale(0.7);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wishlist-toggle--active span {
+    animation: none;
+  }
+}

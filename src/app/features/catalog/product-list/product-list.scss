@@ -283,7 +283,7 @@ $label: #8a7361;
 .switch input:focus-visible + .switch__track,
 .applied__chip:focus-visible,
 .shop__sort:focus-visible,
-.product-tile:focus-visible {
+.product-tile__link:focus-visible {
   outline: 2px solid $gold;
   outline-offset: 2px;
   border-radius: 10px;
@@ -376,10 +376,22 @@ $label: #8a7361;
 }
 
 .product-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-tile__link {
   display: flex;
   flex-direction: column;
   text-decoration: none;
   color: inherit;
+}
+
+.product-tile__wishlist {
+  position: absolute;
+  inset-block-start: 12px;
+  inset-inline-end: 12px;
 }
 
 .product-tile__media {
@@ -401,7 +413,7 @@ $label: #8a7361;
   opacity: 0.55;
 }
 
-.product-tile:hover .product-tile__image {
+.product-tile__link:hover .product-tile__image {
   transform: scale(1.04);
 }
 

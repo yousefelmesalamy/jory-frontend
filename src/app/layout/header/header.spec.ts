@@ -20,8 +20,16 @@ const USER: User = {
   date_joined: '2026-09-05T10:00:00Z',
 };
 
+const EMPTY_CART = {
+  id: 1,
+  items: [],
+  voucher: null,
+  totals: { subtotal: '0.00', discount_total: '0.00', shipping_cost: '0.00', grand_total: '0.00' },
+};
+
 describe('Header', () => {
   let fixture: ComponentFixture<Header>;
+  let httpMock: HttpTestingController;
 
   function navLabels(): string[] {
     return [...fixture.nativeElement.querySelectorAll('.header__link')].map((link) =>
@@ -40,7 +48,14 @@ describe('Header', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(Header);
+    httpMock = TestBed.inject(HttpTestingController);
     await fixture.whenStable();
+    // CartService loads its own cart on construction; drain that first.
+    httpMock.expectOne('/api/cart/').flush(EMPTY_CART);
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   it('renders the nav in Arabic when Arabic is active', () => {
@@ -77,13 +92,13 @@ describe('Header', () => {
 
   it('shows the cart total with the Riyal glyph', async () => {
     const cartTotal = () => fixture.nativeElement.querySelector('.header__cart-total');
-    expect(cartTotal().textContent.trim()).toBe('0');
+    expect(cartTotal().textContent.trim()).toBe('0.00');
     expect(cartTotal().querySelector('svg.riyal-symbol')).toBeTruthy();
 
     TestBed.inject(TranslationService).setLocale('en');
     await fixture.whenStable();
 
-    expect(cartTotal().textContent.trim()).toBe('0');
+    expect(cartTotal().textContent.trim()).toBe('0.00');
     expect(cartTotal().querySelector('svg.riyal-symbol')).toBeTruthy();
   });
 });
@@ -103,16 +118,18 @@ describe('Header — auth', () => {
     fixture = TestBed.createComponent(Header);
     httpMock = TestBed.inject(HttpTestingController);
     await fixture.whenStable();
+    // CartService loads its own cart on construction; drain that first.
+    httpMock.expectOne('/api/cart/').flush(EMPTY_CART);
   });
 
   afterEach(() => {
     localStorage.clear();
   });
 
-  it('shows login and register buttons when signed out', () => {
+  it('shows only a login button when signed out', () => {
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('.header__account-login')?.textContent?.trim()).toBe(EN.authLogin);
-    expect(el.querySelector('.header__account-register')).toBeTruthy();
+    expect(el.querySelector('.header__account-register')).toBeNull();
     expect(el.querySelector('.header__account-logout')).toBeNull();
   });
 
@@ -136,16 +153,6 @@ describe('Header — auth', () => {
     (el.querySelector('.auth-modal__close') as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(el.querySelector('app-auth-modal')).toBeNull();
-  });
-
-  it('opens the register modal from the navbar', async () => {
-    const el: HTMLElement = fixture.nativeElement;
-
-    (el.querySelector('.header__account-register') as HTMLButtonElement).click();
-    await fixture.whenStable();
-
-    expect(el.querySelector('app-auth-modal')).toBeTruthy();
-    expect(el.querySelector('#auth-modal-title')?.textContent?.trim()).toBe(EN.authRegisterTitle);
   });
 
   it('blacklists the refresh token and clears the session on logout', async () => {

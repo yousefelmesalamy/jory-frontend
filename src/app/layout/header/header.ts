@@ -107,11 +107,9 @@ export class Header {
     },
   ];
 
-  /** TODO: sum quantities once `CartItem` carries one — rows are all we have. */
-  readonly cartCount = computed(() => this.cartService.cart()?.items.length ?? 0);
+  readonly cartCount = this.cartService.itemCount;
 
-  /** TODO: derive from the cart once `CartItem` carries a line price. */
-  readonly cartTotal = computed(() => '0');
+  readonly cartTotal = computed(() => this.cartService.cart()?.totals.subtotal ?? '0.00');
 
   toggleLanguage(): void {
     this.translation.toggle();
@@ -141,12 +139,15 @@ export class Header {
     this.authModalMode.set('login');
   }
 
-  openRegister(): void {
-    this.authModalMode.set('register');
-  }
-
   closeAuthModal(): void {
     this.authModalMode.set(null);
+  }
+
+  /** Fires only on a real login/register in this session, never on session
+   * restore — exactly when a guest cart might exist and need folding in. */
+  onAuthenticated(): void {
+    this.closeAuthModal();
+    this.cartService.mergeGuestCart().subscribe();
   }
 
   logout(): void {

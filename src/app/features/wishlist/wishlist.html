@@ -1,5 +1,97 @@
-<app-generic-list [items]="items()" emptyMessage="">
-  <ng-template #item let-entry>
-    <!-- TODO: fill in once the wishlist fields are submitted. -->
-  </ng-template>
-</app-generic-list>
+<div class="wishlist">
+  <header class="wishlist__head">
+    <p class="wishlist__crumb">{{ t().crumbWishlist }}</p>
+    <h1 class="wishlist__title">{{ t().wishlistTitle }}</h1>
+    <p class="wishlist__lead">{{ t().wishlistLead }}</p>
+  </header>
+
+  @if (loading()) {
+    <ul class="skeletons" aria-hidden="true">
+      @for (slot of skeletons; track slot) {
+        <li class="skeleton">
+          <div class="skeleton__media"></div>
+          <div class="skeleton__line skeleton__line--short"></div>
+          <div class="skeleton__line"></div>
+        </li>
+      }
+    </ul>
+  } @else if (!items().length) {
+    <div class="empty">
+      <p class="empty__title">{{ t().emptyWishlist }}</p>
+      <p class="empty__hint">{{ t().emptyWishlistHint }}</p>
+      <a class="empty__action" routerLink="/shop">{{ t().browseShop }}</a>
+    </div>
+  } @else {
+    <app-generic-list [items]="items()" [emptyMessage]="t().emptyWishlist">
+      <ng-template #item let-entry>
+        <app-generic-card [item]="entry">
+          <ng-template #body let-value>
+            <div class="product-tile" [class.product-tile--sold-out]="!value.product.in_stock">
+              <a class="product-tile__link" [routerLink]="['/shop', value.product.slug]">
+                <div class="product-tile__media">
+                  @if (value.product.primary_image) {
+                    <img
+                      class="product-tile__image"
+                      loading="lazy"
+                      [src]="value.product.primary_image.image"
+                      [alt]="value.product.primary_image.alt_text"
+                    />
+                  }
+                  @if (value.product.is_on_sale) {
+                    <span class="product-tile__badge">{{ t().badgeOnSale }}</span>
+                  }
+                  @if (!value.product.in_stock) {
+                    <span class="product-tile__stock">{{ t().outOfStock }}</span>
+                  }
+                </div>
+                <div class="product-tile__body">
+                  <span class="product-tile__category">{{ value.product.category.name }}</span>
+                  <h3 class="product-tile__name">{{ value.product.name }}</h3>
+                  <div class="product-tile__footer">
+                    <span class="product-tile__price">
+                      @if (value.product.compare_at_price_from) {
+                        <span class="product-tile__price-before">
+                          {{ value.product.compare_at_price_from }} <app-riyal-symbol />
+                        </span>
+                      }
+                      {{ value.product.price_from }} <app-riyal-symbol />
+                    </span>
+                    @if (value.product.rating_count > 0) {
+                      <span class="product-tile__rating">
+                        <span class="product-tile__star" aria-hidden="true">★</span>
+                        {{ value.product.rating_avg }}
+                      </span>
+                    }
+                  </div>
+                </div>
+              </a>
+              <button
+                class="product-tile__remove"
+                type="button"
+                [disabled]="removingId() === value.product.id"
+                [attr.aria-label]="t().removeFromWishlistAria"
+                (click)="remove(value.product.id)"
+              >
+                ✕
+              </button>
+            </div>
+          </ng-template>
+        </app-generic-card>
+      </ng-template>
+    </app-generic-list>
+
+    @if (totalPages() > 1) {
+      <nav class="wishlist__pagination">
+        <button type="button" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">
+          {{ t().prevPage }}
+        </button>
+        <span class="wishlist__page-label">
+          {{ t().pageLabel }} {{ page() }} / {{ totalPages() }}
+        </span>
+        <button type="button" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">
+          {{ t().nextPage }}
+        </button>
+      </nav>
+    }
+  }
+</div>

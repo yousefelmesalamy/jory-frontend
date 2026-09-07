@@ -5,6 +5,7 @@ import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from 
 
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { cartTokenInterceptor } from './core/interceptors/cart-token.interceptor';
 import { localeInterceptor } from './core/interceptors/locale.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -16,6 +17,9 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'top' }),
     ),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch(), withInterceptors([localeInterceptor, authInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([localeInterceptor, authInterceptor, cartTokenInterceptor]),
+    ),
   ],
 };

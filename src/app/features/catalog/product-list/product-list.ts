@@ -10,6 +10,7 @@ import { CatalogService } from '../../../core/services/catalog.service';
 import { GenericCard } from '../../../shared/components/generic-card/generic-card';
 import { GenericList } from '../../../shared/components/generic-list/generic-list';
 import { RiyalSymbol } from '../../../shared/components/riyal-symbol/riyal-symbol';
+import { WishlistToggle } from '../../../shared/components/wishlist-toggle/wishlist-toggle';
 
 const PAGE_SIZE = 20;
 
@@ -38,7 +39,7 @@ interface AppliedFilter {
  */
 @Component({
   selector: 'app-product-list',
-  imports: [RouterLink, ReactiveFormsModule, GenericList, GenericCard, RiyalSymbol],
+  imports: [RouterLink, ReactiveFormsModule, GenericList, GenericCard, RiyalSymbol, WishlistToggle],
   templateUrl: './product-list.html',
   styleUrl: './product-list.scss',
 })

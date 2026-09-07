@@ -1,11 +1,13 @@
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { Injectable, PLATFORM_ID, REQUEST, computed, inject, signal } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { Address, RegisterPayload, User } from '../models';
+import { readCookie } from '../i18n/locale';
+import { RegisterPayload, User } from '../models';
 import { API_URL } from '../tokens/api-url.token';
+import { WishlistService } from './wishlist.service';
 
 interface LoginResponse {
   access: string;
@@ -16,15 +18,36 @@ interface LoginResponse {
 const ACCESS_KEY = 'jory.auth.access';
 const REFRESH_KEY = 'jory.auth.refresh';
 
+/**
+ * Mirrors "is there a session" (not the tokens themselves — those stay in
+ * localStorage only) so `authGuard` has something to check during SSR, where
+ * localStorage doesn't exist. Read on the server as well as the client, which
+ * is why this is a cookie and not just another localStorage key.
+ */
+const SESSION_COOKIE = 'jory_session';
+const SESSION_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
+
 /** Email-or-username-and-password login against the backend's JWT endpoints. */
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly apiUrl = inject(API_URL);
   private readonly http = inject(HttpClient);
+  private readonly wishlist = inject(WishlistService);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private readonly request = inject(REQUEST, { optional: true });
 
   readonly user = signal<User | null>(null);
   readonly isAuthenticated = computed(() => this.user() !== null);
+
+  /**
+   * SSR-only stand-in for `isAuthenticated()`: whether the session cookie
+   * says there was a logged-in session, without a network round trip to
+   * verify it. Real data-fetching still needs the real token from
+   * localStorage, so an SSR'd guarded page renders optimistically and lets
+   * client-side hydration fetch (and correct) the real content.
+   */
+  readonly hasServerSession: boolean =
+    !this.isBrowser && readCookie(this.request?.headers?.get('cookie'), SESSION_COOKIE) !== null;
 
   private readonly access = signal<string | null>(this.readStored(ACCESS_KEY));
   private readonly refreshTok = signal<string | null>(this.readStored(REFRESH_KEY));
@@ -33,9 +56,39 @@ export class AuthService {
     return this.access();
   }
 
+  get refreshToken(): string | null {
+    return this.refreshTok();
+  }
+
+  private sessionReadyResolve!: () => void;
+  /** Resolves once constructor-time session restore has settled, one way or the other. */
+  readonly sessionReady: Promise<void> = new Promise((resolve) => {
+    this.sessionReadyResolve = resolve;
+  });
+
   constructor() {
     if (this.access()) {
-      this.me().subscribe({ error: () => this.clearSession() });
+      // Deferred: calling this.me() synchronously here would dispatch an HTTP
+      // request that runs through authInterceptor, which injects AuthService —
+      // while this constructor is still on the stack, Angular's circular-
+      // dependency guard (NG0200) fires and RxJS silently routes it to the
+      // error callback below, wiping the very session we're trying to restore.
+      queueMicrotask(() =>
+        this.me().subscribe({
+          error: () => {
+            this.clearSession();
+            this.sessionReadyResolve();
+          },
+          complete: () => {
+            // Backfills the cookie for a session that predates this cookie
+            // existing at all, so the next hard reload's SSR guard sees it.
+            this.writeSessionCookie(true);
+            this.sessionReadyResolve();
+          },
+        }),
+      );
+    } else {
+      this.sessionReadyResolve();
     }
   }
 
@@ -97,11 +150,6 @@ export class AuthService {
     });
   }
 
-  /** TODO: GET {apiUrl}/addresses/ */
-  listAddresses(): Observable<Address[]> {
-    return of([]);
-  }
-
   private setAccess(token: string): void {
     this.access.set(token);
     this.writeStored(ACCESS_KEY, token);
@@ -110,6 +158,7 @@ export class AuthService {
   private setRefresh(token: string): void {
     this.refreshTok.set(token);
     this.writeStored(REFRESH_KEY, token);
+    this.writeSessionCookie(true);
   }
 
   private clearSession(): void {
@@ -118,6 +167,17 @@ export class AuthService {
     this.user.set(null);
     this.writeStored(ACCESS_KEY, null);
     this.writeStored(REFRESH_KEY, null);
+    this.writeSessionCookie(false);
+    this.wishlist.reset();
+  }
+
+  private writeSessionCookie(present: boolean): void {
+    if (!this.isBrowser) {
+      return;
+    }
+    document.cookie = present
+      ? `${SESSION_COOKIE}=1; path=/; max-age=${SESSION_COOKIE_MAX_AGE}; SameSite=Lax`
+      : `${SESSION_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
   }
 
   private readStored(key: string): string | null {

@@ -1,0 +1,124 @@
+$line: #e0cba6;
+$maroon: #7a2a2a;
+$maroon-dark: #5e1e1e;
+$gold: #d3a45f;
+$ink: #3a2418;
+
+:host {
+  display: block;
+}
+
+.address-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.address-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.address-form__field--wide {
+  grid-column: 1 / -1;
+}
+
+.address-form__label {
+  font-size: 13px;
+  font-weight: 700;
+  color: $ink;
+}
+
+.address-form__input,
+.address-form__textarea {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid $line;
+  border-radius: 10px;
+  background: #fffaf0;
+  color: $ink;
+  font: inherit;
+  font-size: 14px;
+
+  &:focus-visible {
+    outline: 2px solid $gold;
+    outline-offset: 1px;
+  }
+}
+
+.address-form__textarea {
+  resize: vertical;
+}
+
+.address-form__field-error {
+  margin: 0;
+  font-size: 12px;
+  color: #a33a3a;
+}
+
+.address-form__message {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 13px;
+}
+
+.address-form__message--error {
+  color: #a33a3a;
+}
+
+.address-form__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 12px;
+  margin-block-start: 4px;
+}
+
+.address-form__cancel {
+  background: none;
+  border: 1px solid $line;
+  border-radius: 999px;
+  padding: 12px 24px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: $ink;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $maroon;
+    color: $maroon;
+  }
+}
+
+.address-form__submit {
+  background: $maroon;
+  color: #faf3e7;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 26px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $maroon-dark;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $gold;
+    outline-offset: 2px;
+  }
+}
+
+@media (max-width: 560px) {
+  .address-form {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,3 +1,287 @@
+$card: #fffaf1;
+$line: #e6d3b2;
+$line-soft: #efe2cb;
+$maroon: #7a2a2a;
+$maroon-dark: #5e1e1e;
+$gold: #d3a45f;
+$ink: #3a2418;
+$ink-muted: #6a5346;
+$danger: #a13a3a;
+$danger-soft: #fbeaea;
+
 :host {
   display: block;
+}
+
+.order-detail {
+  max-width: 1000px;
+  margin-inline: auto;
+  padding: 40px 24px 80px;
+}
+
+.order-detail__loading {
+  color: $ink-muted;
+  font-size: 14px;
+}
+
+.order-detail__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-block-end: 20px;
+}
+
+.order-detail__number {
+  margin: 0;
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  font-size: 22px;
+  color: $ink;
+}
+
+.order-detail__date {
+  margin: 4px 0 0;
+  color: $ink-muted;
+  font-size: 13.5px;
+}
+
+.order-detail__status {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: $line-soft;
+  color: $ink-muted;
+  white-space: nowrap;
+
+  &[data-status='DELIVERED'] {
+    background: #dfeee5;
+    color: #2e6f4e;
+  }
+
+  &[data-status='CANCELLED'] {
+    background: #f5dedd;
+    color: #a83a3a;
+  }
+
+  &[data-status='SHIPPED'],
+  &[data-status='CONFIRMED'] {
+    background: #f0e0c2;
+    color: $maroon;
+  }
+}
+
+.order-detail__error {
+  margin: 0 0 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: $danger-soft;
+  color: $danger;
+  font-size: 13.5px;
+}
+
+.order-detail__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.order-detail__panel {
+  padding: 22px;
+  border: 1px solid $line;
+  border-radius: 16px;
+  background: $card;
+}
+
+.order-detail__panel-title {
+  margin: 0 0 14px;
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 17px;
+  color: $ink;
+}
+
+.order-detail__panel-title--spaced {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid $line-soft;
+}
+
+::ng-deep .order-detail__panel .generic-list {
+  gap: 0;
+}
+
+.order-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid $line-soft;
+  font-size: 13.5px;
+}
+
+.order-line__body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.order-line__name {
+  font-weight: 700;
+  color: $ink;
+}
+
+.order-line__meta {
+  font-size: 12px;
+  color: $ink-muted;
+  font-family: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+}
+
+.order-line__qty {
+  flex: 0 0 auto;
+  color: $ink-muted;
+}
+
+.order-line__price {
+  flex: 0 0 auto;
+  color: $ink-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+.order-line__total {
+  flex: 0 0 auto;
+  min-width: 80px;
+  text-align: end;
+  font-weight: 700;
+  color: $maroon;
+  font-variant-numeric: tabular-nums;
+}
+
+.order-detail__totals {
+  margin-top: 8px;
+  padding-top: 14px;
+}
+
+.order-detail__totals-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13.5px;
+  padding: 6px 0;
+  color: $ink-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+.order-detail__totals-row--discount {
+  color: #8a6a2f;
+}
+
+.order-detail__totals-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 18px;
+  font-weight: 800;
+  color: $ink;
+  padding: 12px 0 0;
+  margin-top: 6px;
+  border-top: 1px solid $line-soft;
+  font-variant-numeric: tabular-nums;
+
+  span:last-child {
+    color: $maroon;
+  }
+}
+
+.order-detail__address-name {
+  margin: 0;
+  font-weight: 700;
+  color: $ink;
+}
+
+.order-detail__address-line {
+  margin: 6px 0 0;
+  color: $ink;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.order-detail__address-notes {
+  margin: 6px 0 0;
+  color: $ink-muted;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.order-detail__cancel {
+  width: 100%;
+  margin-top: 22px;
+  background: none;
+  border: 1px solid $danger;
+  border-radius: 999px;
+  padding: 12px;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: $danger;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $danger-soft;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.order-detail__not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 56px 32px;
+  border: 1px dashed $line;
+  border-radius: 20px;
+  background: $card;
+}
+
+.order-detail__not-found-title {
+  margin: 0;
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 21px;
+  color: $ink;
+}
+
+.order-detail__not-found-text {
+  margin: 0;
+  font-size: 14px;
+  color: $ink-muted;
+}
+
+.order-detail__not-found-action {
+  display: block;
+  margin-block-start: 8px;
+  padding: 13px 26px;
+  border: none;
+  border-radius: 999px;
+  background: $maroon;
+  color: #faf3e7;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+
+  &:hover {
+    background: $maroon-dark;
+  }
+}
+
+@media (max-width: 780px) {
+  .order-detail__grid {
+    grid-template-columns: 1fr;
+  }
 }

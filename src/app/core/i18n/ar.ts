@@ -151,6 +151,14 @@ export const AR: Copy = {
   categoriesTitle: 'تسوّق حسب التصنيف',
   categoriesLead: 'القهوة والمعدات وكل ما بينهما، مرتّبة بالطريقة التي تتصفح بها.',
 
+  // Wishlist
+  crumbWishlist: 'الرئيسية / المفضلة',
+  wishlistTitle: 'مفضلتك',
+  wishlistLead: 'كل ما حفظته لوقت لاحق، في مكان واحد.',
+  emptyWishlistHint: 'احفظ منتجًا من المتجر لتراه هنا.',
+  removeFromWishlistAria: 'إزالة من المفضلة',
+  addToWishlistAria: 'إضافة إلى المفضلة',
+
   priceRange: 'نطاق السعر',
   // TODO: not rendered yet — when it is, append <app-riyal-symbol> after the number.
   priceMin: '45',
@@ -256,9 +264,19 @@ export const AR: Copy = {
   promo: 'كود الخصم',
   apply: 'تطبيق',
   summary: 'ملخص الطلب',
+  subtotal: 'المجموع الفرعي',
+  discount: 'الخصم',
+  shippingCost: 'الشحن',
+  freeShipping: 'مجاني',
   total: 'الإجمالي',
   checkoutCta: 'إتمام الشراء',
   continueShopping: 'متابعة التسوق',
+  removeItemAria: 'إزالة المنتج',
+  voucherApplied: 'تم تطبيق الكود',
+  removeVoucherAria: 'إزالة الكود',
+  voucherApplyError: 'حدث خطأ أثناء تطبيق الكود — حاول مرة أخرى.',
+  cartLineError: 'حدث خطأ أثناء تحديث هذا المنتج — حاول مرة أخرى.',
+  emptyCartHint: 'تصفح المتجر لتجد ما يعجبك.',
 
   // Checkout
   checkoutTitle: 'إتمام الطلب',
@@ -268,6 +286,40 @@ export const AR: Copy = {
   orderSummary: 'ملخص الطلب',
   placeOrder: 'تأكيد الطلب',
   secureNote: 'دفع آمن ومشفّر · إمكانية الإرجاع خلال 7 أيام',
+
+  // Orders (history list + detail/receipt)
+  ordersTitle: 'طلباتي',
+  orderPlacedOn: 'تاريخ الطلب',
+  orderStatusPending: 'قيد الانتظار',
+  orderStatusConfirmed: 'مؤكد',
+  orderStatusShipped: 'تم الشحن',
+  orderStatusDelivered: 'تم التسليم',
+  orderStatusCancelled: 'ملغي',
+  orderView: 'عرض التفاصيل ←',
+  orderItemsTitle: 'العناصر',
+  orderShipTo: 'الشحن إلى',
+  paymentCod: 'الدفع عند الاستلام',
+  paymentUnpaid: 'غير مدفوع',
+  paymentPaid: 'مدفوع',
+  orderCancel: 'إلغاء الطلب',
+  orderCancelling: 'جارٍ الإلغاء…',
+  orderCancelError: 'تعذّر إلغاء هذا الطلب — حاول مرة أخرى.',
+
+  // Addresses (account book + checkout's shipping-address picker)
+  addressCountry: 'الدولة',
+  addressCity: 'المدينة',
+  addressArea: 'الحي',
+  addressStreet: 'الشارع ورقم المبنى',
+  addressPostalCode: 'الرمز البريدي',
+  addressNotes: 'ملاحظات التوصيل',
+  addressDefaultBadge: 'افتراضي',
+  addressSetDefault: 'اجعله الافتراضي',
+  addressAdd: 'إضافة عنوان جديد',
+  addressEdit: 'تعديل',
+  addressDelete: 'حذف',
+  addressCancel: 'إلغاء',
+  addressSave: 'حفظ العنوان',
+  addressManage: 'إدارة العناوين',
 
   // About
   aboutTag: 'عن جوري',

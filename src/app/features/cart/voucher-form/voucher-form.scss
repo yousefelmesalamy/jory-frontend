@@ -1,3 +1,121 @@
+$ink: #3a2418;
+$maroon: #7a2a2a;
+$gold: #d3a45f;
+$border: #e0cba6;
+$card: #fffdf8;
+
 :host {
   display: block;
+}
+
+.voucher-form {
+  display: flex;
+  gap: 10px;
+
+  &__input {
+    flex: 1;
+    min-width: 0;
+    background: $card;
+    border: 1px solid $border;
+    border-radius: 999px;
+    padding: 13px 18px;
+    font: inherit;
+    font-size: 13.5px;
+    color: $ink;
+
+    &::placeholder {
+      color: #a08659;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $gold;
+      outline-offset: 1px;
+    }
+  }
+
+  &__submit {
+    background: $ink;
+    color: #f4e6cd;
+    border: 0;
+    border-radius: 999px;
+    padding: 13px 24px;
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 150ms ease;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+  }
+
+  &__error {
+    margin: 8px 2px 0;
+    font-size: 12.5px;
+    color: #a13a3a;
+  }
+}
+
+.voucher-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(122, 42, 42, 0.07);
+  border: 1px solid rgba(211, 164, 95, 0.5);
+  border-radius: 999px;
+  padding-block: 10px;
+  padding-inline: 18px 8px;
+
+  &__code {
+    font-weight: 800;
+    font-size: 13.5px;
+    letter-spacing: 0.02em;
+    color: $maroon;
+  }
+
+  &__desc {
+    flex: 1;
+    min-width: 0;
+    font-size: 12.5px;
+    color: #6a5346;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__remove {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    background: none;
+    border: 0;
+    border-radius: 50%;
+    font-size: 16px;
+    color: $maroon;
+    opacity: 0.6;
+    cursor: pointer;
+    transition: opacity 150ms ease, background 150ms ease;
+
+    &:hover:not(:disabled) {
+      opacity: 1;
+      background: rgba(122, 42, 42, 0.1);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $gold;
+      outline-offset: 1px;
+    }
+  }
 }

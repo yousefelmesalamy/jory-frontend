@@ -44,9 +44,6 @@
           <button class="header__account-login" type="button" (click)="openLogin()">
             {{ t().authLogin }}
           </button>
-          <button class="header__account-register" type="button" (click)="openRegister()">
-            {{ t().authSwitchToRegister }}
-          </button>
         </div>
       }
 
@@ -147,6 +144,6 @@
   <app-auth-modal
     [mode]="mode"
     (closed)="closeAuthModal()"
-    (authenticated)="closeAuthModal()"
+    (authenticated)="onAuthenticated()"
   />
 }

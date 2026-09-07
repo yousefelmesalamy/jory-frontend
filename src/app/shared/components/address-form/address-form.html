@@ -1,0 +1,110 @@
+<form class="address-form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="address-form__field">
+    <label class="address-form__label" for="address-full-name">{{ t().authFullName }}</label>
+    <input
+      id="address-full-name"
+      class="address-form__input"
+      type="text"
+      autocomplete="name"
+      formControlName="full_name"
+    />
+    @if (fieldError('full_name'); as message) {
+      <p class="address-form__field-error">{{ message }}</p>
+    }
+  </div>
+
+  <div class="address-form__field">
+    <label class="address-form__label" for="address-phone">{{ t().authPhone }}</label>
+    <input
+      id="address-phone"
+      class="address-form__input"
+      type="tel"
+      autocomplete="tel"
+      formControlName="phone"
+    />
+    @if (fieldError('phone'); as message) {
+      <p class="address-form__field-error">{{ message }}</p>
+    }
+  </div>
+
+  <div class="address-form__field">
+    <label class="address-form__label" for="address-country">{{ t().addressCountry }}</label>
+    <input
+      id="address-country"
+      class="address-form__input"
+      type="text"
+      autocomplete="country-name"
+      formControlName="country"
+    />
+    @if (fieldError('country'); as message) {
+      <p class="address-form__field-error">{{ message }}</p>
+    }
+  </div>
+
+  <div class="address-form__field">
+    <label class="address-form__label" for="address-city">{{ t().addressCity }}</label>
+    <input
+      id="address-city"
+      class="address-form__input"
+      type="text"
+      autocomplete="address-level2"
+      formControlName="city"
+    />
+    @if (fieldError('city'); as message) {
+      <p class="address-form__field-error">{{ message }}</p>
+    }
+  </div>
+
+  <div class="address-form__field">
+    <label class="address-form__label" for="address-area">{{ t().addressArea }}</label>
+    <input id="address-area" class="address-form__input" type="text" formControlName="area" />
+  </div>
+
+  <div class="address-form__field">
+    <label class="address-form__label" for="address-street">{{ t().addressStreet }}</label>
+    <input
+      id="address-street"
+      class="address-form__input"
+      type="text"
+      autocomplete="street-address"
+      formControlName="street_address"
+    />
+    @if (fieldError('street_address'); as message) {
+      <p class="address-form__field-error">{{ message }}</p>
+    }
+  </div>
+
+  <div class="address-form__field">
+    <label class="address-form__label" for="address-postal-code">{{ t().addressPostalCode }}</label>
+    <input
+      id="address-postal-code"
+      class="address-form__input"
+      type="text"
+      autocomplete="postal-code"
+      formControlName="postal_code"
+    />
+  </div>
+
+  <div class="address-form__field address-form__field--wide">
+    <label class="address-form__label" for="address-notes">{{ t().addressNotes }}</label>
+    <textarea
+      id="address-notes"
+      class="address-form__textarea"
+      formControlName="notes"
+      rows="3"
+    ></textarea>
+  </div>
+
+  @if (errorMessage()) {
+    <p class="address-form__message address-form__message--error">{{ errorMessage() }}</p>
+  }
+
+  <div class="address-form__actions">
+    <button type="button" class="address-form__cancel" (click)="cancelled.emit()">
+      {{ t().addressCancel }}
+    </button>
+    <button type="submit" class="address-form__submit" [disabled]="submitting()">
+      {{ t().addressSave }}
+    </button>
+  </div>
+</form>

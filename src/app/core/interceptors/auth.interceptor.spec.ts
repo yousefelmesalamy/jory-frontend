@@ -108,3 +108,37 @@ describe('authInterceptor — 401 refresh-and-retry', () => {
     httpMock.verify();
   });
 });
+
+describe('AuthService — hydration on a fresh page load (interceptor wired in)', () => {
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it('fetches the current user through the real interceptor chain without deadlocking', async () => {
+    localStorage.setItem('jory.auth.access', 'stored-access-token');
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(withInterceptors([authInterceptor])),
+        provideHttpClientTesting(),
+        { provide: API_URL, useValue: '/api' },
+        { provide: PLATFORM_ID, useValue: 'browser' },
+      ],
+    });
+
+    const auth = TestBed.inject(AuthService);
+    const httpMock = TestBed.inject(HttpTestingController);
+
+    // The hydration request is deferred a microtask past construction (see
+    // AuthService's constructor) to dodge a circular-DI deadlock with the
+    // interceptor, so it isn't on the wire yet at this exact point.
+    await Promise.resolve();
+
+    httpMock.expectOne('/api/auth/me/').flush(USER);
+
+    expect(auth.user()).toEqual(USER);
+    expect(auth.accessToken).toBe('stored-access-token');
+
+    httpMock.verify();
+  });
+});

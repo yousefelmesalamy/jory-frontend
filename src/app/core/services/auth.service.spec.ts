@@ -262,11 +262,15 @@ describe('AuthService — hydration on construction', () => {
     localStorage.clear();
   });
 
-  it('fetches the current user when an access token was already stored', () => {
+  it('fetches the current user when an access token was already stored', async () => {
     localStorage.setItem('jory.auth.access', 'stored-access-token');
     const { service, httpMock } = setup();
 
     expect(service.accessToken).toBe('stored-access-token');
+
+    // Dispatch is deferred a microtask past construction — see the comment
+    // on AuthService's constructor.
+    await Promise.resolve();
 
     httpMock.expectOne('/api/auth/me/').flush(USER);
 
@@ -275,9 +279,11 @@ describe('AuthService — hydration on construction', () => {
     httpMock.verify();
   });
 
-  it('clears the session if the stored token is no longer valid', () => {
+  it('clears the session if the stored token is no longer valid', async () => {
     localStorage.setItem('jory.auth.access', 'stale-access-token');
     const { service, httpMock } = setup();
+
+    await Promise.resolve();
 
     httpMock
       .expectOne('/api/auth/me/')

@@ -1,5 +1,59 @@
-<app-generic-list [items]="addresses()" emptyMessage="">
-  <ng-template #item let-address>
-    <!-- TODO: fill in once the address fields are submitted. -->
-  </ng-template>
-</app-generic-list>
+<section class="addresses">
+  <header class="addresses__head">
+    <h1 class="addresses__title">{{ t().addresses }}</h1>
+    @if (editing() === null) {
+      <button type="button" class="addresses__add" (click)="startAdd()">
+        {{ t().addressAdd }}
+      </button>
+    }
+  </header>
+
+  @if (editing() !== null) {
+    <app-address-form
+      [address]="editingAddress()"
+      (saved)="onSaved()"
+      (cancelled)="cancelEdit()"
+    />
+  } @else if (loading()) {
+    <p class="addresses__loading">{{ t().loading }}</p>
+  } @else {
+    <app-generic-list [items]="addresses()" [emptyMessage]="t().emptyAddresses">
+      <ng-template #item let-address>
+        <article class="address-card">
+          @if (address.is_default) {
+            <span class="address-card__badge">{{ t().addressDefaultBadge }}</span>
+          }
+          <p class="address-card__name">{{ address.full_name }}</p>
+          <p class="address-card__phone">{{ address.phone }}</p>
+          <p class="address-card__lines">{{ addressLine(address) }}</p>
+          @if (address.notes) {
+            <p class="address-card__notes">{{ address.notes }}</p>
+          }
+          <div class="address-card__actions">
+            @if (!address.is_default) {
+              <button
+                type="button"
+                class="address-card__action"
+                [disabled]="settingDefaultId() === address.id"
+                (click)="setDefault(address)"
+              >
+                {{ t().addressSetDefault }}
+              </button>
+            }
+            <button type="button" class="address-card__action" (click)="startEdit(address)">
+              {{ t().addressEdit }}
+            </button>
+            <button
+              type="button"
+              class="address-card__action address-card__action--danger"
+              [disabled]="deletingId() === address.id"
+              (click)="remove(address)"
+            >
+              {{ t().addressDelete }}
+            </button>
+          </div>
+        </article>
+      </ng-template>
+    </app-generic-list>
+  }
+</section>

@@ -160,6 +160,14 @@ export const EN = {
   categoriesTitle: 'Shop by category',
   categoriesLead: 'Coffee, equipment and everything in between, sorted the way you browse.',
 
+  // Wishlist
+  crumbWishlist: 'Home / Wishlist',
+  wishlistTitle: 'Your wishlist',
+  wishlistLead: 'Everything you have saved for later, in one place.',
+  emptyWishlistHint: 'Save a product from the shop to see it here.',
+  removeFromWishlistAria: 'Remove from wishlist',
+  addToWishlistAria: 'Add to wishlist',
+
   priceRange: 'Price range',
   // TODO: not rendered yet — when it is, append <app-riyal-symbol> after the number.
   priceMin: '45',
@@ -265,9 +273,19 @@ export const EN = {
   promo: 'Promo code',
   apply: 'Apply',
   summary: 'Order summary',
+  subtotal: 'Subtotal',
+  discount: 'Discount',
+  shippingCost: 'Shipping',
+  freeShipping: 'Free',
   total: 'Total',
   checkoutCta: 'Go to checkout',
   continueShopping: 'Continue shopping',
+  removeItemAria: 'Remove item',
+  voucherApplied: 'Voucher applied',
+  removeVoucherAria: 'Remove voucher',
+  voucherApplyError: 'Something went wrong applying that code — try again.',
+  cartLineError: 'Something went wrong updating that item — try again.',
+  emptyCartHint: "Browse the shop to find something you'll love.",
 
   // Checkout
   checkoutTitle: 'Checkout',
@@ -277,6 +295,40 @@ export const EN = {
   orderSummary: 'Order summary',
   placeOrder: 'Place order',
   secureNote: 'Encrypted secure payment · 7-day returns',
+
+  // Orders (history list + detail/receipt)
+  ordersTitle: 'My orders',
+  orderPlacedOn: 'Placed on',
+  orderStatusPending: 'Pending',
+  orderStatusConfirmed: 'Confirmed',
+  orderStatusShipped: 'Shipped',
+  orderStatusDelivered: 'Delivered',
+  orderStatusCancelled: 'Cancelled',
+  orderView: 'View details →',
+  orderItemsTitle: 'Items',
+  orderShipTo: 'Shipping to',
+  paymentCod: 'Cash on delivery',
+  paymentUnpaid: 'Unpaid',
+  paymentPaid: 'Paid',
+  orderCancel: 'Cancel order',
+  orderCancelling: 'Cancelling…',
+  orderCancelError: 'Could not cancel this order — try again.',
+
+  // Addresses (account book + checkout's shipping-address picker)
+  addressCountry: 'Country',
+  addressCity: 'City',
+  addressArea: 'District',
+  addressStreet: 'Street & building',
+  addressPostalCode: 'Postal code',
+  addressNotes: 'Delivery notes',
+  addressDefaultBadge: 'Default',
+  addressSetDefault: 'Set as default',
+  addressAdd: 'Add a new address',
+  addressEdit: 'Edit',
+  addressDelete: 'Delete',
+  addressCancel: 'Cancel',
+  addressSave: 'Save address',
+  addressManage: 'Manage addresses',
 
   // About
   aboutTag: 'About Jouri',

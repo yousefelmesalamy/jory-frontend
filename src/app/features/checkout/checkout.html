@@ -1,8 +1,81 @@
-<form class="checkout" [formGroup]="form" (ngSubmit)="place()">
-  <select formControlName="addressId">
-    @for (address of addresses(); track address.id) {
-      <option [ngValue]="address.id"></option>
+<h1 class="checkout__title">{{ t().checkoutTitle }}</h1>
+
+@if (cartLoading()) {
+  <p class="checkout__loading">{{ t().loading }}</p>
+} @else if (cartEmpty()) {
+  <div class="checkout__empty-cart">
+    <p class="checkout__empty-cart-title">{{ t().emptyCart }}</p>
+    <p class="checkout__empty-cart-hint">{{ t().emptyCartHint }}</p>
+    <a class="checkout__empty-cart-action" routerLink="/shop">{{ t().browseShop }}</a>
+  </div>
+} @else {
+  <form class="checkout" [formGroup]="form" (ngSubmit)="place()">
+    <section class="checkout__shipping">
+      <h2 class="checkout__heading">{{ t().shipping }}</h2>
+
+      @if (loadingAddresses()) {
+        <p class="checkout__loading">{{ t().loading }}</p>
+      } @else if (!addresses().length) {
+        <p class="checkout__empty">{{ t().emptyAddresses }}</p>
+        <a class="checkout__manage-link" routerLink="/account/addresses">{{ t().addressAdd }}</a>
+      } @else {
+        <select class="checkout__address-select" formControlName="addressId">
+          @for (address of addresses(); track address.id) {
+            <option [ngValue]="address.id">{{ addressLabel(address) }}</option>
+          }
+        </select>
+        <a class="checkout__manage-link" routerLink="/account/addresses">{{ t().addressManage }}</a>
+      }
+    </section>
+
+    @if (errorMessage()) {
+      <p class="checkout__error" role="alert">{{ errorMessage() }}</p>
     }
-  </select>
-  <button type="submit" [disabled]="form.invalid"></button>
-</form>
+
+    <aside class="checkout__summary">
+      <h2 class="checkout__summary-title">{{ t().orderSummary }}</h2>
+
+      @for (item of items(); track item.id) {
+        <div class="checkout__summary-line">
+          <span>
+            {{ item.quantity }}× {{ item.variant.product_name }}
+            <span class="checkout__summary-line-meta">{{ item.variant.label }}</span>
+          </span>
+          <span>{{ item.line_total }} <app-riyal-symbol /></span>
+        </div>
+      }
+
+      @if (cartValue(); as value) {
+        <div class="checkout__summary-row">
+          <span>{{ t().subtotal }}</span>
+          <span>{{ value.totals.subtotal }} <app-riyal-symbol /></span>
+        </div>
+        @if (value.totals.discount_total !== '0.00') {
+          <div class="checkout__summary-row checkout__summary-row--discount">
+            <span>{{ t().discount }}</span>
+            <span>−{{ value.totals.discount_total }} <app-riyal-symbol /></span>
+          </div>
+        }
+        <div class="checkout__summary-row">
+          <span>{{ t().shippingCost }}</span>
+          <span>
+            @if (value.totals.shipping_cost === '0.00') {
+              {{ t().freeShipping }}
+            } @else {
+              {{ value.totals.shipping_cost }} <app-riyal-symbol />
+            }
+          </span>
+        </div>
+        <div class="checkout__summary-total">
+          <span>{{ t().total }}</span>
+          <span>{{ value.totals.grand_total }} <app-riyal-symbol /></span>
+        </div>
+      }
+
+      <button class="checkout__submit" type="submit" [disabled]="form.invalid || placing()">
+        {{ t().placeOrder }}
+      </button>
+      <p class="checkout__secure-note">{{ t().secureNote }}</p>
+    </aside>
+  </form>
+}

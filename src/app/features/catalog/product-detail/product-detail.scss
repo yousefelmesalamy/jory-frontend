@@ -336,6 +336,19 @@ $label: #a08659;
   min-width: 240px;
 }
 
+// Matches the buy box's other 44px-tall controls; the toggle's own default is sized for a card corner.
+.pd__wishlist {
+  flex: none;
+
+  ::ng-deep .wishlist-toggle {
+    width: 44px;
+    height: 44px;
+    font-size: 19px;
+    border: 1px solid $line;
+    background: $card;
+  }
+}
+
 .pd__qty {
   display: flex;
   align-items: center;
@@ -505,14 +518,10 @@ $label: #a08659;
 }
 
 .pd__rec-card {
-  display: flex;
-  gap: 16px;
-  padding: 16px;
+  position: relative;
   background: $card;
   border: 1px solid $line;
   border-radius: 20px;
-  text-decoration: none;
-  color: inherit;
   transition:
     border-color 150ms ease,
     box-shadow 150ms ease;
@@ -521,11 +530,28 @@ $label: #a08659;
     border-color: $gold;
     box-shadow: 0 16px 32px rgba(45, 20, 12, 0.1);
   }
+}
+
+.pd__rec-link {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  text-decoration: none;
+  color: inherit;
 
   &:focus-visible {
     outline: 2px solid $gold;
     outline-offset: 2px;
+    border-radius: 20px;
   }
+}
+
+// `inset-inline-start` lands over the media thumbnail in both directions — it's
+// the flex-row's first child regardless of LTR/RTL, same axis as this property.
+.pd__rec-wishlist {
+  position: absolute;
+  inset-block-start: 10px;
+  inset-inline-start: 10px;
 }
 
 .pd__rec-media {
@@ -644,7 +670,7 @@ $label: #a08659;
     z-index: 5;
   }
 
-  .pd__rec-card {
+  .pd__rec-link {
     flex-direction: column;
   }
 
