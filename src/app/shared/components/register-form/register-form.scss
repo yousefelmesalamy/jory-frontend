@@ -1,8 +1,6 @@
-$line: #e0cba6;
-$maroon: #7a2a2a;
-$maroon-dark: #5e1e1e;
-$gold: #d3a45f;
-$ink: #3a2418;
+@use '../../auth-field' as field;
+
+@include field.fields;
 
 :host {
   display: block;
@@ -11,74 +9,109 @@ $ink: #3a2418;
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
-.register-form__field {
+// `<ngx-intl-tel-input>` is a plain (inline) element by default; the input's
+// own visuals are themed globally in `styles.scss`, since they render inside
+// that library's own component view, one style-encapsulation boundary past
+// what this file can reach.
+.phone-input {
+  display: block;
+  width: 100%;
+}
+
+// Short, related pairs share a line once there is room for two comfortable
+// columns; below that everything stacks.
+.register-form__row {
+  display: grid;
+  gap: 18px;
+
+  @media (min-width: 560px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.strength {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  margin-top: 2px;
 }
 
-.register-form__label {
-  font-size: 13px;
-  font-weight: 700;
-  color: $ink;
+.strength__meter {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-items: center;
+  gap: 4px;
 }
 
-.register-form__input {
-  width: 100%;
-  padding: 11px 14px;
-  border: 1px solid $line;
-  border-radius: 10px;
-  background: #fffaf0;
-  color: $ink;
-  font: inherit;
-  font-size: 14px;
-
-  &:focus-visible {
-    outline: 2px solid $gold;
-    outline-offset: 1px;
-  }
-}
-
-.register-form__field-error {
-  margin: 0;
-  font-size: 12px;
-  color: #a33a3a;
-}
-
-.register-form__message {
-  margin: 0;
-  font-size: 13px;
-}
-
-.register-form__message--error {
-  color: #a33a3a;
-}
-
-.register-form__submit {
-  background: $maroon;
-  color: #faf3e7;
-  border: 0;
+.strength__step {
+  height: 3px;
   border-radius: 999px;
-  padding: 12px 26px;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
+  background: field.$line;
+  transition: background-color 0.2s ease;
+}
 
-  &:hover:not(:disabled) {
-    background: $maroon-dark;
-  }
+.strength__label {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: field.$ink-muted;
+}
 
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+// The meter's one job is to say "further to go" or "you're there", so it moves
+// through three states rather than four colours.
+.strength__meter[data-score='1'] .strength__step.is-lit,
+.strength__meter[data-score='2'] .strength__step.is-lit {
+  background: field.$invalid;
+}
 
-  &:focus-visible {
-    outline: 2px solid $gold;
-    outline-offset: 2px;
+.strength__meter[data-score='3'] .strength__step.is-lit {
+  background: field.$gold;
+}
+
+.strength__meter[data-score='4'] .strength__step.is-lit {
+  background: field.$valid;
+}
+
+.strength__rules {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.strength__rule {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: field.$ink-muted;
+}
+
+.strength__rule.is-met {
+  color: field.$valid;
+}
+
+.strength__rule-mark {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  flex: none;
+  color: rgba(106, 83, 70, 0.45);
+}
+
+.strength__rule.is-met .strength__rule-mark {
+  color: field.$valid;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .strength__step {
+    transition: none;
   }
 }

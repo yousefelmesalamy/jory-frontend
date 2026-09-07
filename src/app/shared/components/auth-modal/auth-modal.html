@@ -1,39 +1,100 @@
 <div class="auth-modal__backdrop" (click)="onBackdropClick($event)">
   <div
+    #dialog
     class="auth-modal__dialog"
     role="dialog"
     aria-modal="true"
     aria-labelledby="auth-modal-title"
+    tabindex="-1"
   >
-    <button
-      class="auth-modal__close"
-      type="button"
-      [attr.aria-label]="t().authClose"
-      (click)="close()"
-    >
-      ✕
-    </button>
+    <aside class="auth-modal__aside">
+      <img class="auth-modal__mark" src="logo-jory.svg" alt="" width="76" height="62" />
 
-    <h2 id="auth-modal-title" class="auth-modal__title">
-      {{ activeMode() === 'login' ? t().authLoginTitle : t().authRegisterTitle }}
-    </h2>
+      <p class="auth-modal__aside-body">{{ t().authAsideBody }}</p>
 
-    @if (activeMode() === 'login') {
-      <app-login-form (success)="onSuccess($event)" />
-      <p class="auth-modal__switch">
-        {{ t().authNoAccount }}
-        <button type="button" class="auth-modal__switch-link" (click)="switchTo('register')">
+      <ul class="auth-modal__perks">
+        @for (perk of perks(); track perk) {
+          <li class="auth-modal__perk">
+            <svg
+              class="auth-modal__bean"
+              viewBox="0 0 16 16"
+              width="14"
+              height="14"
+              aria-hidden="true"
+            >
+              <g transform="rotate(-34 8 8)">
+                <ellipse cx="8" cy="8" rx="4" ry="6.2" fill="currentColor" />
+                <path
+                  d="M8 2.4c-1.7 1.9-1.7 3.4 0 5.6s1.7 3.7 0 5.6"
+                  fill="none"
+                  stroke="#4a1616"
+                  stroke-width="1.2"
+                  stroke-linecap="round"
+                />
+              </g>
+            </svg>
+            {{ perk }}
+          </li>
+        }
+      </ul>
+    </aside>
+
+    <div class="auth-modal__panel">
+      <button
+        class="auth-modal__close"
+        type="button"
+        [attr.aria-label]="t().authClose"
+        (click)="close()"
+      >
+        <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true">
+          <path
+            d="M4 4l8 8M12 4l-8 8"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+          />
+        </svg>
+      </button>
+
+      <div class="auth-modal__tabs" [attr.aria-label]="t().authModeSwitchAria" role="group">
+        <span
+          class="auth-modal__tab-indicator"
+          [class.auth-modal__tab-indicator--register]="activeMode() === 'register'"
+          aria-hidden="true"
+        ></span>
+        <button
+          class="auth-modal__tab"
+          type="button"
+          [class.is-active]="activeMode() === 'login'"
+          [attr.aria-pressed]="activeMode() === 'login'"
+          (click)="switchTo('login')"
+        >
+          {{ t().authLogin }}
+        </button>
+        <button
+          class="auth-modal__tab"
+          type="button"
+          [class.is-active]="activeMode() === 'register'"
+          [attr.aria-pressed]="activeMode() === 'register'"
+          (click)="switchTo('register')"
+        >
           {{ t().authSwitchToRegister }}
         </button>
+      </div>
+
+      <h2 id="auth-modal-title" class="auth-modal__title">
+        {{ activeMode() === 'login' ? t().authLoginTitle : t().authRegisterTitle }}
+      </h2>
+      <p class="auth-modal__subtitle">
+        {{ activeMode() === 'login' ? t().authLoginSubtitle : t().authRegisterSubtitle }}
       </p>
-    } @else {
-      <app-register-form (success)="onSuccess($event)" />
-      <p class="auth-modal__switch">
-        {{ t().authHaveAccount }}
-        <button type="button" class="auth-modal__switch-link" (click)="switchTo('login')">
-          {{ t().authSwitchToLogin }}
-        </button>
-      </p>
-    }
+
+      @if (activeMode() === 'login') {
+        <app-login-form (success)="onSuccess($event)" />
+      } @else {
+        <app-register-form (success)="onSuccess($event)" />
+      }
+    </div>
   </div>
 </div>

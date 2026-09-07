@@ -6,7 +6,8 @@ $ink-muted: #6a5346;
 }
 
 .register {
-  max-width: 400px;
+  // Wide enough for the form's paired fields to sit on one line, as in the modal.
+  max-width: 600px;
   margin: 48px auto;
   padding: 0 24px;
 }

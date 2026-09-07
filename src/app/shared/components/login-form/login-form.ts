@@ -25,11 +25,16 @@ export class LoginForm {
 
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal('');
+  protected readonly passwordVisible = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
     email: ['', Validators.required],
     password: ['', Validators.required],
   });
+
+  protected togglePassword(): void {
+    this.passwordVisible.update((visible) => !visible);
+  }
 
   protected submit(): void {
     this.form.markAllAsTouched();

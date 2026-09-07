@@ -1,10 +1,10 @@
 <app-home-hero />
-<app-home-perks />
-<app-home-featured-products />
-<app-home-marquee />
-<app-home-origins />
-<app-home-loyalty />
-<app-home-reviews />
+<app-home-perks appReveal />
+<app-home-featured-products appReveal />
+<app-home-marquee appReveal />
+<app-home-origins appReveal />
+<app-home-loyalty appReveal />
+<app-home-reviews appReveal />
 
 <app-generic-section [items]="featured()" heading="" emptyMessage="">
   <ng-template #item let-product>

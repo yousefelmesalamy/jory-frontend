@@ -196,6 +196,24 @@ $pad: 56px;
 .header__caret {
   font-size: 9px;
   opacity: 0.55;
+  transition: transform 0.18s ease;
+}
+
+.header__account-button[aria-expanded='true'] .header__caret,
+.header__account-login[aria-expanded='true'] .header__caret {
+  transform: rotate(180deg);
+}
+
+@keyframes header-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .header__account-menu {
@@ -211,6 +229,18 @@ $pad: 56px;
   border: 1px solid $line;
   border-radius: 16px;
   box-shadow: 0 22px 38px rgba(45, 20, 12, 0.16);
+  animation: header-menu-in 0.16s ease both;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+// The logged-out counterpart of `.header__account`: opens on hover rather
+// than click, since there's no logout button here to trigger by accident.
+.header__login-group {
+  position: relative;
+  flex: 0 0 auto;
 }
 
 .header__account-item,
@@ -334,6 +364,15 @@ $pad: 56px;
   text-transform: uppercase;
   color: $maroon;
   white-space: nowrap;
+  transition: color 0.18s ease;
+
+  &:hover {
+    color: $maroon-dark;
+  }
+
+  &[aria-expanded='true'] .header__caret {
+    transform: rotate(180deg);
+  }
 }
 
 .header__browse-link {
@@ -361,7 +400,6 @@ $pad: 56px;
 // ---------------------------------------------------------------- mega panel
 
 .header__mega {
-  display: none;
   position: absolute;
   top: 100%;
   inset-inline-start: 0;
@@ -370,9 +408,34 @@ $pad: 56px;
   background: $panel;
   border-bottom: 1px solid $line;
   box-shadow: 0 26px 44px rgba(45, 20, 12, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s linear 0.2s;
 
   &.is-open {
-    display: block;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0s linear 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+    transform: none;
+
+    &.is-open {
+      transition: opacity 0.2s ease, visibility 0s linear 0s;
+      transform: none;
+    }
   }
 }
 

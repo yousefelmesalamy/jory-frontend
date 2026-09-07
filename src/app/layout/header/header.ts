@@ -18,7 +18,13 @@ import { Category } from '../../core/models';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { CatalogService } from '../../core/services/catalog.service';
-import { AuthModal, AuthModalMode } from '../../shared/components/auth-modal/auth-modal';
+import { AuthModal } from '../../shared/components/auth-modal/auth-modal';
+// `import type`, not a value import: `AuthModal` is the only runtime symbol
+// this file needs from that module, and it appears only inside `@defer` in
+// header.html — a mixed-value import from the same specifier would stop the
+// compiler from splitting it (and its phone-input library) out of the eager
+// bundle.
+import type { AuthModalMode } from '../../shared/components/auth-modal/auth-modal';
 import { RiyalSymbol } from '../../shared/components/riyal-symbol/riyal-symbol';
 import { SearchBox } from '../../shared/components/search-box/search-box';
 import { SOCIAL_LINKS } from '../../shared/social-links';
@@ -97,6 +103,10 @@ export class Header {
   /** The account dropdown, which is click-driven — a hover menu holding a
    * logout button is too easy to trigger by accident. */
   readonly accountOpen = signal(false);
+
+  /** The logged-out login/register dropdown. Hover-driven, unlike the account
+   * menu above — there's no destructive action here to trigger by accident. */
+  readonly loginMenuOpen = signal(false);
 
   /** The mobile drawer, standing in for bars 1 and 3 on a narrow screen. */
   readonly drawerOpen = signal(false);
@@ -263,12 +273,22 @@ export class Header {
   closeAll(): void {
     this.menuOpen.set(false);
     this.accountOpen.set(false);
+    this.loginMenuOpen.set(false);
   }
 
-  openLogin(): void {
-    this.authModalMode.set('login');
+  openLogin(mode: AuthModalMode = 'login'): void {
+    this.authModalMode.set(mode);
     this.accountOpen.set(false);
     this.drawerOpen.set(false);
+    this.loginMenuOpen.set(false);
+  }
+
+  openLoginMenu(): void {
+    this.loginMenuOpen.set(true);
+  }
+
+  closeLoginMenu(): void {
+    this.loginMenuOpen.set(false);
   }
 
   closeAuthModal(): void {

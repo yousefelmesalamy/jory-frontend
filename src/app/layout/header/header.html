@@ -119,21 +119,49 @@
               </div>
             }
           } @else {
-            <button class="header__account-login" type="button" (click)="openLogin()">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                aria-hidden="true"
+            <div
+              class="header__login-group"
+              (mouseenter)="openLoginMenu()"
+              (mouseleave)="closeLoginMenu()"
+            >
+              <button
+                class="header__account-login"
+                type="button"
+                aria-controls="header-login-menu"
+                [attr.aria-expanded]="loginMenuOpen()"
+                (click)="openLogin()"
               >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
-              </svg>
-              <span class="header__account-name">{{ t().authLogin }}</span>
-            </button>
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+                </svg>
+                <span class="header__account-name">{{ t().authLogin }}</span>
+                <span class="header__caret" aria-hidden="true">▾</span>
+              </button>
+
+              @if (loginMenuOpen()) {
+                <div class="header__account-menu" id="header-login-menu">
+                  <button class="header__account-item" type="button" (click)="openLogin('login')">
+                    {{ t().authLogin }}
+                  </button>
+                  <button
+                    class="header__account-item"
+                    type="button"
+                    (click)="openLogin('register')"
+                  >
+                    {{ t().authSwitchToRegister }}
+                  </button>
+                </div>
+              }
+            </div>
           }
         </div>
 
@@ -327,6 +355,8 @@
   }
 </header>
 
-@if (authModalMode(); as mode) {
-  <app-auth-modal [mode]="mode" (closed)="closeAuthModal()" (authenticated)="onAuthenticated()" />
+@defer (when authModalMode() !== null) {
+  @if (authModalMode(); as mode) {
+    <app-auth-modal [mode]="mode" (closed)="closeAuthModal()" (authenticated)="onAuthenticated()" />
+  }
 }

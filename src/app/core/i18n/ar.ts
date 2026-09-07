@@ -428,4 +428,43 @@ export const AR: Copy = {
   authFieldEmail: 'أدخل بريدًا إلكترونيًا صحيحًا.',
   authPasswordMismatch: 'كلمتا المرور غير متطابقتين.',
   authGenericError: 'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
+
+  // Auth: the panel beside the form, and the tabs above it
+  authLoginSubtitle: 'أكمل من حيث توقفت.',
+  authRegisterSubtitle: 'حساب واحد لطلباتك وعناوينك ونقاطك.',
+  authAsideBody: 'تُحمَّص على دفعات صغيرة، وتُشحن في الأسبوع نفسه.',
+  authPerkOrders: 'تابع طلبك من التحميص حتى بابك',
+  authPerkAddresses: 'احفظ عناوين التوصيل جاهزة',
+  authPerkLoyalty: 'اجمع نقاطًا مع كل كيس تشتريه',
+  authModeSwitchAria: 'تسجيل الدخول أو إنشاء حساب',
+
+  // Auth: field placeholders
+  authEmailOrUsernamePlaceholder: 'بريدك الإلكتروني أو اسم المستخدم',
+  authEmailPlaceholder: 'you@example.com',
+  authUsernamePlaceholder: 'jouri_fan',
+  authFullNamePlaceholder: 'الاسم الأول والأخير',
+  authPhonePlaceholder: '50 123 4567',
+  authPasswordPlaceholder: '8 أحرف على الأقل',
+  authPasswordConfirmPlaceholder: 'اكتبها مرة أخرى',
+  authOptional: 'اختياري',
+
+  // Auth: live validation
+  authShowPassword: 'إظهار كلمة المرور',
+  authHidePassword: 'إخفاء كلمة المرور',
+  authPasswordStrength: 'قوة كلمة المرور',
+  authStrengthWeak: 'ضعيفة',
+  authStrengthFair: 'مقبولة',
+  authStrengthGood: 'جيدة',
+  authStrengthStrong: 'قوية',
+  authRuleLength: '8 أحرف على الأقل',
+  authRuleNotNumeric: 'ليست أرقامًا فقط',
+  authRuleNotCommon: 'ليست كلمة مرور شائعة',
+  authRuleNotSimilar: 'تختلف عن بريدك واسم المستخدم',
+  authPasswordMatches: 'كلمتا المرور متطابقتان',
+  authFieldLooksGood: 'تمام',
+  authFieldUsernameChars: 'استخدم الأحرف والأرقام و . _ - + @ فقط.',
+  authFieldUsernameShort: 'استخدم 3 أحرف على الأقل.',
+  authFieldPhoneInvalid: 'أدخل رقمًا صحيحًا للدولة التي اخترتها.',
+  authCountrySearchPlaceholder: 'ابحث عن دولة',
+  authWorking: 'لحظة من فضلك…',
 };

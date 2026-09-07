@@ -438,6 +438,45 @@ export const EN = {
   authFieldEmail: 'Enter a valid email address.',
   authPasswordMismatch: 'Passwords do not match.',
   authGenericError: 'Something went wrong. Please try again.',
+
+  // Auth: the panel beside the form, and the tabs above it
+  authLoginSubtitle: 'Pick up where you left off.',
+  authRegisterSubtitle: 'One account for your orders, addresses and points.',
+  authAsideBody: 'Roasted in small batches, shipped the same week.',
+  authPerkOrders: 'Follow an order from roast to doorstep',
+  authPerkAddresses: 'Keep your delivery addresses ready',
+  authPerkLoyalty: 'Collect points on every bag you brew',
+  authModeSwitchAria: 'Log in or create an account',
+
+  // Auth: field placeholders
+  authEmailOrUsernamePlaceholder: 'you@example.com or your username',
+  authEmailPlaceholder: 'you@example.com',
+  authUsernamePlaceholder: 'jouri_fan',
+  authFullNamePlaceholder: 'First and last name',
+  authPhonePlaceholder: '50 123 4567',
+  authPasswordPlaceholder: 'At least 8 characters',
+  authPasswordConfirmPlaceholder: 'Type it once more',
+  authOptional: 'Optional',
+
+  // Auth: live validation
+  authShowPassword: 'Show password',
+  authHidePassword: 'Hide password',
+  authPasswordStrength: 'Password strength',
+  authStrengthWeak: 'Weak',
+  authStrengthFair: 'Fair',
+  authStrengthGood: 'Good',
+  authStrengthStrong: 'Strong',
+  authRuleLength: 'At least 8 characters',
+  authRuleNotNumeric: 'More than just numbers',
+  authRuleNotCommon: 'Not an obvious password',
+  authRuleNotSimilar: 'Different from your email and username',
+  authPasswordMatches: 'Both passwords match',
+  authFieldLooksGood: 'Looks good',
+  authFieldUsernameChars: 'Use letters, numbers and . _ - + @ only.',
+  authFieldUsernameShort: 'Use at least 3 characters.',
+  authFieldPhoneInvalid: 'Enter a valid number for the country you picked.',
+  authCountrySearchPlaceholder: 'Search countries',
+  authWorking: 'One moment…',
 };
 
 /** The shape every locale must supply in full. */

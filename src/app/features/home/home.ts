@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { Product } from '../../core/models';
 import { CatalogService } from '../../core/services/catalog.service';
 import { GenericSection } from '../../shared/components/generic-section/generic-section';
+import { RevealOnScroll } from '../../shared/directives/reveal-on-scroll.directive';
 import { HomeFeaturedProducts } from './sections/featured-products/featured-products';
 import { HomeHero } from './sections/hero/hero';
 import { HomeLoyalty } from './sections/loyalty/loyalty';
@@ -18,6 +19,7 @@ import { HomeReviews } from './sections/reviews/reviews';
   imports: [
     RouterLink,
     GenericSection,
+    RevealOnScroll,
     HomeHero,
     HomePerks,
     HomeFeaturedProducts,

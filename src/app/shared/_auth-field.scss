@@ -1,0 +1,211 @@
+// The auth surface's tokens and field chrome. The login and register forms and
+// the phone field all wear the same control, so it lives here once rather than
+// three times over. Every component that includes it keeps its own scope.
+
+$panel: #fffdf8;
+$field-bg: #fffaf0;
+$line: #ecdcc0;
+$line-strong: #e0cba6;
+$maroon: #7a2a2a;
+$maroon-dark: #5e1e1e;
+$roast: #4a1616;
+$gold: #d3a45f;
+$ink: #3a2418;
+$ink-muted: #6a5346;
+$valid: #3f6f4a;
+$invalid: #a33a3a;
+$invalid-bg: #fdf3f0;
+
+@mixin fields {
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .field__label {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $ink;
+  }
+
+  .field__optional {
+    font-size: 11px;
+    font-weight: 400;
+    color: $ink-muted;
+  }
+
+  .field__control {
+    position: relative;
+    display: block;
+  }
+
+  .field__input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid $line-strong;
+    border-radius: 12px;
+    background: $field-bg;
+    color: $ink;
+    font: inherit;
+    font-size: 15px;
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      background-color 0.15s ease;
+
+    &::placeholder {
+      color: rgba(106, 83, 70, 0.55);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $gold;
+      box-shadow: 0 0 0 3px rgba(211, 164, 95, 0.28);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
+
+  // Leaves room for the trailing state mark or reveal button.
+  .field__input--trailing {
+    padding-inline-end: 42px;
+  }
+
+  .field__control--valid .field__input {
+    border-color: rgba(63, 111, 74, 0.55);
+  }
+
+  .field__control--invalid .field__input {
+    border-color: $invalid;
+    background: $invalid-bg;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(163, 58, 58, 0.2);
+    }
+  }
+
+  .field__mark {
+    position: absolute;
+    inset-inline-end: 14px;
+    top: 50%;
+    translate: 0 -50%;
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    color: $valid;
+  }
+
+  .field__control--invalid .field__mark {
+    color: $invalid;
+  }
+
+  .field__reveal {
+    position: absolute;
+    inset-inline-end: 8px;
+    top: 50%;
+    translate: 0 -50%;
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: $ink-muted;
+    cursor: pointer;
+
+    &:hover {
+      background: $line;
+      color: $ink;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $gold;
+      outline-offset: 1px;
+    }
+  }
+
+  .field__error,
+  .field__hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .field__error {
+    color: $invalid;
+  }
+
+  .field__hint {
+    color: $valid;
+  }
+
+  .form__submit {
+    margin-top: 4px;
+    padding: 13px 26px;
+    border: 0;
+    border-radius: 999px;
+    background: $maroon;
+    color: #faf3e7;
+    font: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      transform 0.1s ease;
+
+    &:hover:not(:disabled) {
+      background: $maroon-dark;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $gold;
+      outline-offset: 2px;
+    }
+  }
+
+  .form__error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0;
+    padding: 11px 13px;
+    border: 1px solid rgba(163, 58, 58, 0.35);
+    border-inline-start: 3px solid $invalid;
+    border-radius: 10px;
+    background: $invalid-bg;
+    color: $invalid;
+    font-size: 13px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .field__input,
+    .form__submit {
+      transition: none;
+    }
+  }
+}
