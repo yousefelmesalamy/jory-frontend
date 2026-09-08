@@ -89,6 +89,7 @@ export const EN = {
   freshBadge: 'Roasted today',
   freshSub: 'Ships within 24h',
   dropHero: 'Drop hero image',
+  heroCommunity: 'people drink Jouri every week',
   heroStatFarms: 'Partner farms',
   heroStatBatch: 'Batch size',
   heroStatDispatch: 'To dispatch',

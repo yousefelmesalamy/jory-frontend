@@ -224,13 +224,32 @@
         }
 
         @for (category of browseCategories(); track category.id) {
-          <a
-            class="header__browse-link"
-            routerLink="/shop"
-            [queryParams]="{ category: category.slug }"
-            (mouseenter)="closeMenu()"
-            >{{ category.name }}</a
+          <div
+            class="header__browse-item"
+            (mouseenter)="closeMenu(); category.children.length && openCategoryDropdown(category.id)"
+            (mouseleave)="closeCategoryDropdown()"
           >
+            <a
+              class="header__browse-link"
+              routerLink="/shop"
+              [queryParams]="{ category: category.slug }"
+              >{{ category.name }}</a
+            >
+
+            @if (category.children.length && openCategoryId() === category.id) {
+              <div class="header__browse-dropdown">
+                @for (child of category.children; track child.id) {
+                  <a
+                    class="header__browse-dropdown-link"
+                    routerLink="/shop"
+                    [queryParams]="{ category: child.slug }"
+                    (click)="closeCategoryDropdown()"
+                    >{{ child.name }}</a
+                  >
+                }
+              </div>
+            }
+          </div>
         }
 
         @for (link of browseTail; track link.key) {

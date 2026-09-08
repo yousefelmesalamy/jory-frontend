@@ -1,46 +1,65 @@
 <section class="hero">
-  <div class="hero__blob hero__blob--top" aria-hidden="true"></div>
-  <div class="hero__blob hero__blob--bottom" aria-hidden="true"></div>
+  <div
+    class="hero__stage"
+    (pointermove)="onPointerMove($event)"
+    (pointerleave)="resetTilt()"
+    [style.--tilt-x]="tiltX()"
+    [style.--tilt-y]="tiltY()"
+  >
+    <div class="hero__doodles" aria-hidden="true"></div>
+    <div class="hero__disc hero__disc--clay" aria-hidden="true"></div>
+    <div class="hero__disc hero__disc--ring" aria-hidden="true"></div>
 
-  <div class="hero__inner">
-    <div class="hero__copy">
-      <div class="hero__eyebrow">
-        <span class="hero__rule" aria-hidden="true"></span>
-        <span>{{ t().heroTag }}</span>
-      </div>
+    <p class="hero__kicker">{{ t().heroTag }}</p>
+    <h1 class="hero__title">{{ t().heroTitle }}</h1>
 
-      <h1 class="hero__title">{{ t().heroTitle }}</h1>
+    <div class="hero__pack">
+        <div class="hero__pack-tilt">
+          <img
+            class="hero__pack-img"
+            src="/Code_Generated_Image (1).png"
+            alt=""
+            width="430"
+            height="620"
+            fetchpriority="high"
+            (error)="onPackError()"
+          />
+          <span class="hero__pack-gloss" aria-hidden="true"></span>
+        </div>
+      
+       <!-- @else {
+        <div class="hero__pack-tilt">
+          <div class="hero__pack-fallback" aria-hidden="true"></div>
+        </div>
+      } -->
+      <div class="hero__pack-floor" aria-hidden="true"></div>
+    </div>
+
+    <div class="hero__aside">
+      <p class="hero__count">
+        <span class="hero__count-value">{{ community }}</span>
+        <span class="hero__count-label">{{ t().heroCommunity }}</span>
+      </p>
       <p class="hero__text">{{ t().heroText }}</p>
-
-      <div class="hero__ctas">
-        <a class="hero__cta hero__cta--primary" routerLink="/shop">{{ t().shopNow }}</a>
-        <a class="hero__cta hero__cta--ghost" routerLink="/about">{{ t().ourStory }}</a>
-      </div>
-
-      <div class="hero__stats">
-        @for (stat of stats; track stat.labelKey) {
-          <div class="hero__stat">
-            <span class="hero__stat-value"
-              >{{ stat.value }}{{ stat.unitKey ? ' ' + t()[stat.unitKey] : '' }}</span
-            >
-            <span class="hero__stat-label">{{ t()[stat.labelKey] }}</span>
-          </div>
-        }
-      </div>
+      <a class="hero__cta" routerLink="/shop">{{ t().shopNow }}</a>
     </div>
 
-    <div class="hero__media">
-      <div class="hero__frame" aria-hidden="true"></div>
-      <div class="hero__image" role="img" [attr.aria-label]="t().heroTitle">
-        <span class="hero__image-placeholder">{{ t().dropHero }}</span>
-      </div>
-      <div class="hero__badge">
-        <span class="hero__badge-rating">★ 4.8</span>
-        <span class="hero__badge-copy">
-          <span class="hero__badge-title">{{ t().freshBadge }}</span>
-          <span>{{ t().reviewsCount }}</span>
-        </span>
-      </div>
+    <div class="hero__seal">
+      <span class="hero__seal-title">{{ t().freshBadge }}</span>
+      <span class="hero__seal-sub">{{ t().freshSub }}</span>
     </div>
+
+    <a class="hero__more" routerLink="/about">{{ t().ourStory }}</a>
+  </div>
+
+  <div class="hero__stats">
+    @for (stat of stats; track stat.labelKey) {
+      <div class="hero__stat">
+        <span class="hero__stat-value"
+          >{{ stat.value }}{{ stat.unitKey ? ' ' + t()[stat.unitKey] : '' }}</span
+        >
+        <span class="hero__stat-label">{{ t()[stat.labelKey] }}</span>
+      </div>
+    }
   </div>
 </section>

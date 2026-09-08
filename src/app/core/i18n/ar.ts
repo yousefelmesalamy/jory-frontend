@@ -85,6 +85,7 @@ export const AR: Copy = {
   freshBadge: 'محمّصة اليوم',
   freshSub: 'تُشحن خلال 24 ساعة',
   dropHero: 'أفلت صورة الغلاف هنا',
+  heroCommunity: 'شخص يشربون جوري كل أسبوع',
   heroStatFarms: 'مزرعة شريكة',
   heroStatBatch: 'حجم الدفعة',
   heroStatDispatch: 'حتى الشحن',

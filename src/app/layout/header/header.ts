@@ -157,6 +157,10 @@ export class Header {
 
   readonly browseCategories = computed(() => this.categories().slice(0, BROWSE_CATEGORY_LIMIT));
 
+  /** Which browse-bar category's children dropdown is open, if any. Hover-driven
+   * and single-select — opening one implicitly closes any other. */
+  readonly openCategoryId = signal<number | null>(null);
+
   /** Everything, for the panel — the bar shows a slice, the panel the rest. */
   readonly allCategories = this.categories;
 
@@ -240,6 +244,14 @@ export class Header {
     this.menuOpen.set(false);
   }
 
+  openCategoryDropdown(categoryId: number): void {
+    this.openCategoryId.set(categoryId);
+  }
+
+  closeCategoryDropdown(): void {
+    this.openCategoryId.set(null);
+  }
+
   /**
    * The account menu opens on click, so it closes on a click elsewhere — not on
    * pointer-leave. Hover-to-close left an 8px dead strip between the button and
@@ -274,6 +286,7 @@ export class Header {
     this.menuOpen.set(false);
     this.accountOpen.set(false);
     this.loginMenuOpen.set(false);
+    this.openCategoryId.set(null);
   }
 
   openLogin(mode: AuthModalMode = 'login'): void {
