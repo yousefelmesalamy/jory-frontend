@@ -1,0 +1,110 @@
+@if (loading()) {
+  <section class="chart chart--loading" [attr.aria-label]="t().chartTitle" aria-busy="true">
+    <header class="chart__head">
+      <h2 class="chart__title">{{ t().chartTitle }}</h2>
+      <p class="chart__note">{{ t().chartNote }}</p>
+    </header>
+
+    <div class="chart__rail chart__rail--static">
+      @for (slot of skeletons; track slot) {
+        <div class="entry entry--ghost" [class.entry--lead]="slot === 0">
+          <div class="entry__media"></div>
+          <div class="entry__body">
+            <span class="ghost ghost--short"></span>
+            <span class="ghost ghost--wide"></span>
+            <span class="ghost ghost--narrow"></span>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+} @else if (products().length) {
+  <section class="chart">
+    <header class="chart__head">
+      <div class="chart__titles">
+        <h2 class="chart__title">{{ heading() }}</h2>
+        <p class="chart__note">{{ note() }}</p>
+      </div>
+
+      <div class="chart__tools">
+        @if (scrollable()) {
+          <div class="chart__steps">
+            <button
+              class="chart__step"
+              type="button"
+              [attr.aria-label]="t().chartPrevious"
+              [disabled]="atStart()"
+              (click)="scrollRail(-1)"
+            >
+              <span aria-hidden="true">‹</span>
+            </button>
+            <button
+              class="chart__step"
+              type="button"
+              [attr.aria-label]="t().chartNext"
+              [disabled]="atEnd()"
+              (click)="scrollRail(1)"
+            >
+              <span aria-hidden="true">›</span>
+            </button>
+          </div>
+        }
+        <a class="chart__all" routerLink="/shop" [queryParams]="allParams()">{{ allLabel() }}</a>
+      </div>
+    </header>
+
+    <ol class="chart__rail" #rail (scroll)="syncArrows()">
+      @for (product of products(); track product.id; let index = $index) {
+        <li
+          class="entry"
+          [class.entry--lead]="index === 0"
+          [class.entry--sold-out]="!product.in_stock"
+        >
+          <span class="entry__rank" aria-hidden="true">{{ index + 1 }}</span>
+
+          <a class="entry__link" [routerLink]="['/shop', product.slug]">
+            <span class="entry__rank-label">{{ rankLabel(index) }}</span>
+
+            <span class="entry__media">
+              @if (product.primary_image) {
+                <img
+                  class="entry__image"
+                  loading="lazy"
+                  [src]="product.primary_image.image"
+                  [alt]="product.primary_image.alt_text"
+                />
+              }
+              @if (!product.in_stock) {
+                <span class="entry__flag entry__flag--out">{{ t().outOfStock }}</span>
+              } @else if (product.is_on_sale) {
+                <span class="entry__flag">{{ t().badgeOnSale }}</span>
+              }
+            </span>
+
+            <span class="entry__body">
+              <span class="entry__category">{{ product.category.name }}</span>
+              <span class="entry__name">{{ product.name }}</span>
+              <span class="entry__desc">{{ product.short_description }}</span>
+
+              <span class="entry__foot">
+                <span class="entry__price">
+                  @if (product.compare_at_price_from) {
+                    <s class="entry__was">{{ product.compare_at_price_from }}</s>
+                  }
+                  {{ product.price_from }} <app-riyal-symbol />
+                </span>
+                @if (product.rating_count > 0) {
+                  <span class="entry__rating">
+                    <span class="entry__star" aria-hidden="true">★</span>{{ product.rating_avg }}
+                  </span>
+                }
+              </span>
+            </span>
+          </a>
+
+          <app-wishlist-toggle class="entry__wish" [productId]="product.id" />
+        </li>
+      }
+    </ol>
+  </section>
+}

@@ -342,9 +342,9 @@ $doodles: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' widt
 /* ------------------------------------------------------------- narrow views */
 
 @media (max-width: 1080px) {
-  .hero__stage {
-    padding: 40px 34px 44px;
-  }
+  // .hero__stage {
+  //   padding: 40px 34px 44px;
+  // }
 
   .hero__more {
     top: 40px;
@@ -359,7 +359,7 @@ $doodles: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' widt
 
 @media (max-width: 860px) {
   .hero {
-    padding: 16px 16px 0;
+    // padding: 16px 16px 0;
   }
 
   .hero__stage {
@@ -368,7 +368,7 @@ $doodles: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' widt
     row-gap: 26px;
     min-height: 0;
     padding: 34px 24px 40px;
-    border-radius: 32px;
+    // border-radius: 32px;
     text-align: center;
   }
 

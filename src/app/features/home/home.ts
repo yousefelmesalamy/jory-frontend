@@ -5,13 +5,13 @@ import { Product } from '../../core/models';
 import { CatalogService } from '../../core/services/catalog.service';
 import { GenericSection } from '../../shared/components/generic-section/generic-section';
 import { RevealOnScroll } from '../../shared/directives/reveal-on-scroll.directive';
-import { HomeFeaturedProducts } from './sections/featured-products/featured-products';
 import { HomeHero } from './sections/hero/hero';
 import { HomeLoyalty } from './sections/loyalty/loyalty';
 import { HomeMarquee } from './sections/marquee/marquee';
 import { HomeOrigins } from './sections/origins/origins';
 import { HomePerks } from './sections/perks/perks';
 import { HomeReviews } from './sections/reviews/reviews';
+import { HomeTopSellers } from './sections/top-sellers/top-sellers';
 
 /** Storefront landing page: a stack of product rows, all empty until fed. */
 @Component({
@@ -22,7 +22,7 @@ import { HomeReviews } from './sections/reviews/reviews';
     RevealOnScroll,
     HomeHero,
     HomePerks,
-    HomeFeaturedProducts,
+    HomeTopSellers,
     HomeMarquee,
     HomeOrigins,
     HomeLoyalty,

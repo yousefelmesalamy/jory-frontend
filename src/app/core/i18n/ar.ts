@@ -102,8 +102,15 @@ export const AR: Copy = {
   perkPointsSub: 'استبدلها بأكياس مجانية',
 
   // Home — sections
-  selection: 'مختاراتنا',
-  featured: 'الأكثر طلباً هذا الأسبوع',
+  chartTitle: 'الأكثر مبيعاً',
+  chartNote: 'مرتّبة حسب ما تم شحنه خلال الأيام السبعة الماضية.',
+  chartFreshTitle: 'وصل حديثاً',
+  chartFreshNote: 'أحدث ما وصل إلى طاولة المحمصة من قهوة ومعدات.',
+  chartAllRanked: 'اطّلع على الترتيب كاملاً',
+  chartAllNew: 'اطّلع على كل الجديد',
+  chartPrevious: 'المراتب السابقة',
+  chartNext: 'المراتب التالية',
+  chartRank: 'المرتبة',
   viewAll: 'عرض الكل ←',
   origins: 'المناشئ',
   originsTitle: 'من أوغندا إلى كولومبيا',
@@ -140,16 +147,8 @@ export const AR: Copy = {
   marquee4: 'معالجة طبيعية',
   marquee5: 'قهوة مختصة',
 
-  // Home — featured product badges and roast labels
-  badgeBestSeller: 'الأكثر مبيعاً',
+  // Product badges
   badgeRecommended: 'موصى به',
-  badgeLimited: 'إصدار محدود',
-  badgeClassic: 'كلاسيكي',
-  badgeLargeBag: 'كيس كبير',
-  badgeNew: 'جديد',
-  roastLight: 'تحميص فاتح',
-  roastMedium: 'تحميص متوسط',
-  roastDark: 'تحميص داكن',
   reviewsSuffix: 'تقييماً',
 
   // Home — subscription

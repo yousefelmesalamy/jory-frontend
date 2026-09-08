@@ -9,7 +9,7 @@ export interface Category {
   children: readonly Category[];
 }
 
-/** TODO: fill in remaining fields from the backend `OriginSerializer` once submitted. */
+/** Matches `OriginSerializer`. */
 export interface Origin {
   id: number;
   name: string;

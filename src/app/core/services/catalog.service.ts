@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import {
   Category,
   FacetResponse,
+  Origin,
   Paginated,
   Product,
   ProductDetail,
@@ -48,5 +49,10 @@ export class CatalogService {
   /** Unpaginated — the taxonomy is small enough to render whole. */
   listCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${this.apiUrl}/categories/`);
+  }
+
+  /** Unpaginated — the lookup table is small enough to render whole. */
+  listOrigins(): Observable<Origin[]> {
+    return this.http.get<Origin[]>(`${this.apiUrl}/origins/`);
   }
 }

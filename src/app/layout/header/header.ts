@@ -14,7 +14,7 @@ import { catchError, of, shareReplay } from 'rxjs';
 
 import type { Copy } from '../../core/i18n/en';
 import { TranslationService } from '../../core/i18n/translation.service';
-import { Category } from '../../core/models';
+import { Category, Origin } from '../../core/models';
 import { AuthService } from '../../core/services/auth.service';
 import { CartService } from '../../core/services/cart.service';
 import { CatalogService } from '../../core/services/catalog.service';
@@ -58,9 +58,22 @@ interface AccountLink {
   link: string;
 }
 
+/**
+ * A mega-panel link built from live API data rather than a translation key —
+ * the label is already in the current locale, so it's rendered as-is.
+ */
+interface DataMegaLink {
+  label: string;
+  link: string;
+  queryParams: Record<string, string>;
+}
+
 /** How many root categories the browse bar shows before the rest fall into the
  * mega panel. Beyond this the bar wraps and stops reading as one line. */
 const BROWSE_CATEGORY_LIMIT = 5;
+
+/** How many origins the mega panel's origins column shows. */
+const MEGA_ORIGIN_LIMIT = 5;
 
 /** Long enough to read a short line twice over. */
 const ANNOUNCE_INTERVAL_MS = 6000;
@@ -157,6 +170,29 @@ export class Header {
 
   readonly browseCategories = computed(() => this.categories().slice(0, BROWSE_CATEGORY_LIMIT));
 
+  /**
+   * The mega panel's origins column. Same degrade-to-empty approach as
+   * `categories` above, and the same `shareReplay` reasoning — nothing else
+   * in the header consumes this yet, but the pattern is cheap to keep aligned.
+   */
+  private readonly origins = toSignal(
+    this.catalog.listOrigins().pipe(
+      catchError(() => of<Origin[]>([])),
+      shareReplay({ bufferSize: 1, refCount: false }),
+    ),
+    { initialValue: [] as Origin[] },
+  );
+
+  readonly megaOriginLinks = computed<readonly DataMegaLink[]>(() =>
+    this.origins()
+      .slice(0, MEGA_ORIGIN_LIMIT)
+      .map((origin) => ({
+        label: origin.name,
+        link: '/shop',
+        queryParams: { origin: origin.slug },
+      })),
+  );
+
   /** Which browse-bar category's children dropdown is open, if any. Hover-driven
    * and single-select — opening one implicitly closes any other. */
   readonly openCategoryId = signal<number | null>(null);
@@ -164,21 +200,11 @@ export class Header {
   /** Everything, for the panel — the bar shows a slice, the panel the rest. */
   readonly allCategories = this.categories;
 
+  /** Title for the live-data origins column, rendered separately from `megaColumns`
+   * below since its links carry a rendered label rather than a translation key. */
+  readonly megaOriginsTitleKey: keyof Copy = 'megaOrigins';
+
   readonly megaColumns: readonly MegaColumn[] = [
-    {
-      titleKey: 'megaOrigins',
-      links: [
-        { key: 'originUganda', slug: 'uganda' },
-        { key: 'originColombia', slug: 'colombia' },
-        { key: 'originEthiopia', slug: 'ethiopia' },
-        { key: 'originBrazil', slug: 'brazil' },
-        { key: 'originKenya', slug: 'kenya' },
-      ].map(({ key, slug }) => ({
-        key: key as keyof Copy,
-        link: '/shop',
-        queryParams: { origin: slug },
-      })),
-    },
     {
       titleKey: 'megaBrew',
       links: [

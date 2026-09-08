@@ -106,8 +106,17 @@ export const EN = {
   perkPointsSub: 'Redeem for free bags',
 
   // Home — sections
-  selection: 'Our selection',
-  featured: 'Most ordered this week',
+  // The top-sellers rail. The "fresh" copy is what a shop with no sales yet
+  // shows, so it has to stand on its own rather than read as a failure.
+  chartTitle: 'Top sellers',
+  chartNote: 'Ranked by what shipped in the last seven days.',
+  chartFreshTitle: 'Just landed',
+  chartFreshNote: 'The newest coffee and gear on the roastery bench.',
+  chartAllRanked: 'See the full ranking',
+  chartAllNew: 'See everything new',
+  chartPrevious: 'Earlier ranks',
+  chartNext: 'Later ranks',
+  chartRank: 'Rank',
   viewAll: 'View all →',
   origins: 'Origins',
   originsTitle: 'From Uganda to Colombia',
@@ -147,18 +156,8 @@ export const EN = {
   marquee4: 'Natural process',
   marquee5: 'Specialty grade',
 
-  // Home — featured product badges and roast labels
-  // TODO: catalog content (names, notes, prices) is stub data, not from the copy deck —
-  // swap for real products once the backend ProductSerializer lands.
-  badgeBestSeller: 'Best seller',
+  // Product badges
   badgeRecommended: 'Recommended',
-  badgeLimited: 'Limited',
-  badgeClassic: 'Classic',
-  badgeLargeBag: 'Large bag',
-  badgeNew: 'New',
-  roastLight: 'Light roast',
-  roastMedium: 'Medium roast',
-  roastDark: 'Dark roast',
   reviewsSuffix: 'reviews',
 
   // Home — subscription

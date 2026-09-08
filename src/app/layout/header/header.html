@@ -283,6 +283,23 @@
           </div>
         }
 
+        @if (megaOriginLinks().length > 0) {
+          <div>
+            <div class="header__mega-title">{{ t()[megaOriginsTitleKey] }}</div>
+            <div class="header__mega-links">
+              @for (link of megaOriginLinks(); track link.queryParams['origin']) {
+                <a
+                  class="header__mega-link"
+                  [routerLink]="link.link"
+                  [queryParams]="link.queryParams"
+                  (click)="closeMenu()"
+                  >{{ link.label }}</a
+                >
+              }
+            </div>
+          </div>
+        }
+
         @for (column of megaColumns; track column.titleKey) {
           <div>
             <div class="header__mega-title">{{ t()[column.titleKey] }}</div>
