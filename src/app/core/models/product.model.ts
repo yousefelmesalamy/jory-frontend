@@ -119,6 +119,7 @@ export interface ProductFilters {
   roaster?: string;
   type?: ProductType;
   origin?: string;
+  flavor?: string;
   process?: CoffeeProcess;
   roast?: RoastLevel;
   brand?: string;

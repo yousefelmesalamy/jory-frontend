@@ -72,21 +72,9 @@ $danger-soft: #fbeaea;
   font-size: 14px;
 }
 
-.checkout__address-select {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid $line;
-  border-radius: 10px;
-  background: #fffaf0;
-  color: $ink;
-  font: inherit;
-  font-size: 14px;
-
-  &:focus-visible {
-    outline: 2px solid $gold;
-    outline-offset: 1px;
-  }
-}
+// The address dropdown's own look (border, background, focus ring) lives in
+// dropdown.scss — a page-level class can't reach inside a child component's
+// template, so a `.checkout__address-select` rule here would never match it.
 
 .checkout__manage-link {
   align-self: flex-start;

@@ -141,12 +141,13 @@
 
       <div class="filter-group">
         <label class="filter-group__label" for="filter-category">{{ t().filterCategory }}</label>
-        <select id="filter-category" class="filter-group__input" formControlName="category">
-          <option value="">{{ t().filterAllCategories }}</option>
-          @for (cat of categories(); track cat.id) {
-            <option [value]="cat.slug">{{ cat.name }}</option>
-          }
-        </select>
+        <app-dropdown
+          triggerId="filter-category"
+          triggerClass="filter-group__input"
+          formControlName="category"
+          [options]="categoryOptions()"
+          [ariaLabel]="t().filterCategory"
+        />
       </div>
 
       <fieldset class="filter-group">
@@ -191,16 +192,13 @@
           {{ productsResource.value()?.count ?? 0 }} {{ t().resultsSuffix }}
         </span>
 
-        <select class="shop__sort" formControlName="ordering" [attr.aria-label]="t().filterSort">
-          <option value="">{{ t().filterSort }}</option>
-          <option value="-created_at">{{ t().sortNewest }}</option>
-          <option value="created_at">{{ t().sortOldest }}</option>
-          <option value="price">{{ t().sortPriceLow }}</option>
-          <option value="-price">{{ t().sortPriceHigh }}</option>
-          <option value="-rating_avg">{{ t().sortRatingHigh }}</option>
-          <option value="name">{{ t().sortNameAZ }}</option>
-          <option value="-name">{{ t().sortNameZA }}</option>
-        </select>
+        <app-dropdown
+          class="shop__sort-field"
+          triggerClass="shop__sort"
+          formControlName="ordering"
+          [options]="sortOptions()"
+          [ariaLabel]="t().filterSort"
+        />
       </div>
 
       @if (appliedFilters().length) {

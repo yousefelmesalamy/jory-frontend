@@ -534,6 +534,13 @@ $pad: 56px;
   }
 }
 
+// The overflow link at the foot of the origins column — same size as the
+// origins above it, but read as an action rather than one more origin.
+.header__mega-link--more {
+  font-weight: 600;
+  color: $maroon;
+}
+
 .header__promo {
   display: flex;
   flex-direction: column;

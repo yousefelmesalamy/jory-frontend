@@ -70,6 +70,7 @@ export const EN = {
   brewFrench: 'French press',
   megaAllCoffee: 'All coffee',
   megaCategories: 'Categories',
+  megaAllOrigins: 'All origins',
   megaYourCart: 'Your cart',
   megaYourWishlist: 'Your wishlist',
   megaPromoTag: 'New',
@@ -177,6 +178,12 @@ export const EN = {
   crumbCategories: 'Home / Categories',
   categoriesTitle: 'Shop by category',
   categoriesLead: 'Coffee, equipment and everything in between, sorted the way you browse.',
+
+  // Origins — the index page. Not to be confused with `origins`/`originsTitle`
+  // above, which are the home page's origins section.
+  crumbOrigins: 'Home / Origins',
+  originsPageTitle: 'Shop by origin',
+  originsPageLead: 'Every country we buy green coffee from, and everything we are roasting from each.',
 
   // Wishlist
   crumbWishlist: 'Home / Wishlist',
@@ -383,6 +390,7 @@ export const EN = {
   retry: 'Try again',
   emptyProducts: 'No products match that.',
   emptyCategories: 'No categories yet.',
+  emptyOrigins: 'No origins yet.',
   emptyCart: 'Your cart is empty.',
   emptyWishlist: 'Nothing in your wishlist yet.',
   emptyOrders: "You haven't placed an order yet.",

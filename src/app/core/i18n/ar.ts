@@ -64,8 +64,9 @@ export const AR: Copy = {
   brewV60: 'قمع V60',
   brewChemex: 'كيمكس',
   brewFrench: 'فرنسية',
-  megaAllCoffee: 'كل القهوة',
+  megaAllCoffee: 'كل المنتجات',
   megaCategories: 'التصنيفات',
+  megaAllOrigins: 'كل المناشئ',
   megaYourCart: 'سلتك',
   megaYourWishlist: 'مفضلتك',
   megaPromoTag: 'جديد',
@@ -168,6 +169,11 @@ export const AR: Copy = {
   crumbCategories: 'الرئيسية / التصنيفات',
   categoriesTitle: 'تسوّق حسب التصنيف',
   categoriesLead: 'القهوة والمعدات وكل ما بينهما، مرتّبة بالطريقة التي تتصفح بها.',
+
+  // Origins
+  crumbOrigins: 'الرئيسية / المناشئ',
+  originsPageTitle: 'تسوّق حسب المنشأ',
+  originsPageLead: 'كل بلد نشتري منه القهوة الخضراء، وكل ما نحمّصه منها.',
 
   // Wishlist
   crumbWishlist: 'الرئيسية / المفضلة',
@@ -374,6 +380,7 @@ export const AR: Copy = {
   retry: 'إعادة المحاولة',
   emptyProducts: 'لا توجد منتجات مطابقة.',
   emptyCategories: 'لا توجد تصنيفات بعد.',
+  emptyOrigins: 'لا توجد مناشئ بعد.',
   emptyCart: 'سلتك فارغة.',
   emptyWishlist: 'لا توجد منتجات في المفضلة بعد.',
   emptyOrders: 'لم تقم بأي طلب حتى الآن.',
@@ -386,7 +393,7 @@ export const AR: Copy = {
   // Footer
   footerAbout: 'محمصة جوري للقهوة المختصة — نختار، نحمّص، ونشحن طازجاً من الرياض إلى باب منزلك.',
   footerShop: 'المتجر',
-  footerAllCoffee: 'كل القهوة',
+  footerAllCoffee: 'كل المنتجات',
   footerSubscriptions: 'الاشتراكات',
   footerBrewingGear: 'أدوات التحضير',
   footerGiftCards: 'بطاقات الهدايا',

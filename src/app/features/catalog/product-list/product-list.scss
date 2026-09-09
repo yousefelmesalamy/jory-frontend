@@ -53,6 +53,7 @@ $label: #8a7361;
   flex-wrap: wrap;
   gap: 28px 22px;
   margin-block-end: 32px;
+  justify-content: center;
 }
 
 .subcat-tile {
@@ -356,7 +357,6 @@ $label: #8a7361;
 .roast__chip:focus-visible,
 .switch input:focus-visible + .switch__track,
 .applied__chip:focus-visible,
-.shop__sort:focus-visible,
 .product-tile__link:focus-visible {
   outline: 2px solid $gold;
   outline-offset: 2px;
@@ -386,18 +386,15 @@ $label: #8a7361;
   font-size: 14px;
 }
 
-.shop__sort {
+/* The trigger's own look (border, background, focus ring) lives in
+   dropdown.scss — a page-level class can't reach inside a child component's
+   template, so `.shop__sort` never actually matched the button. This is only
+   the toolbar-flex-child sizing that does apply, to the host element itself. */
+.shop__sort-field {
   // Without this the longest option sets the width and pushes off a phone screen.
   min-width: 0;
   max-width: 100%;
-  padding: 9px 12px;
-  border: 1px solid $line;
-  border-radius: 10px;
-  font-size: 14px;
-  font-family: inherit;
-  background: $card;
-  color: $ink;
-  cursor: pointer;
+  flex-shrink: 1;
 }
 
 /* Applied filters, each one removable. */
@@ -479,6 +476,7 @@ $label: #8a7361;
 .product-tile__image {
   width: 100%;
   height: 100%;
+  padding: 5%;
   object-fit: cover;
   transition: transform 400ms ease;
 }

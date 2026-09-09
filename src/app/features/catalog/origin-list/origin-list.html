@@ -1,0 +1,18 @@
+<div class="origins">
+  <header class="origins__head">
+    <p class="origins__crumb">{{ t().crumbOrigins }}</p>
+    <h1 class="origins__title">{{ t().originsPageTitle }}</h1>
+    <p class="origins__lead">{{ t().originsPageLead }}</p>
+  </header>
+
+  <app-generic-list [items]="origins()" [emptyMessage]="t().emptyOrigins">
+    <ng-template #item let-origin let-index="index">
+      <a class="origin-tile" [routerLink]="['/shop']" [queryParams]="{ origin: origin.slug }">
+        <span class="origin-tile__avatar" [style.background]="swatch(index)">
+          <span class="origin-tile__initial" aria-hidden="true">{{ origin.name.charAt(0) }}</span>
+        </span>
+        <span class="origin-tile__name">{{ origin.name }}</span>
+      </a>
+    </ng-template>
+  </app-generic-list>
+</div>

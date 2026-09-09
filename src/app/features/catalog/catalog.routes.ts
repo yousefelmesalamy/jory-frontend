@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
-/** `categories` sits before `:slug` so the literal segment wins the match. */
+/** `categories` and `origins` sit before `:slug` so the literal segments win the
+ * match. */
 export const CATALOG_ROUTES: Routes = [
   {
     path: '',
@@ -9,6 +10,10 @@ export const CATALOG_ROUTES: Routes = [
   {
     path: 'categories',
     loadComponent: () => import('./category-list/category-list').then((m) => m.CategoryList),
+  },
+  {
+    path: 'origins',
+    loadComponent: () => import('./origin-list/origin-list').then((m) => m.OriginList),
   },
   {
     path: ':slug',

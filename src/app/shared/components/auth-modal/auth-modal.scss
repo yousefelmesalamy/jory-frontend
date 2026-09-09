@@ -26,7 +26,7 @@
   border-radius: 22px;
   background: field.$panel;
   box-shadow: 0 30px 70px rgba(43, 24, 18, 0.35);
-  overflow: hidden;
+  overflow: scroll;
 
   &:focus {
     outline: none;
@@ -39,6 +39,7 @@
   display: flex;
   flex-direction: column;
   gap: 22px;
+  min-height: 0;
   padding: 34px 26px;
   background:
     radial-gradient(circle at 1px 1px, rgba(211, 164, 95, 0.18) 1px, transparent 0) 0 0 / 14px 14px,
@@ -89,8 +90,11 @@
 
 .auth-modal__panel {
   position: relative;
+  min-height: 0;
   padding: 30px 32px 32px;
-  overflow-y: auto;
+  // overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .auth-modal__close {
@@ -209,6 +213,7 @@
     max-width: none;
     max-height: 100dvh;
     border-radius: 20px 20px 0 0;
+    overflow: auto;
   }
 
   .auth-modal__aside {

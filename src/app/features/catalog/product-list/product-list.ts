@@ -7,6 +7,7 @@ import { debounceTime, firstValueFrom } from 'rxjs';
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { Category, Facet, Product, ProductFilters } from '../../../core/models';
 import { CatalogService } from '../../../core/services/catalog.service';
+import { Dropdown, DropdownOption } from '../../../shared/components/dropdown/dropdown';
 import { GenericCard } from '../../../shared/components/generic-card/generic-card';
 import { GenericList } from '../../../shared/components/generic-list/generic-list';
 import { RiyalSymbol } from '../../../shared/components/riyal-symbol/riyal-symbol';
@@ -37,6 +38,7 @@ const PARAMS_BY_FACET: Record<string, string> = {
   roast: 'roast',
   process: 'process',
   origin: 'origin',
+  flavor: 'flavor',
   roaster: 'roaster',
   brand: 'brand',
   machine_type: 'machine_type',
@@ -65,7 +67,15 @@ interface AppliedFilter {
  */
 @Component({
   selector: 'app-product-list',
-  imports: [RouterLink, ReactiveFormsModule, GenericList, GenericCard, RiyalSymbol, WishlistToggle],
+  imports: [
+    RouterLink,
+    ReactiveFormsModule,
+    GenericList,
+    GenericCard,
+    RiyalSymbol,
+    WishlistToggle,
+    Dropdown,
+  ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.scss',
 })
@@ -83,6 +93,7 @@ export class ProductList {
   readonly roaster = input('');
   readonly type = input('');
   readonly origin = input('');
+  readonly flavor = input('');
   readonly process = input('');
   readonly roast = input('');
   readonly brand = input('');
@@ -128,6 +139,7 @@ export class ProductList {
     roaster: [''],
     type: [''],
     origin: [''],
+    flavor: [''],
     process: [''],
     roast: [''],
     brand: [''],
@@ -167,12 +179,31 @@ export class ProductList {
     { value: 'year', label: this.t().bestSellingYear },
   ]);
 
+  /** The sidebar dropdown lists roots only — a child is reached from the
+   * subcategory row above the grid, not from here. */
+  protected readonly categoryOptions = computed<DropdownOption[]>(() => [
+    { value: '', label: this.t().filterAllCategories },
+    ...this.categories().map((cat) => ({ value: cat.slug, label: cat.name })),
+  ]);
+
+  protected readonly sortOptions = computed<DropdownOption[]>(() => [
+    { value: '', label: this.t().filterSort },
+    { value: '-created_at', label: this.t().sortNewest },
+    { value: 'created_at', label: this.t().sortOldest },
+    { value: 'price', label: this.t().sortPriceLow },
+    { value: '-price', label: this.t().sortPriceHigh },
+    { value: '-rating_avg', label: this.t().sortRatingHigh },
+    { value: 'name', label: this.t().sortNameAZ },
+    { value: '-name', label: this.t().sortNameZA },
+  ]);
+
   private readonly filters = computed<ProductFilters>(() => ({
     search: this.search() || undefined,
     category: this.category() || undefined,
     roaster: this.roaster() || undefined,
     type: (this.type() || undefined) as ProductFilters['type'],
     origin: this.origin() || undefined,
+    flavor: this.flavor() || undefined,
     process: (this.process() || undefined) as ProductFilters['process'],
     roast: (this.roast() || undefined) as ProductFilters['roast'],
     brand: this.brand() || undefined,
@@ -250,6 +281,9 @@ export class ProductList {
     if (this.origin()) {
       chips.push({ control: 'origin', label: optionLabel('origin', this.origin()) });
     }
+    if (this.flavor()) {
+      chips.push({ control: 'flavor', label: optionLabel('flavor', this.flavor()) });
+    }
     if (this.bestSelling()) {
       chips.push({
         control: 'bestSelling',
@@ -281,6 +315,7 @@ export class ProductList {
           roaster: this.roaster(),
           type: this.type(),
           origin: this.origin(),
+          flavor: this.flavor(),
           process: this.process(),
           roast: this.roast(),
           brand: this.brand(),
@@ -332,6 +367,7 @@ export class ProductList {
           roaster: value.roaster || null,
           type: value.type || null,
           origin: value.origin || null,
+          flavor: value.flavor || null,
           process: value.process || null,
           roast: value.roast || null,
           brand: value.brand || null,

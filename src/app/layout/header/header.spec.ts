@@ -7,7 +7,7 @@ import { AR } from '../../core/i18n/ar';
 import { EN } from '../../core/i18n/en';
 import { LOCALE_COOKIE } from '../../core/i18n/locale';
 import { TranslationService } from '../../core/i18n/translation.service';
-import { Category, User } from '../../core/models';
+import { Category, Origin, User } from '../../core/models';
 import { AuthService } from '../../core/services/auth.service';
 import { Header } from './header';
 
@@ -33,20 +33,53 @@ function category(id: number, name: string, slug: string): Category {
 
 const CATEGORIES: Category[] = [category(1, 'Beans', 'beans'), category(2, 'Grinders', 'grinders')];
 
+function origin(id: number, name: string, slug: string): Origin {
+  return { id, name, slug };
+}
+
+const ORIGINS: Origin[] = [origin(1, 'Uganda', 'uganda'), origin(2, 'Colombia', 'colombia')];
+
+/** One more than `MEGA_ORIGIN_LIMIT`, so the column has to hide one. */
+const MANY_ORIGINS: Origin[] = [
+  ...ORIGINS,
+  origin(3, 'Ethiopia', 'ethiopia'),
+  origin(4, 'Brazil', 'brazil'),
+  origin(5, 'Kenya', 'kenya'),
+  origin(6, 'Rwanda', 'rwanda'),
+];
+
 /**
- * Drains the two calls the header makes on construction — the cart, and the
- * taxonomy the browse bar renders. Both must be answered before any assertion,
- * or `httpMock.verify()` fails on the leftover.
+ * Drains the three calls the header makes on construction — the cart, the
+ * taxonomy the browse bar renders, and the origins the mega panel lists. All
+ * must be answered before any assertion, or `httpMock.verify()` fails on the
+ * leftover.
  */
 async function bootstrap(
   fixture: ComponentFixture<Header>,
   httpMock: HttpTestingController,
   categories: Category[] = CATEGORIES,
+  origins: Origin[] = ORIGINS,
 ): Promise<void> {
   await fixture.whenStable();
   httpMock.expectOne('/api/cart/').flush(EMPTY_CART);
   httpMock.expectOne('/api/categories/').flush(categories);
+  httpMock.expectOne('/api/origins/').flush(origins);
   await fixture.whenStable();
+}
+
+/**
+ * The rendered links of the mega panel's origins column, found by its title
+ * rather than its position — the columns are undifferentiated `div`s, and an
+ * index would silently follow the wrong one if a column were ever inserted.
+ */
+function originColumnLabels(fixture: ComponentFixture<Header>): string[] {
+  const title = [...fixture.nativeElement.querySelectorAll('.header__mega-title')].find(
+    (el) => (el as HTMLElement).textContent!.trim() === AR.megaOrigins,
+  ) as HTMLElement | undefined;
+
+  return [...(title?.parentElement?.querySelectorAll('.header__mega-link') ?? [])].map((link) =>
+    (link as HTMLElement).textContent!.trim(),
+  );
 }
 
 describe('Header', () => {
@@ -133,12 +166,27 @@ describe('Header', () => {
     const titles = [...fixture.nativeElement.querySelectorAll('.header__mega-title')].map((el) =>
       (el as HTMLElement).textContent!.trim(),
     );
-    // The live-category column leads, then the three hardcoded ones.
-    expect(titles).toEqual([AR.megaCategories, AR.megaOrigins, AR.megaBrew, AR.megaShop]);
+    // The two live-data columns lead — categories, then origins — and the
+    // hardcoded shop column closes.
+    expect(titles).toEqual([AR.megaCategories, AR.megaOrigins, AR.megaShop]);
 
     expect(fixture.nativeElement.querySelector('.header__promo-title').textContent.trim()).toBe(
       AR.megaPromoTitle,
     );
+  });
+
+  it('links the shop column to the origins index', () => {
+    const link: HTMLAnchorElement = fixture.nativeElement.querySelector(
+      '.header__mega-link[href="/shop/origins"]',
+    );
+    expect(link).toBeTruthy();
+    expect(link.textContent!.trim()).toBe(AR.megaAllOrigins);
+  });
+
+  it('lists the live origins without an overflow link while they all fit', () => {
+    const labels = originColumnLabels(fixture);
+    expect(labels).toEqual(['Uganda', 'Colombia']);
+    expect(fixture.nativeElement.querySelector('.header__mega-link--more')).toBeNull();
   });
 
   it('opens the mega panel from the browse trigger and closes it again', async () => {
@@ -252,6 +300,41 @@ describe('Header — announcement strip', () => {
   });
 });
 
+describe('Header — more origins than the column shows', () => {
+  let fixture: ComponentFixture<Header>;
+
+  beforeEach(async () => {
+    document.cookie = `${LOCALE_COOKIE}=; path=/; max-age=0`;
+    Object.defineProperty(navigator, 'languages', { value: ['ar-SA'], configurable: true });
+
+    await TestBed.configureTestingModule({
+      imports: [Header],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(Header);
+    await bootstrap(fixture, TestBed.inject(HttpTestingController), CATEGORIES, MANY_ORIGINS);
+  });
+
+  afterEach(() => localStorage.clear());
+
+  it('caps the column and sends the rest to the origins index', () => {
+    expect(originColumnLabels(fixture)).toEqual([
+      'Uganda',
+      'Colombia',
+      'Ethiopia',
+      'Brazil',
+      'Kenya',
+      AR.megaAllOrigins,
+    ]);
+
+    const more: HTMLAnchorElement = fixture.nativeElement.querySelector(
+      '.header__mega-link--more',
+    );
+    expect(more.getAttribute('href')).toBe('/shop/origins');
+  });
+});
+
 describe('Header — degraded catalog', () => {
   let fixture: ComponentFixture<Header>;
 
@@ -269,6 +352,7 @@ describe('Header — degraded catalog', () => {
     await fixture.whenStable();
     httpMock.expectOne('/api/cart/').flush(EMPTY_CART);
     httpMock.expectOne('/api/categories/').flush(null, { status: 500, statusText: 'Server Error' });
+    httpMock.expectOne('/api/origins/').flush(null, { status: 500, statusText: 'Server Error' });
     await fixture.whenStable();
   });
 

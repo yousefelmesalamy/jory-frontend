@@ -1,7 +1,9 @@
+import { DOCUMENT } from '@angular/common';
 import {
   Component,
   ElementRef,
   HostListener,
+  OnDestroy,
   afterNextRender,
   computed,
   inject,
@@ -25,8 +27,9 @@ export type AuthModalMode = 'login' | 'register';
   templateUrl: './auth-modal.html',
   styleUrl: './auth-modal.scss',
 })
-export class AuthModal {
+export class AuthModal implements OnDestroy {
   private readonly translation = inject(TranslationService);
+  private readonly document = inject(DOCUMENT);
   readonly t = this.translation.t;
 
   /** Which form to open with; switching tabs afterwards is local to this instance. */
@@ -45,10 +48,19 @@ export class AuthModal {
 
   private readonly dialog = viewChild.required<ElementRef<HTMLElement>>('dialog');
 
+  private readonly previousBodyOverflow = this.document.body.style.overflow;
+
   constructor() {
     // Opening moves focus into the dialog, so Escape and the tab order start
     // here rather than back on the page behind it.
     afterNextRender(() => this.dialog().nativeElement.focus({ preventScroll: true }));
+    // Without this, a scroll gesture that reaches the panel's edge chains
+    // into the page behind the backdrop instead of stopping there.
+    this.document.body.style.overflow = 'hidden';
+  }
+
+  ngOnDestroy(): void {
+    this.document.body.style.overflow = this.previousBodyOverflow;
   }
 
   protected switchTo(mode: AuthModalMode): void {

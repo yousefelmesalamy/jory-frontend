@@ -172,8 +172,7 @@ export class Header {
 
   /**
    * The mega panel's origins column. Same degrade-to-empty approach as
-   * `categories` above, and the same `shareReplay` reasoning — nothing else
-   * in the header consumes this yet, but the pattern is cheap to keep aligned.
+   * `categories` above, and the same `shareReplay` reasoning.
    */
   private readonly origins = toSignal(
     this.catalog.listOrigins().pipe(
@@ -193,6 +192,10 @@ export class Header {
       })),
   );
 
+  /** Whether the column is hiding origins behind its limit — the "all origins"
+   * link at the foot of the column only earns its place if it is. */
+  readonly hasMoreOrigins = computed(() => this.origins().length > MEGA_ORIGIN_LIMIT);
+
   /** Which browse-bar category's children dropdown is open, if any. Hover-driven
    * and single-select — opening one implicitly closes any other. */
   readonly openCategoryId = signal<number | null>(null);
@@ -206,23 +209,11 @@ export class Header {
 
   readonly megaColumns: readonly MegaColumn[] = [
     {
-      titleKey: 'megaBrew',
-      links: [
-        { key: 'brewEspresso', slug: 'espresso' },
-        { key: 'brewV60', slug: 'v60' },
-        { key: 'brewChemex', slug: 'chemex' },
-        { key: 'brewFrench', slug: 'french-press' },
-      ].map(({ key, slug }) => ({
-        key: key as keyof Copy,
-        link: '/shop',
-        queryParams: { brew: slug },
-      })),
-    },
-    {
       titleKey: 'megaShop',
       links: [
         { key: 'megaAllCoffee', link: '/shop' },
         { key: 'megaCategories', link: '/shop/categories' },
+        { key: 'megaAllOrigins', link: '/shop/origins' },
         { key: 'megaYourCart', link: '/cart' },
         { key: 'megaYourWishlist', link: '/wishlist' },
       ],
@@ -249,6 +240,7 @@ export class Header {
 
   toggleLanguage(): void {
     this.translation.toggle();
+    window.location.reload()
   }
 
   /** Wraps, so the strip cycles rather than dead-ending on the last message. */

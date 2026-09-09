@@ -19,11 +19,12 @@
         <p class="checkout__empty">{{ t().emptyAddresses }}</p>
         <a class="checkout__manage-link" routerLink="/account/addresses">{{ t().addressAdd }}</a>
       } @else {
-        <select class="checkout__address-select" formControlName="addressId">
-          @for (address of addresses(); track address.id) {
-            <option [ngValue]="address.id">{{ addressLabel(address) }}</option>
-          }
-        </select>
+        <app-dropdown
+          triggerClass="checkout__address-select"
+          formControlName="addressId"
+          [options]="addressOptions()"
+          [ariaLabel]="t().shipping"
+        />
         <a class="checkout__manage-link" routerLink="/account/addresses">{{ t().addressManage }}</a>
       }
     </section>

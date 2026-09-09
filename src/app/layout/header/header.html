@@ -296,6 +296,14 @@
                   >{{ link.label }}</a
                 >
               }
+              @if (hasMoreOrigins()) {
+                <a
+                  class="header__mega-link header__mega-link--more"
+                  routerLink="/shop/origins"
+                  (click)="closeMenu()"
+                  >{{ t().megaAllOrigins }}</a
+                >
+              }
             </div>
           </div>
         }

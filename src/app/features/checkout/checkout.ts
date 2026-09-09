@@ -9,13 +9,14 @@ import { Address, ApiError, CartItem } from '../../core/models';
 import { AddressService } from '../../core/services/address.service';
 import { CartService } from '../../core/services/cart.service';
 import { OrderService } from '../../core/services/order.service';
+import { Dropdown, DropdownOption } from '../../shared/components/dropdown/dropdown';
 import { RiyalSymbol } from '../../shared/components/riyal-symbol/riyal-symbol';
 
 /** Cash on delivery only — the form picks a saved address and nothing else;
  * the order's own totals come straight from the live cart. */
 @Component({
   selector: 'app-checkout',
-  imports: [ReactiveFormsModule, RouterLink, RiyalSymbol],
+  imports: [ReactiveFormsModule, RouterLink, RiyalSymbol, Dropdown],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
 })
@@ -44,6 +45,10 @@ export class Checkout {
     () => this.addressesResource.value()?.results ?? [],
   );
   protected readonly loadingAddresses = computed(() => this.addressesResource.isLoading());
+
+  protected readonly addressOptions = computed<DropdownOption[]>(() =>
+    this.addresses().map((address) => ({ value: address.id, label: this.addressLabel(address) })),
+  );
 
   protected readonly form = this.fb.nonNullable.group({
     addressId: [0, [Validators.required, Validators.min(1)]],
