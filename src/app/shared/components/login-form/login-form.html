@@ -70,6 +70,10 @@
     }
   </div>
 
+  <button class="forgot" type="button" (click)="forgotPassword.emit()">
+    {{ t().authForgotPassword }}
+  </button>
+
   @if (errorMessage()) {
     <p class="form__error" role="alert">{{ errorMessage() }}</p>
   }

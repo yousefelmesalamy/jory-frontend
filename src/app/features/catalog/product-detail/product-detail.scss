@@ -334,6 +334,8 @@ $label: #a08659;
   gap: 14px;
   flex: 1;
   min-width: 240px;
+      flex-wrap: wrap;
+
 }
 
 // Matches the buy box's other 44px-tall controls; the toggle's own default is sized for a card corner.

@@ -57,43 +57,59 @@
         </svg>
       </button>
 
-      <div class="auth-modal__tabs" [attr.aria-label]="t().authModeSwitchAria" role="group">
-        <span
-          class="auth-modal__tab-indicator"
-          [class.auth-modal__tab-indicator--register]="activeMode() === 'register'"
-          aria-hidden="true"
-        ></span>
-        <button
-          class="auth-modal__tab"
-          type="button"
-          [class.is-active]="activeMode() === 'login'"
-          [attr.aria-pressed]="activeMode() === 'login'"
-          (click)="switchTo('login')"
-        >
-          {{ t().authLogin }}
-        </button>
-        <button
-          class="auth-modal__tab"
-          type="button"
-          [class.is-active]="activeMode() === 'register'"
-          [attr.aria-pressed]="activeMode() === 'register'"
-          (click)="switchTo('register')"
-        >
-          {{ t().authSwitchToRegister }}
-        </button>
-      </div>
+      @if (activeMode() !== 'forgot') {
+        <div class="auth-modal__tabs" [attr.aria-label]="t().authModeSwitchAria" role="group">
+          <span
+            class="auth-modal__tab-indicator"
+            [class.auth-modal__tab-indicator--register]="activeMode() === 'register'"
+            aria-hidden="true"
+          ></span>
+          <button
+            class="auth-modal__tab"
+            type="button"
+            [class.is-active]="activeMode() === 'login'"
+            [attr.aria-pressed]="activeMode() === 'login'"
+            (click)="switchTo('login')"
+          >
+            {{ t().authLogin }}
+          </button>
+          <button
+            class="auth-modal__tab"
+            type="button"
+            [class.is-active]="activeMode() === 'register'"
+            [attr.aria-pressed]="activeMode() === 'register'"
+            (click)="switchTo('register')"
+          >
+            {{ t().authSwitchToRegister }}
+          </button>
+        </div>
+      }
 
       <h2 id="auth-modal-title" class="auth-modal__title">
-        {{ activeMode() === 'login' ? t().authLoginTitle : t().authRegisterTitle }}
+        @switch (activeMode()) {
+          @case ('login') {
+            {{ t().authLoginTitle }}
+          }
+          @case ('forgot') {
+            {{ t().authForgotTitle }}
+          }
+          @default {
+            {{ t().authRegisterTitle }}
+          }
+        }
       </h2>
-      <p class="auth-modal__subtitle">
-        {{ activeMode() === 'login' ? t().authLoginSubtitle : t().authRegisterSubtitle }}
-      </p>
+      @if (activeMode() !== 'forgot') {
+        <p class="auth-modal__subtitle">
+          {{ activeMode() === 'login' ? t().authLoginSubtitle : t().authRegisterSubtitle }}
+        </p>
+      }
 
       @if (activeMode() === 'login') {
-        <app-login-form (success)="onSuccess($event)" />
-      } @else {
+        <app-login-form (success)="onSuccess($event)" (forgotPassword)="showForgot()" />
+      } @else if (activeMode() === 'register') {
         <app-register-form (success)="onSuccess($event)" />
+      } @else {
+        <app-forgot-password-form (backToLogin)="switchTo('login')" />
       }
     </div>
   </div>

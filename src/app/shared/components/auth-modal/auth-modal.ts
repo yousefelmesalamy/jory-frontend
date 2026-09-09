@@ -15,15 +15,22 @@ import {
 
 import { TranslationService } from '../../../core/i18n/translation.service';
 import { User } from '../../../core/models';
+import { ForgotPasswordForm } from '../forgot-password-form/forgot-password-form';
 import { LoginForm } from '../login-form/login-form';
 import { RegisterForm } from '../register-form/register-form';
 
 export type AuthModalMode = 'login' | 'register';
 
+/**
+ * `AuthModalMode` stays the *entry* mode — nothing opens the modal straight
+ * into the forgot state, it is only ever reached from the login form.
+ */
+type ActiveMode = AuthModalMode | 'forgot';
+
 /** Overlay wrapping `LoginForm`/`RegisterForm`, with a tab to flip between them. */
 @Component({
   selector: 'app-auth-modal',
-  imports: [LoginForm, RegisterForm],
+  imports: [LoginForm, RegisterForm, ForgotPasswordForm],
   templateUrl: './auth-modal.html',
   styleUrl: './auth-modal.scss',
 })
@@ -38,7 +45,7 @@ export class AuthModal implements OnDestroy {
   readonly closed = output<void>();
   readonly authenticated = output<User>();
 
-  protected readonly activeMode = linkedSignal(() => this.mode());
+  protected readonly activeMode = linkedSignal<ActiveMode>(() => this.mode());
 
   /** What an account is actually for — a set, not a sequence, hence no numbering. */
   protected readonly perks = computed(() => {
@@ -65,6 +72,10 @@ export class AuthModal implements OnDestroy {
 
   protected switchTo(mode: AuthModalMode): void {
     this.activeMode.set(mode);
+  }
+
+  protected showForgot(): void {
+    this.activeMode.set('forgot');
   }
 
   protected onSuccess(user: User): void {

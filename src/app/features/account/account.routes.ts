@@ -17,6 +17,14 @@ export const ACCOUNT_ROUTES: Routes = [
     loadComponent: () => import('./register/register').then((m) => m.Register),
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./forgot-password/forgot-password').then((m) => m.ForgotPassword),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./reset-password/reset-password').then((m) => m.ResetPassword),
+  },
+  {
     path: 'profile',
     canActivate: [authGuard],
     loadComponent: () => import('./profile/profile').then((m) => m.Profile),

@@ -446,6 +446,27 @@ export const EN = {
   authFieldEmail: 'Enter a valid email address.',
   authPasswordMismatch: 'Passwords do not match.',
   authGenericError: 'Something went wrong. Please try again.',
+  authForgotPassword: 'Forgot password?',
+  authForgotTitle: 'Reset your password',
+  authForgotSubtitle: "Enter your email and we'll send you a link.",
+  authForgotSubmit: 'Send reset link',
+  authForgotSentTitle: 'Check your email',
+  authForgotSentBody:
+    'If that email has an account, a reset link is on its way. It expires in one hour.',
+  authForgotThrottled: 'Too many attempts. Please wait a while before trying again.',
+  authBackToLogin: 'Back to log in',
+  authResetTitle: 'Choose a new password',
+  authResetSubtitle: 'Pick something you have not used here before.',
+  authNewPassword: 'New password',
+  authNewPasswordConfirm: 'Confirm new password',
+  authResetSubmit: 'Update password',
+  authResetChecking: 'Checking your link…',
+  authResetSuccessTitle: 'Password updated',
+  authResetSuccessBody: 'You can now log in with your new password.',
+  authResetInvalidTitle: 'This link has expired',
+  authResetInvalidBody:
+    'Reset links last one hour. Request a new one and we will send it right over.',
+  authResetRequestNew: 'Request a new link',
 
   // Auth: the panel beside the form, and the tabs above it
   authLoginSubtitle: 'Pick up where you left off.',

@@ -1,7 +1,7 @@
 <section class="login">
   <h1 class="login__title">{{ t().authLoginTitle }}</h1>
 
-  <app-login-form (success)="onSuccess()" />
+  <app-login-form (success)="onSuccess()" (forgotPassword)="onForgotPassword()" />
 
   <p class="login__switch">
     {{ t().authNoAccount }}

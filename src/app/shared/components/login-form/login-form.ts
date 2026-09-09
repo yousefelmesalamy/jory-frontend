@@ -23,6 +23,13 @@ export class LoginForm {
   /** Fires once login succeeds, so the host (modal or routed page) can move on. */
   readonly success = output<User>();
 
+  /**
+   * The host decides what this means: the modal switches to its forgot state,
+   * the routed login page navigates. The form itself never navigates, which is
+   * what keeps one link working in both places.
+   */
+  readonly forgotPassword = output<void>();
+
   protected readonly submitting = signal(false);
   protected readonly errorMessage = signal('');
   protected readonly passwordVisible = signal(false);

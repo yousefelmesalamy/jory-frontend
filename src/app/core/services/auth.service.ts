@@ -146,6 +146,36 @@ export class AuthService {
     });
   }
 
+  /**
+   * The API answers identically whether or not the address has an account, so
+   * there is nothing here to branch on — the caller shows the same "check your
+   * email" either way.
+   */
+  requestPasswordReset(email: string): Observable<{ detail: string }> {
+    return this.http.post<{ detail: string }>(`${this.apiUrl}/auth/password-reset/`, { email });
+  }
+
+  /** Lets the reset page detect a dead link on load instead of on submit. */
+  verifyResetToken(uid: string, token: string): Observable<{ valid: boolean }> {
+    return this.http.post<{ valid: boolean }>(`${this.apiUrl}/auth/password-reset/verify/`, {
+      uid,
+      token,
+    });
+  }
+
+  /** Deliberately does not sign the user in — they log in with the new password. */
+  confirmPasswordReset(
+    uid: string,
+    token: string,
+    newPassword: string,
+  ): Observable<{ detail: string }> {
+    return this.http.post<{ detail: string }>(`${this.apiUrl}/auth/password-reset/confirm/`, {
+      uid,
+      token,
+      new_password: newPassword,
+    });
+  }
+
   private setAccess(token: string): void {
     this.access.set(token);
     this.writeStored(ACCESS_KEY, token);

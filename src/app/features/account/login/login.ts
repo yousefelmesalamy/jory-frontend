@@ -22,4 +22,8 @@ export class Login {
     const next = this.route.snapshot.queryParamMap.get('next');
     this.router.navigateByUrl(next ?? '/account/profile');
   }
+
+  protected onForgotPassword(): void {
+    this.router.navigate(['/account/forgot-password']);
+  }
 }

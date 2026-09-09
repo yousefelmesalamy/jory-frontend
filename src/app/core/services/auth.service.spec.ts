@@ -320,3 +320,58 @@ describe('AuthService — hydration on construction', () => {
     httpMock.verify();
   });
 });
+
+describe('AuthService — password reset', () => {
+  afterEach(() => {
+    localStorage.clear();
+  });
+
+  it('posts the address to the request endpoint', () => {
+    const { service, httpMock } = setup();
+
+    service.requestPasswordReset('shopper@example.com').subscribe();
+
+    const req = httpMock.expectOne('/api/auth/password-reset/');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual({ email: 'shopper@example.com' });
+    req.flush({ detail: 'If that email has an account, a reset link is on its way.' });
+    httpMock.verify();
+  });
+
+  it('posts the uid and token to the verify endpoint', () => {
+    const { service, httpMock } = setup();
+
+    service.verifyResetToken('MTI', 'abc-def').subscribe();
+
+    const req = httpMock.expectOne('/api/auth/password-reset/verify/');
+    expect(req.request.body).toEqual({ uid: 'MTI', token: 'abc-def' });
+    req.flush({ valid: true });
+    httpMock.verify();
+  });
+
+  it('sends the new password under the snake_case key the API expects', () => {
+    const { service, httpMock } = setup();
+
+    service.confirmPasswordReset('MTI', 'abc-def', 'An0therStrongPass!').subscribe();
+
+    const req = httpMock.expectOne('/api/auth/password-reset/confirm/');
+    expect(req.request.body).toEqual({
+      uid: 'MTI',
+      token: 'abc-def',
+      new_password: 'An0therStrongPass!',
+    });
+    req.flush({ detail: 'Password updated.' });
+    httpMock.verify();
+  });
+
+  it('leaves the session alone — a reset does not sign anyone in', () => {
+    const { service, httpMock } = setup();
+
+    service.confirmPasswordReset('MTI', 'abc-def', 'An0therStrongPass!').subscribe();
+    httpMock.expectOne('/api/auth/password-reset/confirm/').flush({ detail: 'Password updated.' });
+
+    expect(service.isAuthenticated()).toBe(false);
+    expect(service.accessToken).toBeNull();
+    httpMock.verify();
+  });
+});

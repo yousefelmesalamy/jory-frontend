@@ -11,3 +11,52 @@
   flex-direction: column;
   gap: 18px;
 }
+
+// A text button that has to read as a link without being one: it stays inside
+// the form so the modal and the routed page can each decide what "forgot"
+// means. The padding is what gives it a real hit target and a focus ring that
+// doesn't clip the text, so the negative margin pulls it back level with the
+// password field it belongs to.
+.forgot {
+  align-self: flex-end;
+  margin-top: -12px;
+  margin-inline-end: -6px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  padding: 4px 6px;
+  color: field.$maroon;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: underline;
+  text-decoration-color: rgba(122, 42, 42, 0.35);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease,
+    text-decoration-color 0.15s ease;
+
+  &:hover {
+    color: field.$maroon-dark;
+    background: rgba(211, 164, 95, 0.14);
+    text-decoration-color: currentColor;
+  }
+
+  &:active {
+    background: rgba(211, 164, 95, 0.22);
+  }
+
+  &:focus-visible {
+    outline: 2px solid field.$gold;
+    outline-offset: 1px;
+  }
+}
+
+// @media (prefers-reduced-motion: reduce) {
+//   .login-form__forgot {
+//     transition: none;
+//   }
+// }
