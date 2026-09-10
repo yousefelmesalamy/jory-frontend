@@ -1,8 +1,32 @@
 <section class="addresses">
   <header class="addresses__head">
-    <h1 class="addresses__title">{{ t().addresses }}</h1>
+    <div class="addresses__intro">
+      <p class="addresses__eyebrow">{{ t().account }}</p>
+      <h1 class="addresses__title">
+        {{ t().addresses }}
+        @if (!loading() && addresses().length) {
+          <span class="addresses__count">
+            {{ addresses().length }} {{ t().addressesCountLabel }}
+          </span>
+        }
+      </h1>
+      <p class="addresses__subtitle">{{ t().addressesSubtitle }}</p>
+    </div>
+
     @if (editing() === null) {
       <button type="button" class="addresses__add" (click)="startAdd()">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M12 5v14M5 12h14" />
+        </svg>
         {{ t().addressAdd }}
       </button>
     }
@@ -11,25 +35,104 @@
   @if (editing() !== null) {
     <app-address-form [address]="editingAddress()" (saved)="onSaved()" (cancelled)="cancelEdit()" />
   } @else if (loading()) {
-    <p class="addresses__loading">{{ t().loading }}</p>
+    <!-- Skeletons rather than a line of text: the cards below land in this
+         exact grid, so the page does not jump when the resource resolves. -->
+    <div class="addresses__skeletons" [attr.aria-label]="t().loading" role="status">
+      @for (placeholder of [0, 1, 2]; track placeholder) {
+        <div class="address-skeleton" aria-hidden="true">
+          <span class="address-skeleton__line address-skeleton__line--title"></span>
+          <span class="address-skeleton__line address-skeleton__line--short"></span>
+          <span class="address-skeleton__line"></span>
+          <span class="address-skeleton__line address-skeleton__line--short"></span>
+        </div>
+      }
+    </div>
+  } @else if (!addresses().length) {
+    <div class="addresses__empty">
+      <span class="addresses__empty-art" aria-hidden="true">
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+      </span>
+      <h2 class="addresses__empty-title">{{ t().addressEmptyTitle }}</h2>
+      <p class="addresses__empty-text">{{ t().emptyAddresses }}</p>
+      <button type="button" class="addresses__add" (click)="startAdd()">
+        {{ t().addressAdd }}
+      </button>
+    </div>
   } @else {
     <app-generic-list [items]="addresses()" [emptyMessage]="t().emptyAddresses">
       <ng-template #item let-address>
-        <article class="address-card">
-          @if (address.is_default) {
-            <span class="address-card__badge">{{ t().addressDefaultBadge }}</span>
-          }
-          <p class="address-card__name">{{ address.full_name }}</p>
-          <p class="address-card__phone">{{ address.phone }}</p>
-          <p class="address-card__lines">{{ addressLine(address) }}</p>
+        <article class="address-card" [class.is-default]="address.is_default">
+          <div class="address-card__top">
+            <span class="address-card__avatar" aria-hidden="true">{{ initial(address) }}</span>
+            <div class="address-card__who">
+              <p class="address-card__name">{{ address.full_name }}</p>
+              <p class="address-card__phone" dir="ltr">{{ address.phone }}</p>
+            </div>
+            @if (address.is_default) {
+              <span class="address-card__badge">
+                <svg
+                  width="11"
+                  height="11"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M12 2l2.9 6.2 6.6.9-4.8 4.7 1.2 6.7L12 17.3 6.1 20.5l1.2-6.7L2.5 9.1l6.6-.9z"
+                  />
+                </svg>
+                {{ t().addressDefaultBadge }}
+              </span>
+            }
+          </div>
+
+          <p class="address-card__street">{{ address.street_address }}</p>
+
+          <ul class="address-card__chips">
+            @for (chip of locationChips(address); track chip) {
+              <li class="address-card__chip">{{ chip }}</li>
+            }
+          </ul>
+
+          <p class="address-card__country">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="9" />
+              <path d="M3 12h18M12 3a15 15 0 010 18a15 15 0 010-18z" />
+            </svg>
+            {{ address.country }}
+          </p>
+
           @if (address.notes) {
             <p class="address-card__notes">{{ address.notes }}</p>
           }
+
           <div class="address-card__actions">
             @if (!address.is_default) {
               <button
                 type="button"
-                class="address-card__action"
+                class="address-card__action address-card__action--primary"
                 [disabled]="settingDefaultId() === address.id"
                 (click)="setDefault(address)"
               >
@@ -38,6 +141,9 @@
             }
             <button type="button" class="address-card__action" (click)="startEdit(address)">
               {{ t().addressEdit }}
+            </button>
+            <button type="button" class="address-card__action" (click)="copy(address)">
+              {{ copiedId() === address.id ? t().addressCopied : t().addressCopy }}
             </button>
             <button
               type="button"

@@ -1,23 +1,125 @@
+// Jouri palette, same values the header, dropdown and address list use.
+// Logical properties throughout so the Arabic RTL flip costs nothing.
+$cream: #faf3e7;
+$card: #fffaf1;
+$field: #fffdf8;
 $line: #e0cba6;
+$line-soft: #efe2cb;
 $maroon: #7a2a2a;
 $maroon-dark: #5e1e1e;
 $gold: #d3a45f;
 $ink: #3a2418;
+$ink-muted: #6a5346;
+$danger: #a33a3a;
 
 :host {
   display: block;
 }
 
 .address-form {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 26px 24px;
+  border: 1px solid $line-soft;
+  border-radius: 22px;
+  background: linear-gradient(180deg, $card 0%, #fffdf8 55%);
+  box-shadow: 0 18px 40px rgba(58, 36, 24, 0.07);
+}
+
+// The gold-to-maroon hairline that ties the panel to the rest of the shop.
+.address-form::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 3px;
+  background: linear-gradient(90deg, $gold, $maroon 55%, $gold);
+}
+
+.address-form__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-block-end: 20px;
+  margin-block-end: 4px;
+  border-block-end: 1px solid $line-soft;
+}
+
+.address-form__head-icon {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(122, 42, 42, 0.08);
+  color: $maroon;
+}
+
+.address-form__head-text {
+  min-width: 0;
+}
+
+.address-form__title {
+  margin: 0;
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 21px;
+  color: $ink;
+}
+
+.address-form__subtitle {
+  margin: 3px 0 0;
+  color: $ink-muted;
+  font-size: 13px;
+}
+
+.address-form__group {
+  margin: 0;
+  padding: 22px 0 0;
+  border: 0;
+  // A <fieldset> ships with `min-inline-size: min-content`, which stops the
+  // grid inside it from shrinking and pushes a long city name off a phone.
+  min-inline-size: 0;
+}
+
+.address-form__legend {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  // A <legend> inside a bordered-less fieldset still sits in the border box;
+  // padding: 0 keeps it flush with the grid below it.
+  padding: 0;
+  margin-block-end: 14px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: $ink;
+}
+
+.address-form__step {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: $gold;
+  color: $maroon-dark;
+  font-size: 12px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.address-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
 .address-form__field {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
+  min-width: 0;
 }
 
 .address-form__field--wide {
@@ -25,53 +127,163 @@ $ink: #3a2418;
 }
 
 .address-form__label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
   font-size: 13px;
   font-weight: 700;
   color: $ink;
 }
 
+.address-form__optional {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(211, 164, 95, 0.18);
+  color: $ink-muted;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
 .address-form__input,
 .address-form__textarea {
   width: 100%;
-  padding: 11px 14px;
+  padding: 12px 14px;
   border: 1px solid $line;
-  border-radius: 10px;
-  background: #fffaf0;
+  border-radius: 12px;
+  background: $field;
   color: $ink;
   font: inherit;
   font-size: 14px;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease,
+    background 0.16s ease;
 
-  &:focus-visible {
-    outline: 2px solid $gold;
-    outline-offset: 1px;
+  &::placeholder {
+    color: rgba(106, 83, 70, 0.55);
+  }
+
+  &:hover:not(:focus) {
+    border-color: $gold;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: $maroon;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(211, 164, 95, 0.28);
   }
 }
 
 .address-form__textarea {
+  min-height: 88px;
   resize: vertical;
+  line-height: 1.6;
+}
+
+// The dropdown draws its own trigger inside its own template, one style
+// boundary further in — a plain `.address-form__dropdown` rule compiled with
+// this component's scope attribute could never reach it. `::ng-deep` under an
+// ancestor class is the pattern the address list already uses for the same
+// reason, and keeps the escape hatch bounded to this form.
+::ng-deep .address-form .dropdown__trigger {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: $field;
+  font-size: 14px;
+  transition:
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+
+  &:focus-visible {
+    outline: none;
+    border-color: $maroon;
+    box-shadow: 0 0 0 3px rgba(211, 164, 95, 0.28);
+  }
+
+  &[aria-expanded='true'] {
+    border-color: $maroon;
+    box-shadow: 0 0 0 3px rgba(211, 164, 95, 0.28);
+  }
+}
+
+// The locked country row: same height and rhythm as a field, but visibly not
+// one — flat cream, no caret, a lock at the end.
+.address-form__locked {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px dashed $line;
+  border-radius: 12px;
+  background: $cream;
+  color: $ink;
+  font-size: 14px;
+}
+
+.address-form__flag {
+  font-size: 17px;
+  line-height: 1;
+}
+
+.address-form__locked-value {
+  flex: 1;
+  font-weight: 700;
+}
+
+.address-form__lock {
+  flex-shrink: 0;
+  color: rgba(106, 83, 70, 0.7);
+}
+
+.address-form__hint {
+  margin: 0;
+  color: $ink-muted;
+  font-size: 11.5px;
 }
 
 .address-form__field-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   margin: 0;
   font-size: 12px;
-  color: #a33a3a;
+  font-weight: 600;
+  color: $danger;
+
+  &::before {
+    content: '!';
+    display: grid;
+    place-items: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 999px;
+    background: rgba(163, 58, 58, 0.14);
+    font-size: 10px;
+    font-weight: 800;
+  }
 }
 
 .address-form__message {
-  grid-column: 1 / -1;
-  margin: 0;
+  margin: 18px 0 0;
+  padding: 11px 14px;
+  border-radius: 12px;
   font-size: 13px;
 }
 
 .address-form__message--error {
-  color: #a33a3a;
+  border: 1px solid rgba(163, 58, 58, 0.28);
+  background: rgba(163, 58, 58, 0.07);
+  color: $danger;
 }
 
 .address-form__actions {
-  grid-column: 1 / -1;
   display: flex;
+  justify-content: flex-end;
   gap: 12px;
-  margin-block-start: 4px;
+  margin-block-start: 24px;
+  padding-block-start: 20px;
+  border-block-start: 1px solid $line-soft;
 }
 
 .address-form__cancel {
@@ -84,31 +296,13 @@ $ink: #3a2418;
   font-weight: 700;
   color: $ink;
   cursor: pointer;
+  transition:
+    border-color 0.16s ease,
+    color 0.16s ease;
 
   &:hover {
     border-color: $maroon;
     color: $maroon;
-  }
-}
-
-.address-form__submit {
-  background: $maroon;
-  color: #faf3e7;
-  border: 0;
-  border-radius: 999px;
-  padding: 12px 26px;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-
-  &:hover:not(:disabled) {
-    background: $maroon-dark;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
   }
 
   &:focus-visible {
@@ -117,8 +311,69 @@ $ink: #3a2418;
   }
 }
 
-@media (max-width: 560px) {
+.address-form__submit {
+  background: linear-gradient(135deg, $maroon 0%, $maroon-dark 100%);
+  color: $cream;
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 30px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(122, 42, 42, 0.24);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    opacity 0.16s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(122, 42, 42, 0.3);
+  }
+
+  &:active:not(:disabled) {
+    transform: none;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $gold;
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .address-form__submit {
+    transition: none;
+
+    &:hover:not(:disabled) {
+      transform: none;
+    }
+  }
+}
+
+@media (max-width: 640px) {
   .address-form {
+    padding: 20px 18px;
+    border-radius: 18px;
+  }
+
+  .address-form__grid {
     grid-template-columns: 1fr;
+  }
+
+  .address-form__actions {
+    flex-direction: column-reverse;
+  }
+
+  .address-form__cancel,
+  .address-form__submit {
+    width: 100%;
   }
 }

@@ -15,7 +15,7 @@
           </div>
           <p class="order-card__date">{{ t().orderPlacedOn }} {{ formatDate(order.placed_at) }}</p>
           <div class="order-card__foot">
-            <span class="order-card__total">{{ order.grand_total }} <app-riyal-symbol /></span>
+            <span class="order-card__total">{{ order.grand_total | price }} <app-riyal-symbol /></span>
             <a class="order-card__view" [routerLink]="['/orders', order.order_number]">
               {{ t().orderView }}
             </a>

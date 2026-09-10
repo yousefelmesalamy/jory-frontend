@@ -32,26 +32,72 @@
 </button>
 
 @if (open()) {
-  <ul
-    class="dropdown__panel"
-    [id]="panelId"
-    role="listbox"
-    [attr.aria-label]="ariaLabel()"
-    (mousedown)="onPanelMouseDown($event)"
-  >
-    @for (option of options(); track option.value; let i = $index) {
-      <li
-        class="dropdown__option"
-        [class.is-active]="activeIndex() === i"
-        [class.is-selected]="selectedIndex() === i"
-        [id]="optionId(i)"
-        role="option"
-        [attr.aria-selected]="selectedIndex() === i"
-        (mouseenter)="activeIndex.set(i)"
-        (click)="choose(i)"
-      >
-        {{ option.label }}
-      </li>
+  <div class="dropdown__panel" (mousedown)="onPanelMouseDown($event)">
+    <!-- Not an <input>: focus never leaves the trigger, which is what keeps
+         `aria-activedescendant` the single source of truth for the keyboard
+         and what lets the whole panel close on one focusout. This mirrors
+         what the visitor is typing. -->
+    @if (searchable()) {
+      <div class="dropdown__search" aria-hidden="true">
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+        >
+          <circle cx="11" cy="11" r="7" />
+          <path d="M20 20l-3.6-3.6" />
+        </svg>
+        @if (query()) {
+          <span class="dropdown__search-text">{{ query() }}</span>
+        } @else {
+          <span class="dropdown__search-text dropdown__search-text--empty">
+            {{ searchPlaceholder() }}
+          </span>
+        }
+        <span class="dropdown__caret"></span>
+      </div>
     }
-  </ul>
+
+    <ul
+      class="dropdown__list"
+      [id]="panelId"
+      role="listbox"
+      [attr.aria-label]="ariaLabel()"
+    >
+      @for (option of visibleOptions(); track option.value; let i = $index) {
+        <li
+          class="dropdown__option"
+          [class.is-active]="activeIndex() === i"
+          [class.is-selected]="option === selectedOption()"
+          [id]="optionId(i)"
+          role="option"
+          [attr.aria-selected]="option === selectedOption()"
+          (mouseenter)="activeIndex.set(i)"
+          (click)="choose(i)"
+        >
+          <span class="dropdown__option-label">{{ option.label }}</span>
+          <svg
+            class="dropdown__option-check"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+        </li>
+      } @empty {
+        <li class="dropdown__no-results" role="presentation">{{ noResultsText() }}</li>
+      }
+    </ul>
+  </div>
 }

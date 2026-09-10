@@ -7,114 +7,368 @@ $maroon-dark: #5e1e1e;
 $gold: #d3a45f;
 $ink: #3a2418;
 $ink-muted: #6a5346;
+$danger: #a33a3a;
 
 :host {
   display: block;
 }
 
 .addresses {
-  max-width: 960px;
+  max-width: 1040px;
   margin-inline: auto;
-  padding: 40px 24px 80px;
+  padding: 40px 24px 88px;
 }
 
 .addresses__head {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
+  padding-block-end: 22px;
   margin-block-end: 28px;
+  // A plain hairline, not a gradient one: `linear-gradient` has no logical
+  // direction keyword, so any fade would point the wrong way on the Arabic
+  // side of the site.
+  border-block-end: 1px solid $line-soft;
+}
+
+.addresses__intro {
+  min-width: 0;
+}
+
+.addresses__eyebrow {
+  margin: 0 0 6px;
+  color: $gold;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .addresses__title {
-  font-family: 'Reem Kufi', 'Outfit', sans-serif;
-  font-size: 32px;
-  color: $ink;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   margin: 0;
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 34px;
+  line-height: 1.15;
+  color: $ink;
+}
+
+.addresses__count {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(122, 42, 42, 0.08);
+  color: $maroon;
+  font-family: 'Cairo', 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.addresses__subtitle {
+  margin: 8px 0 0;
+  max-width: 46ch;
+  color: $ink-muted;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .addresses__add {
-  background: $maroon;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, $maroon 0%, $maroon-dark 100%);
   color: $cream;
   border: 0;
   border-radius: 999px;
-  padding: 12px 24px;
+  padding: 13px 26px;
   font: inherit;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: 0 10px 22px rgba(122, 42, 42, 0.24);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
 
   &:hover {
-    background: $maroon-dark;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(122, 42, 42, 0.3);
+  }
+
+  &:active {
+    transform: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $gold;
+    outline-offset: 3px;
   }
 }
 
-.addresses__loading {
-  color: $ink-muted;
-  font-size: 14px;
-}
+// --- loading skeletons -------------------------------------------------
 
-::ng-deep .addresses .generic-list {
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+.addresses__skeletons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
 }
+
+// `generic-list` renders inside its own component template, so this has to
+// reach past the encapsulation boundary — bounded by `.addresses` so it can
+// only ever hit this page's list.
+::ng-deep .addresses .generic-list {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.address-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid $line-soft;
+  border-radius: 20px;
+  background: $card;
+}
+
+.address-skeleton__line {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(230, 211, 178, 0.5) 25%,
+    rgba(230, 211, 178, 0.85) 37%,
+    rgba(230, 211, 178, 0.5) 63%
+  );
+  background-size: 400% 100%;
+  animation: address-shimmer 1.4s ease infinite;
+}
+
+.address-skeleton__line--title {
+  width: 55%;
+  height: 16px;
+}
+
+.address-skeleton__line--short {
+  width: 70%;
+}
+
+@keyframes address-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .address-skeleton__line {
+    animation: none;
+  }
+}
+
+// --- empty state -------------------------------------------------------
+
+.addresses__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 56px 24px 60px;
+  border: 1px dashed $line;
+  border-radius: 24px;
+  background: linear-gradient(180deg, $card 0%, rgba(255, 253, 248, 0) 70%);
+  text-align: center;
+}
+
+.addresses__empty-art {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin-block-end: 4px;
+  border-radius: 999px;
+  background: rgba(211, 164, 95, 0.16);
+  color: $maroon;
+}
+
+.addresses__empty-title {
+  margin: 0;
+  font-family: 'Reem Kufi', 'Outfit', sans-serif;
+  font-size: 20px;
+  color: $ink;
+}
+
+.addresses__empty-text {
+  margin: 0 0 14px;
+  max-width: 40ch;
+  color: $ink-muted;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+// --- address cards -----------------------------------------------------
 
 .address-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
   height: 100%;
-  padding: 20px;
-  border: 1px solid $line;
-  border-radius: 16px;
+  padding: 22px;
+  border: 1px solid $line-soft;
+  border-radius: 20px;
   background: $card;
+  box-shadow: 0 10px 26px rgba(58, 36, 24, 0.05);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: $line;
+    box-shadow: 0 18px 38px rgba(58, 36, 24, 0.1);
+  }
 }
 
-.address-card__badge {
-  align-self: flex-start;
-  margin-block-end: 8px;
-  padding: 4px 11px;
+// The default address earns a gold edge instead of only a badge, so it is
+// findable in a grid of eight without reading any of them.
+.address-card.is-default {
+  border-color: rgba(211, 164, 95, 0.7);
+  box-shadow: 0 10px 26px rgba(122, 42, 42, 0.09);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block: 22px;
+    inset-inline-start: -1px;
+    width: 3px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, $gold, $maroon);
+  }
+}
+
+.address-card__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-block-end: 16px;
+}
+
+.address-card__avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
   border-radius: 999px;
-  background: $gold;
-  color: $maroon-dark;
-  font-size: 11.5px;
-  font-weight: 700;
+  background: rgba(122, 42, 42, 0.09);
+  color: $maroon;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.address-card__who {
+  min-width: 0;
+  flex: 1;
 }
 
 .address-card__name {
   margin: 0;
+  overflow: hidden;
+  font-size: 15px;
   font-weight: 700;
   color: $ink;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .address-card__phone {
-  margin: 0;
+  margin: 2px 0 0;
   color: $ink-muted;
-  font-size: 13.5px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  // The number itself reads left-to-right even on the Arabic page; `text-align`
+  // keeps it hugging the same edge as the name above it.
+  text-align: start;
 }
 
-.address-card__lines {
-  margin: 6px 0 0;
+.address-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, $gold, #c08f45);
+  color: $maroon-dark;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.address-card__street {
+  margin: 0;
   color: $ink;
-  font-size: 13.5px;
+  font-size: 14px;
   line-height: 1.6;
 }
 
-.address-card__notes {
-  margin: 6px 0 0;
+.address-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.address-card__chip {
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: $cream;
+  border: 1px solid $line-soft;
   color: $ink-muted;
-  font-size: 13px;
-  font-style: italic;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.address-card__country {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  color: $ink-muted;
+  font-size: 12.5px;
+}
+
+.address-card__notes {
+  margin: 14px 0 0;
+  padding-inline-start: 12px;
+  border-inline-start: 2px solid rgba(211, 164, 95, 0.55);
+  color: $ink-muted;
+  font-size: 12.5px;
+  line-height: 1.6;
 }
 
 .address-card__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-block-start: 16px;
-  padding-block-start: 14px;
+  // `auto` above pushes the row to the card's floor, so cards of different
+  // heights still line their buttons up; the negative inline margins bleed the
+  // divider out to the card's edges and the matching padding puts the buttons
+  // back where the rest of the content sits.
+  margin: auto -22px 0;
+  padding: 16px 22px 0;
   border-block-start: 1px solid $line-soft;
 }
 
@@ -122,16 +376,25 @@ $ink-muted: #6a5346;
   background: none;
   border: 1px solid $line;
   border-radius: 999px;
-  padding: 8px 16px;
+  padding: 8px 15px;
   font: inherit;
   font-size: 12.5px;
   font-weight: 700;
   color: $ink;
   cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
 
   &:hover:not(:disabled) {
     border-color: $maroon;
     color: $maroon;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $gold;
+    outline-offset: 2px;
   }
 
   &:disabled {
@@ -140,7 +403,56 @@ $ink-muted: #6a5346;
   }
 }
 
+.address-card__action--primary {
+  border-color: rgba(211, 164, 95, 0.8);
+  background: rgba(211, 164, 95, 0.16);
+  color: $maroon-dark;
+
+  &:hover:not(:disabled) {
+    background: rgba(211, 164, 95, 0.28);
+    border-color: $gold;
+    color: $maroon-dark;
+  }
+}
+
 .address-card__action--danger:hover:not(:disabled) {
-  border-color: #a33a3a;
-  color: #a33a3a;
+  border-color: $danger;
+  background: rgba(163, 58, 58, 0.08);
+  color: $danger;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .address-card,
+  .addresses__add {
+    transition: none;
+  }
+
+  .address-card:hover,
+  .addresses__add:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .addresses {
+    padding: 28px 16px 64px;
+  }
+
+  .addresses__head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .addresses__title {
+    font-size: 27px;
+  }
+
+  .addresses__add {
+    justify-content: center;
+  }
+
+  .addresses__skeletons,
+  ::ng-deep .addresses .generic-list {
+    grid-template-columns: 1fr;
+  }
 }

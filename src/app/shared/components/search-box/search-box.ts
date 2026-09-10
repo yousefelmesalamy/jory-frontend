@@ -7,6 +7,7 @@ import { TranslationService } from '../../../core/i18n/translation.service';
 import { CategorySuggestion, ProductSuggestion, SearchSuggestions } from '../../../core/models';
 import { SearchService } from '../../../core/services/search.service';
 import { RiyalSymbol } from '../riyal-symbol/riyal-symbol';
+import { PricePipe } from '../../pipes/price.pipe';
 
 /** Below this, a query matches so much that the dropdown is noise. */
 const MIN_CHARS = 2;
@@ -39,7 +40,7 @@ export type SearchRow =
  */
 @Component({
   selector: 'app-search-box',
-  imports: [RiyalSymbol],
+  imports: [RiyalSymbol, PricePipe],
   templateUrl: './search-box.html',
   styleUrl: './search-box.scss',
 })

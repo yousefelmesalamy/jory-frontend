@@ -182,7 +182,7 @@
             <path d="M5 8h14l-1.2 11.2a2 2 0 01-2 1.8H8.2a2 2 0 01-2-1.8z" />
             <path d="M9 8V6.5a3 3 0 016 0V8" />
           </svg>
-          <span class="header__cart-total">{{ cartTotal() }} <app-riyal-symbol /></span>
+          <span class="header__cart-total">{{ cartTotal() | price }} <app-riyal-symbol /></span>
           <span class="header__cart-count" aria-hidden="true">{{ cartCount() }}</span>
         </a>
       </div>

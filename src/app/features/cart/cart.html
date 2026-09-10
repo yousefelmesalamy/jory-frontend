@@ -77,7 +77,7 @@
                 </button>
               </div>
 
-              <div class="line__total">{{ line.line_total }} <app-riyal-symbol /></div>
+              <div class="line__total">{{ line.line_total | price }} <app-riyal-symbol /></div>
 
               <button
                 class="line__remove"
@@ -101,12 +101,12 @@
 
           <div class="summary__row">
             <span>{{ t().subtotal }}</span>
-            <span>{{ value.totals.subtotal }} <app-riyal-symbol /></span>
+            <span>{{ value.totals.subtotal | price }} <app-riyal-symbol /></span>
           </div>
           @if (value.totals.discount_total !== '0.00') {
             <div class="summary__row summary__row--discount">
               <span>{{ t().discount }}</span>
-              <span>−{{ value.totals.discount_total }} <app-riyal-symbol /></span>
+              <span>−{{ value.totals.discount_total | price }} <app-riyal-symbol /></span>
             </div>
           }
           <div class="summary__row">
@@ -115,14 +115,14 @@
               @if (value.totals.shipping_cost === '0.00') {
                 {{ t().freeShipping }}
               } @else {
-                {{ value.totals.shipping_cost }} <app-riyal-symbol />
+                {{ value.totals.shipping_cost | price }} <app-riyal-symbol />
               }
             </span>
           </div>
 
           <div class="summary__total">
             <span>{{ t().total }}</span>
-            <span>{{ value.totals.grand_total }} <app-riyal-symbol /></span>
+            <span>{{ value.totals.grand_total | price }} <app-riyal-symbol /></span>
           </div>
 
           <a class="summary__checkout" routerLink="/checkout">{{ t().checkoutCta }}</a>

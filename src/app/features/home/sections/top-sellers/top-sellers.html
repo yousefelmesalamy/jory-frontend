@@ -89,9 +89,9 @@
               <span class="entry__foot">
                 <span class="entry__price">
                   @if (product.compare_at_price_from) {
-                    <s class="entry__was">{{ product.compare_at_price_from }}</s>
+                    <s class="entry__was">{{ product.compare_at_price_from | price }}</s>
                   }
-                  {{ product.price_from }} <app-riyal-symbol />
+                  {{ product.price_from | price }} <app-riyal-symbol />
                 </span>
                 @if (product.rating_count > 0) {
                   <span class="entry__rating">

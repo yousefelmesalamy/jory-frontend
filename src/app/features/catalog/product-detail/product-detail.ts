@@ -12,6 +12,7 @@ import { TranslationService } from '../../../core/i18n/translation.service';
 import { CartService } from '../../../core/services/cart.service';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { RiyalSymbol } from '../../../shared/components/riyal-symbol/riyal-symbol';
+import { PricePipe } from '../../../shared/pipes/price.pipe';
 import { StarRating } from '../../../shared/components/star-rating/star-rating';
 import { WishlistToggle } from '../../../shared/components/wishlist-toggle/wishlist-toggle';
 import { ReviewForm } from './review-form/review-form';
@@ -26,7 +27,7 @@ interface Spec {
 /** `slug` arrives from the `:slug` segment via `withComponentInputBinding()`. */
 @Component({
   selector: 'app-product-detail',
-  imports: [RouterLink, ReviewList, ReviewForm, RiyalSymbol, StarRating, WishlistToggle],
+  imports: [RouterLink, ReviewList, ReviewForm, RiyalSymbol, PricePipe, StarRating, WishlistToggle],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })

@@ -240,13 +240,13 @@ describe('Header', () => {
 
   it('shows the cart total with the Riyal glyph', async () => {
     const cartTotal = () => fixture.nativeElement.querySelector('.header__cart-total');
-    expect(cartTotal().textContent.trim()).toBe('0.00');
+    expect(cartTotal().textContent.trim()).toBe('0');
     expect(cartTotal().querySelector('svg.riyal-symbol')).toBeTruthy();
 
     TestBed.inject(TranslationService).setLocale('en');
     await fixture.whenStable();
 
-    expect(cartTotal().textContent.trim()).toBe('0.00');
+    expect(cartTotal().textContent.trim()).toBe('0');
     expect(cartTotal().querySelector('svg.riyal-symbol')).toBeTruthy();
   });
 });

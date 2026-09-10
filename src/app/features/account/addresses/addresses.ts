@@ -54,6 +54,34 @@ export class Addresses {
       .join(', ');
   }
 
+  /** City / district / postal code, as separate pills — the parts a courier
+   * scans for, pulled out of the one-line join above. */
+  protected locationChips(address: Address): string[] {
+    return [address.city, address.area, address.postal_code].filter((part) => part);
+  }
+
+  /** The letter for the card's avatar disc. Falls back to a dot rather than an
+   * empty circle when the name starts with something unrenderable. */
+  protected initial(address: Address): string {
+    return address.full_name.trim().charAt(0) || '•';
+  }
+
+  /** Which card just had its address copied, so only that one flips its label. */
+  protected readonly copiedId = signal<number | null>(null);
+
+  /** Guarded rather than platform-checked: `navigator.clipboard` is absent
+   * under SSR and on insecure origins alike, and both should just no-op. */
+  protected copy(address: Address): void {
+    navigator.clipboard?.writeText(this.addressLine(address)).then(() => {
+      this.copiedId.set(address.id);
+      setTimeout(() => {
+        if (this.copiedId() === address.id) {
+          this.copiedId.set(null);
+        }
+      }, 1800);
+    });
+  }
+
   protected startAdd(): void {
     this.editing.set('new');
   }

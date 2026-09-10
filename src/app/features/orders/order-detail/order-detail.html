@@ -33,8 +33,8 @@
                 <span class="order-line__meta">{{ line.variant_label }} · {{ line.sku }}</span>
               </div>
               <span class="order-line__qty">{{ line.quantity }} ×</span>
-              <span class="order-line__price">{{ line.unit_price }} <app-riyal-symbol /></span>
-              <span class="order-line__total">{{ line.line_total }} <app-riyal-symbol /></span>
+              <span class="order-line__price">{{ line.unit_price | price }} <app-riyal-symbol /></span>
+              <span class="order-line__total">{{ line.line_total | price }} <app-riyal-symbol /></span>
             </div>
           </ng-template>
         </app-generic-list>
@@ -42,12 +42,12 @@
         <div class="order-detail__totals">
           <div class="order-detail__totals-row">
             <span>{{ t().subtotal }}</span>
-            <span>{{ value.subtotal }} <app-riyal-symbol /></span>
+            <span>{{ value.subtotal | price }} <app-riyal-symbol /></span>
           </div>
           @if (value.discount_total !== '0.00') {
             <div class="order-detail__totals-row order-detail__totals-row--discount">
               <span>{{ t().discount }}</span>
-              <span>−{{ value.discount_total }} <app-riyal-symbol /></span>
+              <span>−{{ value.discount_total | price }} <app-riyal-symbol /></span>
             </div>
           }
           <div class="order-detail__totals-row">
@@ -56,13 +56,13 @@
               @if (value.shipping_cost === '0.00') {
                 {{ t().freeShipping }}
               } @else {
-                {{ value.shipping_cost }} <app-riyal-symbol />
+                {{ value.shipping_cost | price }} <app-riyal-symbol />
               }
             </span>
           </div>
           <div class="order-detail__totals-total">
             <span>{{ t().total }}</span>
-            <span>{{ value.grand_total }} <app-riyal-symbol /></span>
+            <span>{{ value.grand_total | price }} <app-riyal-symbol /></span>
           </div>
         </div>
       </section>

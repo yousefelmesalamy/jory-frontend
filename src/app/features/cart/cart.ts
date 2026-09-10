@@ -7,6 +7,7 @@ import { ApiError, CartItem } from '../../core/models';
 import { CartService } from '../../core/services/cart.service';
 import { GenericList } from '../../shared/components/generic-list/generic-list';
 import { RiyalSymbol } from '../../shared/components/riyal-symbol/riyal-symbol';
+import { PricePipe } from '../../shared/pipes/price.pipe';
 import { VoucherForm } from './voucher-form/voucher-form';
 
 /** Pastel fills for a line's monogram tile, cycled by index — the cart API
@@ -24,7 +25,7 @@ const SWATCHES = [
 
 @Component({
   selector: 'app-cart',
-  imports: [RouterLink, GenericList, VoucherForm, RiyalSymbol],
+  imports: [RouterLink, GenericList, VoucherForm, RiyalSymbol, PricePipe],
   templateUrl: './cart.html',
   styleUrl: './cart.scss',
 })

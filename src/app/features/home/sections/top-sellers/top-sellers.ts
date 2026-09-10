@@ -15,6 +15,7 @@ import { TranslationService } from '../../../../core/i18n/translation.service';
 import { Product } from '../../../../core/models';
 import { CatalogService } from '../../../../core/services/catalog.service';
 import { RiyalSymbol } from '../../../../shared/components/riyal-symbol/riyal-symbol';
+import { PricePipe } from '../../../../shared/pipes/price.pipe';
 import { WishlistToggle } from '../../../../shared/components/wishlist-toggle/wishlist-toggle';
 
 /** How many entries the chart holds. One request, one rail, no pagination. */
@@ -44,7 +45,7 @@ interface Chart {
  */
 @Component({
   selector: 'app-home-top-sellers',
-  imports: [RouterLink, RiyalSymbol, WishlistToggle],
+  imports: [RouterLink, RiyalSymbol, PricePipe, WishlistToggle],
   templateUrl: './top-sellers.html',
   styleUrl: './top-sellers.scss',
 })

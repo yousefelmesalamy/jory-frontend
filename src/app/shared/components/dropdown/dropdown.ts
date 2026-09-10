@@ -1,6 +1,7 @@
 import {
   Component,
   ElementRef,
+  afterRenderEffect,
   computed,
   forwardRef,
   inject,
@@ -71,12 +72,28 @@ export class Dropdown implements ControlValueAccessor {
 
   readonly ariaLabel = input<string>();
 
+  /** Turns printable keystrokes into a filter instead of a type-ahead jump.
+   * Off by default: a four-line sort menu is worse with a search box, a
+   * hundred-line city list is unusable without one. */
+  readonly searchable = input(false);
+
+  /** Shown in the panel's search row while nothing has been typed. */
+  readonly searchPlaceholder = input('');
+
+  /** Shown in place of the list when the filter matches nothing. */
+  readonly noResultsText = input('');
+
   readonly value = signal<unknown>(null);
   readonly disabled = signal(false);
   readonly open = signal(false);
 
-  /** Which option the keyboard is on — not the same as the chosen one. */
+  /** Which option the keyboard is on — an index into `visibleOptions()`, not
+   * into `options()`, so it stays meaningful while the list is filtered. */
   readonly activeIndex = signal(0);
+
+  /** What the visitor has typed since the panel opened. Always `''` unless
+   * `searchable`. */
+  readonly query = signal('');
 
   readonly panelId = `${this.uid}-panel`;
 
@@ -86,20 +103,46 @@ export class Dropdown implements ControlValueAccessor {
   private onChange: (value: unknown) => void = () => {};
   private onTouched: () => void = () => {};
 
+  /** The rows the panel actually renders. Substring, not prefix: someone
+   * hunting "دمشق" should reach "ريف دمشق" too. */
+  readonly visibleOptions = computed(() => {
+    const needle = this.query().trim().toLowerCase();
+    if (!needle) {
+      return this.options();
+    }
+    return this.options().filter((option) => option.label.toLowerCase().includes(needle));
+  });
+
   /** Falls back to the first option when nothing strictly matches — the same
    * thing a native `<select>` does with a value it doesn't recognise (`null`,
    * `undefined`, a stale id). Without this the trigger would rather show a
    * blank box than the closest sane thing. */
-  readonly selectedIndex = computed(() => {
-    const index = this.options().findIndex((option) => option.value === this.value());
-    return index >= 0 ? index : 0;
+  readonly selectedOption = computed(() => {
+    const options = this.options();
+    return options.find((option) => option.value === this.value()) ?? options[0] ?? null;
   });
 
-  readonly selectedLabel = computed(() => this.options()[this.selectedIndex()]?.label ?? '');
+  readonly selectedLabel = computed(() => this.selectedOption()?.label ?? '');
 
   readonly activeOptionId = computed(() =>
     this.open() ? this.optionId(this.activeIndex()) : null,
   );
+
+  constructor() {
+    // A hundred cities do not fit in the panel, and the keyboard never leaves
+    // the trigger — so nothing scrolls the active row into view unless this
+    // does. Guarded rather than platform-checked: `afterRenderEffect` is
+    // browser-only already, this just keeps it honest under test doubles.
+    afterRenderEffect(() => {
+      if (!this.open()) {
+        return;
+      }
+      const row = this.host.nativeElement.querySelector(
+        `[id="${this.optionId(this.activeIndex())}"]`,
+      );
+      row?.scrollIntoView?.({ block: 'nearest' });
+    });
+  }
 
   optionId(index: number): string {
     return `${this.uid}-option-${index}`;
@@ -138,17 +181,20 @@ export class Dropdown implements ControlValueAccessor {
     if (this.disabled()) {
       return;
     }
-    this.activeIndex.set(Math.max(0, this.selectedIndex()));
+    this.query.set('');
+    const selected = this.selectedOption();
+    this.activeIndex.set(Math.max(0, selected ? this.options().indexOf(selected) : 0));
     this.open.set(true);
   }
 
   close(): void {
     this.open.set(false);
     this.typeahead = '';
+    this.query.set('');
   }
 
   choose(index: number): void {
-    const option = this.options()[index];
+    const option = this.visibleOptions()[index];
     if (!option) {
       return;
     }
@@ -194,18 +240,40 @@ export class Dropdown implements ControlValueAccessor {
           return;
         }
         event.preventDefault();
-        this.activeIndex.set(event.key === 'Home' ? 0 : this.options().length - 1);
+        this.activeIndex.set(event.key === 'Home' ? 0 : this.visibleOptions().length - 1);
         return;
 
       case 'Enter':
-      case ' ':
         event.preventDefault();
         this.open() ? this.choose(this.activeIndex()) : this.openPanel();
+        return;
+
+      case ' ':
+        // While searching, a space is part of the query ("رأس العين"), not a
+        // commit — every other time it behaves like Enter, as a select does.
+        if (this.searchable() && this.open()) {
+          break;
+        }
+        event.preventDefault();
+        this.open() ? this.choose(this.activeIndex()) : this.openPanel();
+        return;
+
+      case 'Backspace':
+        if (this.searchable() && this.open()) {
+          event.preventDefault();
+          this.setQuery(this.query().slice(0, -1));
+        }
         return;
 
       case 'Escape':
         if (this.open()) {
           event.preventDefault();
+          // One Escape clears the filter, a second one closes — otherwise a
+          // mistyped query costs the visitor the whole panel.
+          if (this.searchable() && this.query()) {
+            this.setQuery('');
+            return;
+          }
           this.close();
           this.triggerEl()?.nativeElement.focus();
         }
@@ -216,13 +284,28 @@ export class Dropdown implements ControlValueAccessor {
         return;
     }
 
-    if (event.key.length === 1) {
-      this.typeAhead(event.key);
+    if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      if (this.searchable()) {
+        event.preventDefault();
+        if (!this.open()) {
+          this.openPanel();
+        }
+        this.setQuery(this.query() + event.key);
+      } else {
+        this.typeAhead(event.key);
+      }
     }
   }
 
+  /** Filtering always lands the keyboard on the first surviving row — the one
+   * Enter would take — so the panel never points at a row that scrolled away. */
+  private setQuery(value: string): void {
+    this.query.set(value);
+    this.activeIndex.set(0);
+  }
+
   private move(step: number): void {
-    const last = this.options().length - 1;
+    const last = this.visibleOptions().length - 1;
     // Clamped, not wrapped: a native select stops at the ends too, and wrapping
     // makes a long list feel like it lost your place.
     this.activeIndex.set(Math.min(last, Math.max(0, this.activeIndex() + step)));

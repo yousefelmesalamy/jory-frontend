@@ -9,6 +9,7 @@ import { ApiError, Order, OrderStatus } from '../../../core/models';
 import { OrderService } from '../../../core/services/order.service';
 import { GenericList } from '../../../shared/components/generic-list/generic-list';
 import { RiyalSymbol } from '../../../shared/components/riyal-symbol/riyal-symbol';
+import { PricePipe } from '../../../shared/pipes/price.pipe';
 
 const STATUS_KEYS: Record<OrderStatus, keyof Copy> = {
   PENDING: 'orderStatusPending',
@@ -20,7 +21,7 @@ const STATUS_KEYS: Record<OrderStatus, keyof Copy> = {
 
 @Component({
   selector: 'app-order-detail',
-  imports: [GenericList, RiyalSymbol, RouterLink],
+  imports: [GenericList, RiyalSymbol, PricePipe, RouterLink],
   templateUrl: './order-detail.html',
   styleUrl: './order-detail.scss',
 })

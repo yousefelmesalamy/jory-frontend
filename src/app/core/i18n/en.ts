@@ -123,13 +123,13 @@ export const EN = {
   originsTitle: 'From Uganda to Colombia',
   originsText:
     'Every origin carries its own signature: citric acidity from Kenya, caramel sweetness from Brazil, tropical fruit from Ugandan Mananasi. We publish the farm, altitude and process behind every bag.',
-  // Home — origin cards (editorial copy about the origin, not catalog data)
-  originUgandaAlt: '1,750 m',
-  originUgandaNotes: 'Pineapple, mango, cane sugar',
-  originColombiaAlt: '1,600 m',
-  originColombiaNotes: 'Caramel, hazelnut, apple acidity',
-  originEthiopiaAlt: '2,000 m',
-  originEthiopiaNotes: 'Jasmine, lemon, honey',
+  // Home — the origins carousel. The country names themselves come from the
+  // API (localized there), so only the chrome is in the deck.
+  originsCta: 'See coffees',
+  originsPrevious: 'Previous origins',
+  originsNext: 'More origins',
+  originsPause: 'Pause the origins carousel',
+  originsPlay: 'Resume the origins carousel',
   loyaltyTitle: 'Jouri points',
   loyaltyText:
     'Earn points on every order and redeem them for free bags or cupping sessions at the roastery.',
@@ -183,7 +183,8 @@ export const EN = {
   // above, which are the home page's origins section.
   crumbOrigins: 'Home / Origins',
   originsPageTitle: 'Shop by origin',
-  originsPageLead: 'Every country we buy green coffee from, and everything we are roasting from each.',
+  originsPageLead:
+    'Every country we buy green coffee from, and everything we are roasting from each.',
 
   // Wishlist
   crumbWishlist: 'Home / Wishlist',
@@ -344,6 +345,24 @@ export const EN = {
   addressCancel: 'Cancel',
   addressSave: 'Save address',
   addressManage: 'Manage addresses',
+  addressesSubtitle: 'Save the places you order to, and checkout fills itself in.',
+  addressesCountLabel: 'saved',
+  addressEmptyTitle: 'No addresses yet',
+  addressFormNewTitle: 'New address',
+  addressFormEditTitle: 'Edit address',
+  addressFormSubtitle: 'The clearer the details, the faster the courier finds you.',
+  addressSectionRecipient: 'Who receives the order',
+  addressSectionLocation: 'Where it goes',
+  addressSectionNotes: 'Anything else',
+  addressCountryLocked: 'We deliver inside Syria only for now.',
+  addressCityPlaceholder: 'Choose your city',
+  addressCitySearchHint: 'Type to search…',
+  addressCityHint: 'All Syrian governorates and their towns.',
+  addressNoMatches: 'No city matches that.',
+  addressNotesPlaceholder: 'A landmark, a floor number, the best time to call…',
+  addressOptional: 'optional',
+  addressCopy: 'Copy address',
+  addressCopied: 'Copied',
 
   // About
   aboutTag: 'About Jouri',

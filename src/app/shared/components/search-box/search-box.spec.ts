@@ -138,8 +138,8 @@ describe('SearchBox', () => {
     await fixture.whenStable();
 
     expect(rowLabels()).toEqual([
-      'Ethiopia Yirgacheffe 250.00',
-      'Yirga Espresso Blend 180.00',
+      'Ethiopia Yirgacheffe 250',
+      'Yirga Espresso Blend 180',
       '# Yirgacheffe lots Category',
       'See all results for "yirga" →',
     ]);

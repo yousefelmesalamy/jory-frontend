@@ -26,6 +26,7 @@ import { AuthModal } from '../../shared/components/auth-modal/auth-modal';
 // bundle.
 import type { AuthModalMode } from '../../shared/components/auth-modal/auth-modal';
 import { RiyalSymbol } from '../../shared/components/riyal-symbol/riyal-symbol';
+import { PricePipe } from '../../shared/pipes/price.pipe';
 import { SearchBox } from '../../shared/components/search-box/search-box';
 import { SOCIAL_LINKS } from '../../shared/social-links';
 
@@ -92,7 +93,7 @@ const ANNOUNCE_INTERVAL_MS = 6000;
  */
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, RiyalSymbol, AuthModal, SearchBox],
+  imports: [RouterLink, RouterLinkActive, RiyalSymbol, PricePipe, AuthModal, SearchBox],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })

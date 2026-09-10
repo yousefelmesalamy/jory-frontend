@@ -92,9 +92,9 @@
         <div class="pd__buybox">
           <div class="pd__price">
             @if (price().before) {
-              <span class="pd__price-before">{{ price().before }} <app-riyal-symbol /></span>
+              <span class="pd__price-before">{{ price().before | price }} <app-riyal-symbol /></span>
             }
-            <span class="pd__price-current">{{ price().current }} <app-riyal-symbol /></span>
+            <span class="pd__price-current">{{ price().current | price }} <app-riyal-symbol /></span>
             @if (price().onSale && price().discountPercent) {
               <span class="pd__discount">-{{ price().discountPercent }}%</span>
             }
@@ -205,7 +205,7 @@
                       {{ item.rating_avg }}
                     </span>
                   }
-                  <span class="pd__rec-price">{{ item.price_from }} <app-riyal-symbol /></span>
+                  <span class="pd__rec-price">{{ item.price_from | price }} <app-riyal-symbol /></span>
                 </div>
               </a>
               <app-wishlist-toggle class="pd__rec-wishlist" [productId]="item.id" />

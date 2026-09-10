@@ -8,6 +8,7 @@ import { Order, OrderStatus, Paginated } from '../../../core/models';
 import { OrderService } from '../../../core/services/order.service';
 import { GenericList } from '../../../shared/components/generic-list/generic-list';
 import { RiyalSymbol } from '../../../shared/components/riyal-symbol/riyal-symbol';
+import { PricePipe } from '../../../shared/pipes/price.pipe';
 
 /** The server's own default page size — used only to derive a page count from
  * `count`, since the list endpoint carries no `page_size` param here. */
@@ -24,7 +25,7 @@ const STATUS_KEYS: Record<OrderStatus, keyof Copy> = {
 
 @Component({
   selector: 'app-order-list',
-  imports: [RouterLink, GenericList, RiyalSymbol],
+  imports: [RouterLink, GenericList, RiyalSymbol, PricePipe],
   templateUrl: './order-list.html',
   styleUrl: './order-list.scss',
 })

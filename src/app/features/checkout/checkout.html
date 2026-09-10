@@ -42,19 +42,19 @@
             {{ item.quantity }}× {{ item.variant.product_name }}
             <span class="checkout__summary-line-meta">{{ item.variant.label }}</span>
           </span>
-          <span>{{ item.line_total }} <app-riyal-symbol /></span>
+          <span>{{ item.line_total | price }} <app-riyal-symbol /></span>
         </div>
       }
 
       @if (cartValue(); as value) {
         <div class="checkout__summary-row">
           <span>{{ t().subtotal }}</span>
-          <span>{{ value.totals.subtotal }} <app-riyal-symbol /></span>
+          <span>{{ value.totals.subtotal | price }} <app-riyal-symbol /></span>
         </div>
         @if (value.totals.discount_total !== '0.00') {
           <div class="checkout__summary-row checkout__summary-row--discount">
             <span>{{ t().discount }}</span>
-            <span>−{{ value.totals.discount_total }} <app-riyal-symbol /></span>
+            <span>−{{ value.totals.discount_total | price }} <app-riyal-symbol /></span>
           </div>
         }
         <div class="checkout__summary-row">
@@ -63,13 +63,13 @@
             @if (value.totals.shipping_cost === '0.00') {
               {{ t().freeShipping }}
             } @else {
-              {{ value.totals.shipping_cost }} <app-riyal-symbol />
+              {{ value.totals.shipping_cost | price }} <app-riyal-symbol />
             }
           </span>
         </div>
         <div class="checkout__summary-total">
           <span>{{ t().total }}</span>
-          <span>{{ value.totals.grand_total }} <app-riyal-symbol /></span>
+          <span>{{ value.totals.grand_total | price }} <app-riyal-symbol /></span>
         </div>
       }
 

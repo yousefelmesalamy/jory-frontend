@@ -8,12 +8,13 @@ import { WishlistService } from '../../core/services/wishlist.service';
 import { GenericCard } from '../../shared/components/generic-card/generic-card';
 import { GenericList } from '../../shared/components/generic-list/generic-list';
 import { RiyalSymbol } from '../../shared/components/riyal-symbol/riyal-symbol';
+import { PricePipe } from '../../shared/pipes/price.pipe';
 
 const PAGE_SIZE = 20;
 
 @Component({
   selector: 'app-wishlist',
-  imports: [RouterLink, GenericList, GenericCard, RiyalSymbol],
+  imports: [RouterLink, GenericList, GenericCard, RiyalSymbol, PricePipe],
   templateUrl: './wishlist.html',
   styleUrl: './wishlist.scss',
 })

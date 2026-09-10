@@ -11,12 +11,13 @@ import { CartService } from '../../core/services/cart.service';
 import { OrderService } from '../../core/services/order.service';
 import { Dropdown, DropdownOption } from '../../shared/components/dropdown/dropdown';
 import { RiyalSymbol } from '../../shared/components/riyal-symbol/riyal-symbol';
+import { PricePipe } from '../../shared/pipes/price.pipe';
 
 /** Cash on delivery only — the form picks a saved address and nothing else;
  * the order's own totals come straight from the live cart. */
 @Component({
   selector: 'app-checkout',
-  imports: [ReactiveFormsModule, RouterLink, RiyalSymbol, Dropdown],
+  imports: [ReactiveFormsModule, RouterLink, RiyalSymbol, PricePipe, Dropdown],
   templateUrl: './checkout.html',
   styleUrl: './checkout.scss',
 })

@@ -269,10 +269,10 @@
                         <span class="product-tile__price">
                           @if (value.compare_at_price_from) {
                             <span class="product-tile__price-before">
-                              {{ value.compare_at_price_from }} <app-riyal-symbol />
+                              {{ value.compare_at_price_from | price }} <app-riyal-symbol />
                             </span>
                           }
-                          {{ value.price_from }} <app-riyal-symbol />
+                          {{ value.price_from | price }} <app-riyal-symbol />
                         </span>
                         @if (value.rating_count > 0) {
                           <span class="product-tile__rating">

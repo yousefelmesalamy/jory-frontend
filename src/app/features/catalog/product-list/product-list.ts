@@ -11,6 +11,7 @@ import { Dropdown, DropdownOption } from '../../../shared/components/dropdown/dr
 import { GenericCard } from '../../../shared/components/generic-card/generic-card';
 import { GenericList } from '../../../shared/components/generic-list/generic-list';
 import { RiyalSymbol } from '../../../shared/components/riyal-symbol/riyal-symbol';
+import { PricePipe } from '../../../shared/pipes/price.pipe';
 import { WishlistToggle } from '../../../shared/components/wishlist-toggle/wishlist-toggle';
 
 const PAGE_SIZE = 20;
@@ -73,6 +74,7 @@ interface AppliedFilter {
     GenericList,
     GenericCard,
     RiyalSymbol,
+    PricePipe,
     WishlistToggle,
     Dropdown,
   ],
