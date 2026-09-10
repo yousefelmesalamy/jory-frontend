@@ -138,6 +138,20 @@ export class ProductDetail {
     return list;
   });
 
+  /** The long description, split on blank lines so multi-paragraph copy keeps its
+   * shape. Empty when it would only repeat the short description shown up top. */
+  protected readonly descriptionParagraphs = computed<readonly string[]>(() => {
+    const value = this.product();
+    const full = value?.description?.trim() ?? '';
+    if (!full || full === value?.short_description?.trim()) {
+      return [];
+    }
+    return full
+      .split(/\n\s*\n/)
+      .map((paragraph) => paragraph.trim())
+      .filter(Boolean);
+  });
+
   /** "Colombia — Huila", or just "Colombia" when no region is on file. */
   protected readonly originLabel = computed(() => {
     const profile = this.product()?.coffee_profile;

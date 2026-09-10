@@ -292,6 +292,7 @@ export const EN = {
   reviewNotPermitted: 'Only customers who received this product can review it.',
   reviewAlreadySubmitted: "You've already reviewed this product.",
   reviewSubmitError: 'Something went wrong — try again.',
+  descriptionTitle: 'About this product',
   profileTitle: 'Origin story',
   profileVariety: 'Variety',
   profileAltitude: 'Altitude',

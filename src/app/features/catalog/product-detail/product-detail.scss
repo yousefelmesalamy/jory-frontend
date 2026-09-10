@@ -419,6 +419,21 @@ $label: #a08659;
   }
 }
 
+/* ---------- about / long description ---------- */
+
+.pd__about {
+  border-block-start: 1px solid rgba(122, 42, 42, 0.14);
+  padding-block-start: 30px;
+}
+
+.pd__about-body p {
+  font-size: 17px;
+  line-height: 1.85;
+  color: rgba(58, 26, 26, 0.86);
+  max-width: 70ch;
+  margin: 14px 0 0;
+}
+
 /* ---------- coffee profile ---------- */
 
 .pd__profile {

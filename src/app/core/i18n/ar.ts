@@ -280,6 +280,7 @@ export const AR: Copy = {
   reviewNotPermitted: 'يمكن فقط لمن استلم هذا المنتج تقييمه.',
   reviewAlreadySubmitted: 'لقد قيّمت هذا المنتج من قبل.',
   reviewSubmitError: 'حدث خطأ ما — حاول مرة أخرى.',
+  descriptionTitle: 'عن المنتج',
   profileTitle: 'قصة المنشأ',
   profileVariety: 'الصنف',
   profileAltitude: 'الارتفاع',

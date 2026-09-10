@@ -137,6 +137,17 @@
       </div>
     </section>
 
+    @if (descriptionParagraphs().length) {
+      <section class="pd__about">
+        <h2 class="pd__section-title">{{ t().descriptionTitle }}</h2>
+        <div class="pd__about-body">
+          @for (paragraph of descriptionParagraphs(); track $index) {
+            <p>{{ paragraph }}</p>
+          }
+        </div>
+      </section>
+    }
+
     @if (value.coffee_profile; as profile) {
       <section class="pd__profile">
         <div class="pd__profile-head">
