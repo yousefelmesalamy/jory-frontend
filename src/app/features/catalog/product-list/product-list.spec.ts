@@ -58,6 +58,8 @@ const DEFAULT_FACETS = {
 describe('ProductList facets', () => {
   let fixture: ComponentFixture<ProductList>;
   let httpMock: HttpTestingController;
+  /** Every `/facets/` URL the component asked for, params included. */
+  let facetUrls: string[];
 
   /**
    * Drains the startup requests in microtask rounds. Deliberately not
@@ -73,6 +75,7 @@ describe('ProductList facets', () => {
         request.flush([]);
       }
       for (const request of httpMock.match((req) => req.url.endsWith('/facets/'))) {
+        facetUrls.push(request.request.urlWithParams);
         request.flush(facets);
       }
       for (const request of httpMock.match((req) => req.url.includes('/products/'))) {
@@ -101,6 +104,7 @@ describe('ProductList facets', () => {
 
     fixture = TestBed.createComponent(ProductList);
     httpMock = TestBed.inject(HttpTestingController);
+    facetUrls = [];
   });
 
   afterEach(() => {
@@ -134,6 +138,48 @@ describe('ProductList facets', () => {
     await settle(COFFEE_FACETS);
 
     expect(fixture.nativeElement.querySelectorAll('.roast__chip').length).toBe(2);
+  });
+
+  it('asks for the chosen type’s facets when no category is selected', async () => {
+    // /shop?type=COFFEE is as much of a narrowing as picking the Coffee
+    // category, so the rail must not fall back to the universal set.
+    fixture.componentRef.setInput('type', 'COFFEE');
+    fixture.detectChanges();
+    await settle(COFFEE_FACETS);
+
+    expect(facetUrls.some((url) => url.includes('type=COFFEE'))).toBe(true);
+    expect(fixture.nativeElement.querySelectorAll('.roast__chip').length).toBe(2);
+  });
+
+  it('re-asks for facets when the type changes', async () => {
+    fixture.componentRef.setInput('type', 'COFFEE');
+    fixture.detectChanges();
+    await settle(COFFEE_FACETS);
+    fixture.componentRef.setInput('type', 'ROASTING_MACHINE');
+    fixture.detectChanges();
+    await settle(MACHINE_FACETS);
+
+    expect(facetUrls.some((url) => url.includes('type=ROASTING_MACHINE'))).toBe(true);
+    expect(legends()).toContain('Brand');
+  });
+
+  it('clears a brand param that the chosen type has no facet for', async () => {
+    const router = TestBed.inject(Router);
+    await router.navigate([], { queryParams: { brand: 'probat' } });
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    fixture.componentRef.setInput('type', 'COFFEE');
+    fixture.componentRef.setInput('brand', 'probat');
+    fixture.detectChanges();
+    await settle(COFFEE_FACETS);
+
+    const cleared = navigate.mock.calls.some(
+      ([, extras]) =>
+        (extras as { queryParams?: Record<string, unknown> } | undefined)?.queryParams?.[
+          'brand'
+        ] === null,
+    );
+    expect(cleared).toBe(true);
   });
 
   it('clears a roast param that the new category has no facet for', async () => {

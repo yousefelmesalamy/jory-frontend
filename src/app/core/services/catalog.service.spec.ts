@@ -35,6 +35,11 @@ describe('CatalogService.getFacets', () => {
     httpMock.expectOne('/api/facets/').flush({ product_type: null, facets: [] });
   });
 
+  it('passes the product type through as a query param', () => {
+    service.getFacets('', 'COFFEE').subscribe();
+    httpMock.expectOne('/api/facets/?type=COFFEE').flush({ product_type: 'COFFEE', facets: [] });
+  });
+
   it('returns the facet list as given', () => {
     let received: readonly string[] = [];
     service.getFacets('coffee').subscribe((response) => {

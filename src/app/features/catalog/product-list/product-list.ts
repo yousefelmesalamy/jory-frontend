@@ -162,12 +162,13 @@ export class ProductList {
   ]);
 
   /**
-   * Which filters this category actually has. Keyed on the category alone — the
-   * facet list does not depend on the other filters.
+   * Which filters this scope actually has. Keyed on the category and the type
+   * pills — the two filters that say what kind of product is being browsed —
+   * and on nothing else, since no other filter changes which facets apply.
    */
   protected readonly facetsResource = resource({
-    params: () => ({ category: this.category() }),
-    loader: ({ params }) => firstValueFrom(this.catalog.getFacets(params.category)),
+    params: () => ({ category: this.category(), type: this.type() }),
+    loader: ({ params }) => firstValueFrom(this.catalog.getFacets(params.category, params.type)),
   });
 
   /** The facets the rail loop draws: everything with a bespoke control removed. */
@@ -338,14 +339,14 @@ export class ProductList {
     // a machine. `replaceUrl` so the cleanup is not a history entry the back
     // button has to walk through.
     //
-    // Only a chosen category rules a filter out. With none chosen the facet
-    // list is the universal set — which offers no origin, roast or flavor, but
-    // does not contradict them either — so a link like /shop?origin=ethiopia
-    // from the home carousel keeps its filter instead of being stripped bare
-    // the moment the page loads.
+    // Only a chosen category or type rules a filter out. With neither chosen
+    // the facet list is the universal set — which offers no origin, roast or
+    // flavor, but does not contradict them either — so a link like
+    // /shop?origin=ethiopia from the home carousel keeps its filter instead of
+    // being stripped bare the moment the page loads.
     effect(() => {
       const response = this.facetsResource.value();
-      if (!response || !this.category()) return;
+      if (!response || (!this.category() && !this.type())) return;
 
       const offered = new Set(response.facets.map((facet) => facet.key));
       const stale: Record<string, null> = {};

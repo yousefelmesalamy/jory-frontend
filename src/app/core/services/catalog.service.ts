@@ -35,13 +35,17 @@ export class CatalogService {
   }
 
   /**
-   * Which filters apply to a category — a roasting machine is asked about its
-   * brand, not its roast level. No category means the universal set.
+   * Which filters apply to what is being browsed — a roasting machine is asked
+   * about its brand, not its roast level. With no category, a product type
+   * narrows the rail the same way; neither one means the universal set.
    */
-  getFacets(category = ''): Observable<FacetResponse> {
+  getFacets(category = '', type = ''): Observable<FacetResponse> {
     let params = new HttpParams();
     if (category) {
       params = params.set('category', category);
+    }
+    if (type) {
+      params = params.set('type', type);
     }
     return this.http.get<FacetResponse>(`${this.apiUrl}/facets/`, { params });
   }
