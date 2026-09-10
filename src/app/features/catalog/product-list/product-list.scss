@@ -392,9 +392,10 @@ $label: #8a7361;
    the toolbar-flex-child sizing that does apply, to the host element itself. */
 .shop__sort-field {
   // Without this the longest option sets the width and pushes off a phone screen.
-  min-width: 0;
+  min-width: 200px;
   max-width: 100%;
   flex-shrink: 1;
+
 }
 
 /* Applied filters, each one removable. */
