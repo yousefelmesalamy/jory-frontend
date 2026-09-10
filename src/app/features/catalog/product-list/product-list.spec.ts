@@ -45,6 +45,16 @@ const MACHINE_FACETS = {
   ],
 };
 
+/** What the backend returns for `/facets/` with no category: the universal set,
+ * which has no origin — see DEFAULT_FACETS in apps/catalog/facets.py. */
+const DEFAULT_FACETS = {
+  product_type: null,
+  facets: [
+    { key: 'type', label: 'Product type', kind: 'choice', options: [] },
+    { key: 'price', label: 'Price range', kind: 'range', options: [] },
+  ],
+};
+
 describe('ProductList facets', () => {
   let fixture: ComponentFixture<ProductList>;
   let httpMock: HttpTestingController;
@@ -145,6 +155,27 @@ describe('ProductList facets', () => {
         ] === null,
     );
     expect(cleared).toBe(true);
+  });
+
+  it('keeps an origin arriving with no category, where nothing rules it out', async () => {
+    // Landing from the home page's origins carousel: /shop?origin=ethiopia. No
+    // category is selected, so the universal facet set has no origin — but the
+    // filter still applies, and stripping it would empty the link of meaning.
+    const router = TestBed.inject(Router);
+    await router.navigate([], { queryParams: { origin: 'ethiopia' } });
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    fixture.componentRef.setInput('origin', 'ethiopia');
+    fixture.detectChanges();
+    await settle(DEFAULT_FACETS);
+
+    const cleared = navigate.mock.calls.some(
+      ([, extras]) =>
+        (extras as { queryParams?: Record<string, unknown> } | undefined)?.queryParams?.[
+          'origin'
+        ] === null,
+    );
+    expect(cleared).toBe(false);
   });
 
   it('leaves a param alone when its facet is still offered', async () => {

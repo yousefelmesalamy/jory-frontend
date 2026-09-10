@@ -5,8 +5,7 @@
   (mouseenter)="setHovered(true)"
   (mouseleave)="setHovered(false)"
   (focusin)="setHovered(true)"
-  (focusout)="setHovered(false)"
->
+  (focusout)="setHovered(false)">
   <header class="origins__head">
     <div class="origins__titles">
       <span class="origins__eyebrow">{{ t().origins }}</span>
@@ -16,99 +15,93 @@
 
     <div class="origins__tools">
       @if (scrollable()) {
-        <button
-          class="origins__control"
-          type="button"
-          [attr.aria-label]="paused() ? t().originsPlay : t().originsPause"
-          [attr.aria-pressed]="paused()"
-          (click)="togglePlay()"
-        >
-          <span aria-hidden="true">{{ paused() ? '▶' : '❚❚' }}</span>
-        </button>
-        <button
-          class="origins__control"
-          type="button"
-          [attr.aria-label]="t().originsPrevious"
-          [disabled]="atStart()"
-          (click)="step(-1)"
-        >
-          <span aria-hidden="true">‹</span>
-        </button>
-        <button
-          class="origins__control"
-          type="button"
-          [attr.aria-label]="t().originsNext"
-          [disabled]="atEnd()"
-          (click)="step(1)"
-        >
-          <span aria-hidden="true">›</span>
-        </button>
+      <button
+        class="origins__control"
+        type="button"
+        [attr.aria-label]="paused() ? t().originsPlay : t().originsPause"
+        [attr.aria-pressed]="paused()"
+        (click)="togglePlay()">
+        <span aria-hidden="true">{{ paused() ? '▶' : '❚❚' }}</span>
+      </button>
+      <button
+        class="origins__control"
+        type="button"
+        [attr.aria-label]="t().originsPrevious"
+        [disabled]="atStart()"
+        (click)="step(-1)">
+        <span aria-hidden="true">›</span>
+      </button>
+      <button
+        class="origins__control"
+        type="button"
+        [attr.aria-label]="t().originsNext"
+        [disabled]="atEnd()"
+        (click)="step(1)"> <span aria-hidden="true">‹</span>
+
+      </button>
       }
       <a class="origins__all" routerLink="/shop/origins">{{ t().megaAllOrigins }}</a>
     </div>
   </header>
 
   @if (loading()) {
-    <div class="origins__track origins__track--static">
-      @for (slot of skeletons; track slot) {
-        <div class="origin origin--ghost">
-          <span class="origin__medallion"></span>
-          <span class="ghost ghost--name"></span>
-          <span class="ghost ghost--cta"></span>
-        </div>
-      }
+  <div class="origins__track origins__track--static">
+    @for (slot of skeletons; track slot) {
+    <div class="origin origin--ghost">
+      <span class="origin__medallion"></span>
+      <span class="ghost ghost--name"></span>
+      <span class="ghost ghost--cta"></span>
     </div>
-  } @else if (tiles().length) {
-    <ul class="origins__track" #track (scroll)="sync()">
-      @for (tile of tiles(); track tile.origin.id) {
-        <li class="origin">
-          <a
-            class="origin__link"
-            [routerLink]="['/shop']"
-            [queryParams]="{ origin: tile.origin.slug }"
-          >
-            <span class="origin__medallion">
-              <!-- The emoji sits underneath as the flag of record until the
-                   image paints over it, and stays visible if it never does. -->
-              <span class="origin__emoji" aria-hidden="true">{{ tile.flag?.emoji ?? '☕' }}</span>
-              @if (tile.flag) {
-                <img
-                  class="origin__flag"
-                  loading="lazy"
-                  decoding="async"
-                  alt=""
-                  [src]="tile.flag.src"
-                  [srcset]="tile.flag.srcset"
-                />
-              }
-            </span>
-
-            <span class="origin__name">{{ tile.origin.name }}</span>
-
-            <span class="origin__cta">
-              {{ t().originsCta }}
-              <span class="origin__arrow" aria-hidden="true">→</span>
-            </span>
-          </a>
-        </li>
-      }
-    </ul>
-
-    @if (scrollable()) {
-      <div class="origins__dots">
-        @for (tile of tiles(); track tile.origin.id; let index = $index) {
-          <button
-            class="origins__dot"
-            type="button"
-            [class.is-active]="index === active()"
-            [attr.aria-label]="dotLabel(index)"
-            [attr.aria-current]="index === active() ? 'true' : null"
-            (click)="goTo(index)"
-          ></button>
-        }
-      </div>
     }
+  </div>
+  } @else if (tiles().length) {
+  <ul class="origins__track" #track (scroll)="sync()">
+    @for (tile of tiles(); track tile.origin.id) {
+    <li class="origin">
+      <a
+        class="origin__link"
+        [routerLink]="['/shop']"
+        [queryParams]="{ origin: tile.origin.slug }">
+        <span class="origin__medallion">
+          <!-- The emoji sits underneath as the flag of record until the
+                   image paints over it, and stays visible if it never does. -->
+          <span class="origin__emoji" aria-hidden="true">{{ tile.flag?.emoji ?? '☕' }}</span>
+          @if (tile.flag) {
+          <img
+            class="origin__flag"
+            loading="lazy"
+            decoding="async"
+            alt=""
+            [src]="tile.flag.src"
+            [srcset]="tile.flag.srcset" />
+          }
+        </span>
+
+        <span class="origin__name">{{ tile.origin.name }}</span>
+
+        <span class="origin__cta">
+          {{ t().originsCta }}
+          <span class="origin__arrow" aria-hidden="true">→</span>
+        </span>
+      </a>
+    </li>
+    }
+  </ul>
+
+  @if (scrollable()) {
+  <div class="origins__dots">
+    @for (tile of tiles(); track tile.origin.id; let index = $index) {
+    <button
+      class="origins__dot"
+      type="button"
+      [class.is-active]="index === active()"
+      [attr.aria-label]="dotLabel(index)"
+      [attr.aria-current]="index === active() ? 'true' : null"
+      (click)="goTo(index)"></button>
+    }
+  </div>
+  }
   } @else {
-    <p class="origins__empty">{{ t().emptyOrigins }}</p>
+  <p class="origins__empty">{{ t().emptyOrigins }}</p>
   }
 </section>

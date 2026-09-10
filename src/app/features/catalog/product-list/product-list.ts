@@ -337,9 +337,15 @@ export class ProductList {
     // would silently empty the grid — the param is valid, it just cannot match
     // a machine. `replaceUrl` so the cleanup is not a history entry the back
     // button has to walk through.
+    //
+    // Only a chosen category rules a filter out. With none chosen the facet
+    // list is the universal set — which offers no origin, roast or flavor, but
+    // does not contradict them either — so a link like /shop?origin=ethiopia
+    // from the home carousel keeps its filter instead of being stripped bare
+    // the moment the page loads.
     effect(() => {
       const response = this.facetsResource.value();
-      if (!response) return;
+      if (!response || !this.category()) return;
 
       const offered = new Set(response.facets.map((facet) => facet.key));
       const stale: Record<string, null> = {};
