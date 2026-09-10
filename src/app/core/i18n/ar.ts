@@ -183,9 +183,11 @@ export const AR: Copy = {
   addToWishlistAria: 'إضافة إلى المفضلة',
 
   priceRange: 'نطاق السعر',
-  // TODO: not rendered yet — when it is, append <app-riyal-symbol> after the number.
+  // Placeholders, not values — they hint at the range the shop actually spans.
   priceMin: '45',
   priceMax: '190',
+  priceMinLabel: 'أقل سعر',
+  priceMaxLabel: 'أعلى سعر',
   resultsCount: '6 منتجات',
   resultsSuffix: 'منتج',
 
@@ -224,10 +226,24 @@ export const AR: Copy = {
   removeFilterAria: 'إزالة الفلتر',
   emptyProductsHint: 'وسّع نطاق السعر أو امسح أحد الفلاتر لعرض المزيد.',
   badgeOnSale: 'عرض خاص',
+  badgeSave: 'وفّر',
   outOfStock: 'غير متوفر',
   prevPage: 'السابق',
   nextPage: 'التالي ←',
   pageLabel: 'صفحة',
+
+  // Shop — results toolbar and state
+  refineLabel: 'ابحث ضمن النتائج',
+  refinePlaceholder: 'ابحث ضمن النتائج',
+  clearSearch: 'مسح البحث',
+  resultsUpdating: 'جارٍ تحديث النتائج',
+  activeFiltersLabel: 'الفلاتر المطبّقة',
+  showAllOptions: 'عرض الكل',
+  showFewerOptions: 'عرض أقل',
+  errorProducts: 'تعذّر تحميل المنتجات',
+  errorProductsHint: 'لم يتمكّن المتجر من الوصول إلى الكتالوج. تحقّق من اتصالك ثم أعد المحاولة.',
+  paginationLabel: 'صفحات المنتجات',
+  goToPageAria: 'انتقل إلى صفحة',
 
   // Product
   crumbProduct: 'الرئيسية / المتجر / المنتج',

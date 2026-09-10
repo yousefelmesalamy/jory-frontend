@@ -195,9 +195,11 @@ export const EN = {
   addToWishlistAria: 'Add to wishlist',
 
   priceRange: 'Price range',
-  // TODO: not rendered yet — when it is, append <app-riyal-symbol> after the number.
+  // Placeholders, not values — they hint at the range the shop actually spans.
   priceMin: '45',
   priceMax: '190',
+  priceMinLabel: 'Lowest price',
+  priceMaxLabel: 'Highest price',
   resultsCount: '6 products',
   resultsSuffix: 'products',
 
@@ -236,10 +238,24 @@ export const EN = {
   removeFilterAria: 'Remove filter',
   emptyProductsHint: 'Widen the price range or clear a filter to see more.',
   badgeOnSale: 'On sale',
+  badgeSave: 'Save',
   outOfStock: 'Out of stock',
   prevPage: 'Previous',
   nextPage: 'Next →',
   pageLabel: 'Page',
+
+  // Shop — results toolbar and state
+  refineLabel: 'Search within results',
+  refinePlaceholder: 'Search within results',
+  clearSearch: 'Clear search',
+  resultsUpdating: 'Updating results',
+  activeFiltersLabel: 'Active filters',
+  showAllOptions: 'Show all',
+  showFewerOptions: 'Show fewer',
+  errorProducts: 'Products did not load',
+  errorProductsHint: 'The shop could not reach the catalog. Check your connection and try again.',
+  paginationLabel: 'Product pages',
+  goToPageAria: 'Go to page',
 
   // Product
   crumbProduct: 'Home / Shop / Product',

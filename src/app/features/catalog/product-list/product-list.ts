@@ -1,11 +1,24 @@
-import { Component, computed, effect, inject, input, resource, signal } from '@angular/core';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  PLATFORM_ID,
+  computed,
+  effect,
+  inject,
+  input,
+  linkedSignal,
+  resource,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { debounceTime, firstValueFrom } from 'rxjs';
 
 import { TranslationService } from '../../../core/i18n/translation.service';
-import { Category, Facet, Product, ProductFilters } from '../../../core/models';
+import { Category, Facet, FacetOption, Product, ProductFilters } from '../../../core/models';
 import { CatalogService } from '../../../core/services/catalog.service';
 import { Dropdown, DropdownOption } from '../../../shared/components/dropdown/dropdown';
 import { GenericCard } from '../../../shared/components/generic-card/generic-card';
@@ -15,6 +28,16 @@ import { PricePipe } from '../../../shared/pipes/price.pipe';
 import { WishlistToggle } from '../../../shared/components/wishlist-toggle/wishlist-toggle';
 
 const PAGE_SIZE = 20;
+
+/** Options past this are folded behind a "Show all" so one long facet — flavor
+ * notes, brands — cannot push every other filter below the fold. */
+const OPTION_LIMIT = 6;
+
+/** How many numbered buttons the pagination draws before it starts eliding. */
+const PAGE_WINDOW = 7;
+
+/** Matches the breakpoint in the stylesheet where the rail becomes a drawer. */
+const DRAWER_QUERY = '(max-width: 900px)';
 
 /** Rendered as a pill group rather than a `<select>`, so the choices stay visible. */
 interface Choice {
@@ -80,6 +103,7 @@ interface AppliedFilter {
   ],
   templateUrl: './product-list.html',
   styleUrl: './product-list.scss',
+  host: { '(document:keydown.escape)': 'closeFilters()' },
 })
 export class ProductList {
   private readonly catalog = inject(CatalogService);
@@ -87,6 +111,11 @@ export class ProductList {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
+  private readonly document = inject(DOCUMENT);
+  private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  /** Where a page change scrolls back to, so paging never leaves you mid-grid. */
+  private readonly resultsAnchor = viewChild<ElementRef<HTMLElement>>('resultsAnchor');
 
   readonly t = this.translation.t;
 
@@ -226,11 +255,44 @@ export class ProductList {
     loader: ({ params }) => firstValueFrom(this.catalog.listProducts(params)),
   });
 
+  /**
+   * The last page of results that actually arrived, held across the next load.
+   *
+   * `resource` drops its value the moment the params change, which made every
+   * keystroke in the search box replace the whole grid with skeletons — the
+   * page jumped, the scroll position was lost, and the shopper lost sight of
+   * what they were narrowing down. Keeping the previous results on screen and
+   * marking them busy is the difference between a page that reloads and one
+   * that refines.
+   */
+  private readonly lastLoaded = linkedSignal<
+    { results: readonly Product[]; count: number } | undefined,
+    { results: readonly Product[]; count: number } | null
+  >({
+    source: () => {
+      const value = this.productsResource.value();
+      return value ? { results: value.results, count: value.count } : undefined;
+    },
+    computation: (value, previous) => value ?? previous?.value ?? null,
+  });
+
   protected readonly products = computed<readonly Product[]>(
-    () => this.productsResource.value()?.results ?? [],
+    () => this.lastLoaded()?.results ?? [],
   );
 
-  protected readonly loading = computed(() => this.productsResource.isLoading());
+  protected readonly total = computed(() => this.lastLoaded()?.count ?? 0);
+
+  /** First paint, or a load with nothing to keep on screen: draw skeletons. */
+  protected readonly loading = computed(
+    () => this.productsResource.isLoading() && !this.lastLoaded(),
+  );
+
+  /** A load on top of results we already have: dim them, don't discard them. */
+  protected readonly refreshing = computed(
+    () => this.productsResource.isLoading() && !!this.lastLoaded(),
+  );
+
+  protected readonly failed = computed(() => !!this.productsResource.error());
 
   /** Placeholder tiles, sized to a typical first screen rather than the full page. */
   protected readonly skeletons = Array.from({ length: 8 }, (_, index) => index);
@@ -238,8 +300,31 @@ export class ProductList {
   protected readonly currentPage = computed(() => Number(this.page() || '1'));
 
   protected readonly totalPages = computed(() =>
-    Math.max(1, Math.ceil((this.productsResource.value()?.count ?? 0) / PAGE_SIZE)),
+    Math.max(1, Math.ceil(this.total() / PAGE_SIZE)),
   );
+
+  /**
+   * The numbered buttons: every page while there are few, otherwise the ends,
+   * the current page and its neighbours, with `null` standing for an elision.
+   */
+  protected readonly pageWindow = computed<readonly (number | null)[]>(() => {
+    const total = this.totalPages();
+    if (total <= PAGE_WINDOW) {
+      return Array.from({ length: total }, (_, index) => index + 1);
+    }
+
+    const current = this.currentPage();
+    const shown = [...new Set([1, current - 1, current, current + 1, total])]
+      .filter((page) => page >= 1 && page <= total)
+      .sort((a, b) => a - b);
+
+    const window: (number | null)[] = [];
+    for (const [index, page] of shown.entries()) {
+      if (index && page - shown[index - 1] > 1) window.push(null);
+      window.push(page);
+    }
+    return window;
+  });
 
   /**
    * The applied filters, read off the URL inputs so the chips can never disagree with
@@ -305,8 +390,43 @@ export class ProductList {
     return chips;
   });
 
+  /** Which form controls are currently narrowing the results — lets a collapsed
+   * facet still say that something inside it is on. */
+  private readonly activeControls = computed(
+    () => new Set(this.appliedFilters().map((chip) => chip.control)),
+  );
+
+  /** Facets the visitor has expanded past `OPTION_LIMIT`. */
+  private readonly expandedFacets = signal<ReadonlySet<string>>(new Set());
+
   constructor() {
     this.catalog.listCategories().subscribe((categories) => this.categories.set(categories));
+
+    // The mobile drawer is a real overlay, so the page behind it must not scroll
+    // — otherwise flicking the filter list carries the grid away underneath it.
+    // Widening past the breakpoint turns the drawer back into the always-open
+    // rail, so the lock is released with it rather than stranding the page.
+    effect((onCleanup) => {
+      if (!this.isBrowser || !this.filtersOpen()) return;
+
+      const view = this.document.defaultView;
+      const drawer = view?.matchMedia(DRAWER_QUERY);
+      if (!drawer?.matches) return;
+
+      const body = this.document.body;
+      const previous = body.style.overflow;
+      body.style.overflow = 'hidden';
+
+      const onWiden = () => {
+        if (!drawer.matches) this.filtersOpen.set(false);
+      };
+      drawer.addEventListener('change', onWiden);
+
+      onCleanup(() => {
+        body.style.overflow = previous;
+        drawer.removeEventListener('change', onWiden);
+      });
+    });
 
     // Route -> form. `emitEvent: false` keeps this from re-triggering the navigation below,
     // so following a link elsewhere or using browser back/forward doesn't loop.
@@ -431,11 +551,82 @@ export class ProductList {
     this.router.navigate([], { relativeTo: this.route, queryParams: {} });
   }
 
-  protected goToPage(page: number): void {
-    this.router.navigate([], {
-      relativeTo: this.route,
-      queryParamsHandling: 'merge',
-      queryParams: { page },
+  protected clearSearch(): void {
+    this.form.controls.search.setValue('');
+  }
+
+  protected closeFilters(): void {
+    this.filtersOpen.set(false);
+  }
+
+  protected retry(): void {
+    this.productsResource.reload();
+  }
+
+  /** The options a facet shows right now. A chosen option always stays visible,
+   * so collapsing a facet can never hide the filter that is actually applied. */
+  protected visibleOptions(facet: Facet): readonly FacetOption[] {
+    if (this.expandedFacets().has(facet.key) || facet.options.length <= OPTION_LIMIT) {
+      return facet.options;
+    }
+
+    const head = facet.options.slice(0, OPTION_LIMIT);
+    const chosen = facet.options.find((option) => this.isChosen(facet.key, option.value));
+    return chosen && !head.includes(chosen) ? [...head, chosen] : head;
+  }
+
+  protected hasMoreOptions(facet: Facet): boolean {
+    return facet.options.length > OPTION_LIMIT;
+  }
+
+  protected isFacetExpanded(key: string): boolean {
+    return this.expandedFacets().has(key);
+  }
+
+  protected toggleFacetOptions(key: string): void {
+    this.expandedFacets.update((keys) => {
+      const next = new Set(keys);
+      if (!next.delete(key)) next.add(key);
+      return next;
     });
+  }
+
+  /** Whether anything inside this facet is currently applied. */
+  protected isFacetActive(facetKey: string): boolean {
+    return this.activeControls().has(CONTROL_BY_FACET[facetKey] ?? facetKey);
+  }
+
+  /**
+   * How much a sale saves, as a whole percentage — a number a shopper can
+   * compare across tiles, where a bare "On sale" badge is only a label.
+   * Null when the compare-at price is missing or not actually higher.
+   */
+  protected discount(product: Product): number | null {
+    const now = Number(product.price_from);
+    const before = Number(product.compare_at_price_from);
+    if (!product.is_on_sale || !before || !now || before <= now) return null;
+    return Math.round(((before - now) / before) * 100);
+  }
+
+  protected goToPage(page: number): void {
+    this.router
+      .navigate([], {
+        relativeTo: this.route,
+        queryParamsHandling: 'merge',
+        queryParams: { page },
+      })
+      .then(() => {
+        if (!this.isBrowser) return;
+        // Landing on page 2 still scrolled to the bottom of page 1 means the
+        // new results start off-screen. `scroll-margin` on the anchor keeps the
+        // sticky toolbar from covering the first row.
+        const reduced = this.document.defaultView?.matchMedia(
+          '(prefers-reduced-motion: reduce)',
+        ).matches;
+        this.resultsAnchor()?.nativeElement.scrollIntoView({
+          behavior: reduced ? 'auto' : 'smooth',
+          block: 'start',
+        });
+      });
   }
 }

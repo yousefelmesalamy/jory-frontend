@@ -85,10 +85,12 @@ describe('ProductList facets', () => {
     }
   }
 
+  /** Every filter group's heading. Facets render as collapsible `<details>`, so
+   * their heading is the `<summary>`; the category dropdown is still a label. */
   function legends(): string[] {
-    return [...fixture.nativeElement.querySelectorAll('.filter-group__label')].map(
-      (node: Element) => node.textContent!.trim(),
-    );
+    return [
+      ...fixture.nativeElement.querySelectorAll('.facet__summary, .filter-group__label'),
+    ].map((node: Element) => node.textContent!.trim());
   }
 
   beforeEach(async () => {

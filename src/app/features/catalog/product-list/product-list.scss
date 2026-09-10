@@ -10,6 +10,10 @@ $ink: #3a2418;
 $ink-muted: #6a5346;
 $label: #8a7361;
 
+// The sticky toolbar's own height, so the rail below it and the scroll target
+// for pagination both clear it without three magic numbers drifting apart.
+$toolbar-h: 68px;
+
 :host {
   display: block;
 }
@@ -46,13 +50,13 @@ $label: #8a7361;
   color: $ink-muted;
 }
 
-/* ---------- subcategory row ---------- */
+// ---------- subcategory row ----------
 
 .subcats {
   display: flex;
   flex-wrap: wrap;
   gap: 28px 22px;
-  margin-block-end: 32px;
+  margin-block-end: 24px;
   justify-content: center;
 }
 
@@ -121,21 +125,90 @@ $label: #8a7361;
   font-weight: 700;
 }
 
-.shop__layout {
-  display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
-  gap: 40px;
-  align-items: start;
+// ---------- sticky toolbar ----------
+
+.toolbar {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: $toolbar-h;
+  margin-block-end: 20px;
+  padding-block: 12px;
+  background: $cream;
+  border-block-end: 1px solid $line-soft;
 }
 
-/* ---------- filter rail ---------- */
+.toolbar__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  min-width: 0;
+}
 
-.shop__filters-toggle {
+.toolbar__search-icon {
+  position: absolute;
+  inset-inline-start: 16px;
+  width: 18px;
+  height: 18px;
+  color: $label;
+  pointer-events: none;
+}
+
+.toolbar__search-input {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 16px;
+  padding-inline-start: 44px;
+  padding-inline-end: 40px;
+  border: 1px solid $line;
+  border-radius: 999px;
+  background: $card;
+  color: $ink;
+  font: inherit;
+  font-size: 14px;
+
+  &::placeholder {
+    color: #a8927c;
+  }
+
+  // Chrome's own clear affordance would sit on top of ours.
+  &::-webkit-search-cancel-button {
+    display: none;
+  }
+}
+
+.toolbar__search-clear {
+  position: absolute;
+  inset-inline-end: 12px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: $panel;
+  color: $ink-muted;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: $line;
+    color: $ink;
+  }
+}
+
+.toolbar__filters {
   display: none;
   align-items: center;
-  gap: 10px;
-  margin-block-end: 20px;
-  padding: 12px 22px;
+  gap: 8px;
+  flex: 0 0 auto;
+  padding: 12px 18px;
   border: 1.5px solid $line;
   border-radius: 999px;
   background: $card;
@@ -146,11 +219,16 @@ $label: #8a7361;
   cursor: pointer;
 }
 
-.shop__filters-count {
+.toolbar__filters-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.toolbar__filters-count {
   display: inline-grid;
   place-items: center;
-  min-width: 21px;
-  height: 21px;
+  min-width: 20px;
+  height: 20px;
   padding-inline: 6px;
   border-radius: 999px;
   background: $maroon;
@@ -158,16 +236,125 @@ $label: #8a7361;
   font-size: 12px;
 }
 
+// Only the flex sizing applies here — the trigger's border, background and
+// focus ring live in dropdown.scss, one encapsulation boundary further in.
+.toolbar__sort {
+  flex: 0 1 auto;
+  min-width: 190px;
+  max-width: 100%;
+}
+
+.shop__layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+// ---------- filter rail ----------
+
+.drawer-scrim {
+  display: none;
+}
+
 .shop__filters {
   position: sticky;
-  top: 24px;
+  // Clears the sticky toolbar rather than the top of the viewport.
+  inset-block-start: calc(#{$toolbar-h} + 16px);
   display: flex;
   flex-direction: column;
-  gap: 26px;
-  padding: 26px 24px;
+  // A long facet list scrolls inside the rail instead of running past the
+  // bottom of a sticky box, where it could never be reached.
+  max-height: calc(100vh - #{$toolbar-h} - 40px);
   border: 1px solid $line;
   border-radius: 20px;
   background: $card;
+  // overflow: hidden;
+}
+
+.shop__filters-head {
+  display: none;
+}
+
+.shop__filters-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 24px;
+  overflow-y: auto;
+}
+
+// One collapsible filter. `<details>` carries its own keyboard and screen
+// reader behaviour, so the disclosure needs no script.
+.facet {
+  border-block-end: 1px solid $line-soft;
+
+  &:last-of-type {
+    border-block-end: none;
+  }
+
+  &[open] .facet__summary::after {
+    transform: rotate(180deg);
+  }
+}
+
+.facet__summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-block: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: $ink;
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &::after {
+    content: '';
+    margin-inline-start: auto;
+    width: 9px;
+    height: 9px;
+    border-inline-end: 1.5px solid $label;
+    border-block-end: 1.5px solid $label;
+    transform: rotate(45deg) translate(-2px, -2px);
+    transform-origin: center;
+    transition: transform 160ms ease;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $gold;
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+}
+
+// Says a collapsed facet is doing something without repeating the value, which
+// the chips above the grid already spell out.
+.facet__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $maroon;
+}
+
+.facet > *:not(.facet__summary) {
+  margin-block-end: 16px;
+}
+
+.facet__more {
+  padding: 2px 0;
+  border: none;
+  background: none;
+  color: $maroon;
+  font: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }
 
 .filter-group {
@@ -175,8 +362,9 @@ $label: #8a7361;
   flex-direction: column;
   gap: 10px;
   margin: 0;
-  padding: 0;
+  padding-block: 14px;
   border: none;
+  border-block-end: 1px solid $line-soft;
 }
 
 .filter-group__label {
@@ -202,7 +390,7 @@ $label: #8a7361;
   }
 }
 
-/* Single-select pill groups. Clicking the on pill turns the filter off. */
+// Single-select pill groups. Clicking the on pill turns the filter off.
 .pills {
   display: flex;
   flex-wrap: wrap;
@@ -231,7 +419,7 @@ $label: #8a7361;
   color: $cream;
 }
 
-/* The roast scale: each chip is painted the colour of the bean it selects. */
+// The roast scale: each chip is painted the colour of the bean it selects.
 .roast {
   display: flex;
   gap: 10px;
@@ -270,8 +458,7 @@ $label: #8a7361;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding-block-start: 20px;
-  border-block-start: 1px solid $line-soft;
+  padding-block: 18px 4px;
 }
 
 .switch {
@@ -323,88 +510,73 @@ $label: #8a7361;
   }
 }
 
-/* Mirrors the knob travel so the toggle reads correctly in Arabic. */
+// Mirrors the knob travel so the toggle reads correctly in Arabic.
 :host-context([dir='rtl']) .switch input:checked + .switch__track::after {
   transform: translateX(-17px);
 }
 
-.shop__filters-done,
-.empty__action {
+// Only the drawer needs a footer: on desktop the rail's results are one glance
+// away, so a "show results" button would be a button that does nothing.
+.shop__filters-foot {
   display: none;
-  padding: 13px 26px;
-  border: none;
-  border-radius: 999px;
-  background: $maroon;
-  color: $cream;
-  font: inherit;
-  font-weight: 700;
-  font-size: 14px;
-  cursor: pointer;
-
-  &:hover {
-    background: $maroon-dark;
-  }
 }
 
-.empty__action {
-  display: block;
-  margin-block-start: 8px;
-}
-
-/* One visible focus ring for every control on the page. */
+// One visible focus ring for every control on the page.
+.toolbar__search-input:focus-visible,
+.toolbar__filters:focus-visible,
+.toolbar__search-clear:focus-visible,
 .filter-group__input:focus-visible,
 .pill:focus-visible,
+.facet__more:focus-visible,
 .roast__chip:focus-visible,
 .switch input:focus-visible + .switch__track,
 .applied__chip:focus-visible,
+.applied__clear:focus-visible,
+.pager__page:focus-visible,
+.pager__step:focus-visible,
+.notice__action:focus-visible,
 .product-tile__link:focus-visible {
   outline: 2px solid $gold;
   outline-offset: 2px;
   border-radius: 10px;
 }
 
-/* ---------- results ---------- */
+// ---------- results ----------
 
 .shop__results {
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 20px;
   min-width: 0;
 }
 
-.shop__toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding-block-end: 16px;
-  border-block-end: 1px solid $line-soft;
+// Zero-height mark that pagination scrolls to; the margin keeps the first row
+// of the new page from landing underneath the sticky toolbar.
+.shop__anchor {
+  display: block;
+  scroll-margin-block-start: calc(#{$toolbar-h} + 24px);
 }
 
-.shop__count {
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.meta__count {
+  margin: 0;
+  flex: 0 0 auto;
   color: $ink-muted;
   font-size: 14px;
 }
 
-/* The trigger's own look (border, background, focus ring) lives in
-   dropdown.scss — a page-level class can't reach inside a child component's
-   template, so `.shop__sort` never actually matched the button. This is only
-   the toolbar-flex-child sizing that does apply, to the host element itself. */
-.shop__sort-field {
-  // Without this the longest option sets the width and pushes off a phone screen.
-  min-width: 200px;
-  max-width: 100%;
-  flex-shrink: 1;
-
-}
-
-/* Applied filters, each one removable. */
+// Applied filters, each one removable.
 .applied {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin-block-start: -6px;
 }
 
 .applied__chip {
@@ -419,6 +591,10 @@ $label: #8a7361;
   font: inherit;
   font-size: 13px;
   cursor: pointer;
+
+  &:hover {
+    border-color: $maroon;
+  }
 }
 
 .applied__x {
@@ -440,8 +616,19 @@ $label: #8a7361;
   cursor: pointer;
 }
 
+// The results stay put while the next set loads — dimmed, inert, and clearly
+// mid-update rather than replaced by placeholder boxes.
+.grid {
+  transition: opacity 180ms ease;
+}
+
+.grid--busy {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
 // `GenericList` only owns a single-column grid; the shop grid needs multiple columns.
-.shop__results ::ng-deep .generic-list,
+.grid ::ng-deep .generic-list,
 .skeletons {
   grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
   gap: 34px 24px;
@@ -587,7 +774,7 @@ $label: #8a7361;
   color: $gold;
 }
 
-/* ---------- loading and empty ---------- */
+// ---------- loading, empty and failure ----------
 
 .skeletons {
   display: grid;
@@ -628,10 +815,11 @@ $label: #8a7361;
   }
 }
 
-.empty {
+.notice {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
   gap: 10px;
   padding: 56px 32px;
   border: 1px dashed $line;
@@ -639,40 +827,74 @@ $label: #8a7361;
   background: $card;
 }
 
-.empty__title {
+.notice--error {
+  border-style: solid;
+  border-color: rgba(122, 42, 42, 0.35);
+  background: #fdf3ef;
+  padding: 28px 32px;
+}
+
+.notice__title {
   margin: 0;
   font-family: 'Reem Kufi', 'Outfit', sans-serif;
   font-size: 21px;
   color: $ink;
 }
 
-.empty__hint {
+.notice__hint {
   margin: 0;
+  max-width: 46ch;
   font-size: 14px;
+  line-height: 1.7;
   color: $ink-muted;
 }
 
-/* ---------- pagination ---------- */
-
-.shop__pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  padding-block-start: 24px;
+.notice__action {
+  margin-block-start: 8px;
+  padding: 12px 26px;
+  border: none;
+  border-radius: 999px;
+  background: $maroon;
+  color: $cream;
+  font: inherit;
+  font-weight: 700;
   font-size: 14px;
-  color: $ink;
+  cursor: pointer;
+
+  &:hover {
+    background: $maroon-dark;
+  }
 }
 
-.shop__pagination button {
-  background: $card;
+// ---------- pagination ----------
+
+.pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 14px;
+  padding-block-start: 24px;
+}
+
+.pager__pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pager__step,
+.pager__page {
   border: 1px solid $line;
   border-radius: 999px;
-  padding: 10px 20px;
+  background: $card;
+  color: $ink;
   font-family: inherit;
   font-size: 14px;
   cursor: pointer;
-  color: $ink;
 
   &:hover:not(:disabled) {
     border-color: $maroon;
@@ -685,10 +907,40 @@ $label: #8a7361;
   }
 }
 
+.pager__step {
+  padding: 10px 20px;
+}
+
+.pager__page {
+  min-width: 38px;
+  height: 38px;
+  padding-inline: 8px;
+}
+
+.pager__page--on {
+  background: $maroon;
+  border-color: $maroon;
+  color: $cream;
+
+  &:hover {
+    color: $cream;
+  }
+}
+
+.pager__gap {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  color: $label;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .product-tile__image,
   .switch__track,
-  .switch__track::after {
+  .switch__track::after,
+  .facet__summary::after,
+  .grid,
+  .shop__filters {
     transition: none;
   }
 
@@ -696,37 +948,151 @@ $label: #8a7361;
   .skeleton__line {
     animation: none;
   }
+
+  .shop__filters--open {
+    animation: none;
+  }
 }
 
-/* Below this the rail becomes a drawer opened by the Filters button. */
+// Below this the rail becomes a bottom sheet opened from the toolbar.
 @media (max-width: 900px) {
   .shop {
     padding: 28px 20px 56px;
   }
 
-  .shop__filters-toggle {
+  .toolbar {
+    // Full-bleed so the sticky bar's background covers the page gutter.
+    margin-inline: -20px;
+    padding-inline: 20px;
+    // Search takes the first row on its own; filters and sort share the second,
+    // which keeps both wide enough to read on a phone.
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .toolbar__search {
+    flex: 1 0 100%;
+  }
+
+  .toolbar__filters {
     display: inline-flex;
+    flex: 0 0 auto;
+  }
+
+  .toolbar__sort {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .shop__layout {
     grid-template-columns: 1fr;
   }
 
+  .drawer-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    padding: 0;
+    border: none;
+    background: rgba(43, 29, 22, 0.45);
+    animation: shop-fade 180ms ease;
+    cursor: pointer;
+  }
+
   .shop__filters {
     display: none;
-    position: static;
+    position: fixed;
+    inset-block-end: 0;
+    inset-inline: 0;
+    z-index: 61;
+    max-height: 86vh;
+    border: none;
+    border-start-start-radius: 22px;
+    border-start-end-radius: 22px;
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+    box-shadow: 0 -18px 44px rgba(43, 29, 22, 0.22);
   }
 
   .shop__filters--open {
     display: flex;
-    margin-block-end: 24px;
+    animation: shop-sheet 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .shop__filters-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px 12px;
+    border-block-end: 1px solid $line-soft;
+  }
+
+  .shop__filters-title {
+    margin: 0;
+    font-family: 'Reem Kufi', 'Outfit', sans-serif;
+    font-size: 19px;
+    color: $ink;
+  }
+
+  .shop__filters-x {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid $line;
+    border-radius: 50%;
+    background: $cream;
+    color: $ink;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .shop__filters-body {
+    flex: 1 1 auto;
+    padding: 4px 20px 12px;
+    // Momentum scrolling inside the sheet, with the page behind it locked.
+    overscroll-behavior: contain;
+  }
+
+  .shop__filters-foot {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+    border-block-start: 1px solid $line-soft;
+    background: $card;
+  }
+
+  .shop__filters-reset {
+    flex: 0 0 auto;
+    padding: 13px 18px;
+    border: 1px solid $line;
+    border-radius: 999px;
+    background: transparent;
+    color: $ink;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
   }
 
   .shop__filters-done {
-    display: block;
+    flex: 1 1 auto;
+    padding: 13px 26px;
+    border: none;
+    border-radius: 999px;
+    background: $maroon;
+    color: $cream;
+    font: inherit;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
   }
 
-  .shop__results ::ng-deep .generic-list,
+  .grid ::ng-deep .generic-list,
   .skeletons {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 26px 16px;
@@ -755,5 +1121,21 @@ $label: #8a7361;
 
   .subcat-tile__name {
     font-size: 12px;
+  }
+
+  .notice {
+    padding: 40px 20px;
+  }
+}
+
+@keyframes shop-sheet {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes shop-fade {
+  from {
+    opacity: 0;
   }
 }
