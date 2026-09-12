@@ -380,21 +380,44 @@
         }
       </div>
 
-      <nav class="header__drawer-socials" [attr.aria-label]="t().footerFollow">
-        @for (social of socials; track social.label) {
-          <a
-            class="header__social"
-            [href]="social.href"
-            target="_blank"
-            rel="noopener noreferrer"
-            [attr.aria-label]="social.label"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path [attr.d]="social.path" />
-            </svg>
-          </a>
-        }
-      </nav>
+      <!--
+        Bar 1's two remaining affordances, in the same order it puts them:
+        socials at the start, the language switch at the end. The switch has to
+        live here — bar 1 itself is hidden at this width, so the drawer is a
+        phone's only route to it.
+      -->
+      <div class="header__drawer-footer">
+        <nav class="header__drawer-socials" [attr.aria-label]="t().footerFollow">
+          @for (social of socials; track social.label) {
+            <a
+              class="header__social"
+              [href]="social.href"
+              target="_blank"
+              rel="noopener noreferrer"
+              [attr.aria-label]="social.label"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path [attr.d]="social.path" />
+              </svg>
+            </a>
+          }
+        </nav>
+
+        <button
+          class="header__drawer-lang"
+          type="button"
+          [attr.aria-label]="t().langSwitchAria"
+          (click)="toggleLanguage()"
+        >
+          {{ t().langSwitch }}
+        </button>
+      </div>
     </div>
   }
 </header>

@@ -30,8 +30,9 @@ export const AR: Copy = {
   browseCategories: 'تسوّق حسب التصنيف',
   browseOffers: 'العروض',
   browseNew: 'وصل حديثاً',
-  // TODO: append <app-riyal-symbol> after "150" once the strip renders it.
-  announce: 'شحن مجاني للطلبات فوق 150',
+  // The strip is plain text with no currency glyph, so the rate is named in
+  // the perks tile instead of here.
+  announce: 'شحن بسعر ثابت على كل الطلبات',
   announceRoast: 'تحميص يومي في الرياض',
   announceTrack: 'تتبّع طلبك في أي وقت من حسابك',
   announcePrev: 'الإعلان السابق',
@@ -96,8 +97,8 @@ export const AR: Copy = {
   // Home — perks strip
   perkFreshTitle: 'تحميص طازج يومياً',
   perkFreshSub: 'يُشحن خلال 24 ساعة',
-  // Rendered with <app-riyal-symbol> appended after "150" — see perks.html.
-  perkShippingTitle: 'شحن مجاني فوق 150',
+  // Rendered with <app-riyal-symbol> appended after "14" — see perks.html.
+  perkShippingTitle: 'شحن ثابت بـ 14',
   perkShippingSub: 'لكل مدن المملكة',
   perkPointsTitle: 'نقاط ولاء على كل طلب',
   perkPointsSub: 'استبدلها بأكياس مجانية',

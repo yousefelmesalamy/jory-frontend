@@ -623,14 +623,44 @@ $pad: 56px;
   color: $maroon;
 }
 
+.header__drawer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 4px;
+}
+
 .header__drawer-socials {
   display: flex;
   gap: 16px;
-  padding-top: 4px;
 
   .header__social {
     color: $maroon;
     opacity: 0.8;
+  }
+}
+
+// The drawer's counterpart to `.header__lang`, on cream rather than maroon —
+// and with a thumb-sized target, since this one is only ever tapped.
+.header__drawer-lang {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 8px 18px;
+  background: none;
+  border: 1px solid $line-strong;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: $maroon;
+  white-space: nowrap;
+
+  &:hover {
+    background: $maroon;
+    border-color: $maroon;
+    color: $on-maroon;
   }
 }
 

@@ -33,8 +33,9 @@ export const EN = {
   browseCategories: 'Shop by category',
   browseOffers: 'Offers',
   browseNew: 'New arrivals',
-  // TODO: append <app-riyal-symbol> after "150" once the strip renders it.
-  announce: 'Free shipping over 150',
+  // The strip is plain text with no currency glyph, so the rate is named in
+  // the perks tile instead of here.
+  announce: 'Flat-rate shipping on every order',
   announceRoast: 'Roasted daily in Riyadh',
   announceTrack: 'Track your order any time from your account',
   announcePrev: 'Previous announcement',
@@ -100,8 +101,8 @@ export const EN = {
   // Home — perks strip
   perkFreshTitle: 'Roasted fresh daily',
   perkFreshSub: 'Ships within 24 hours',
-  // Rendered with <app-riyal-symbol> appended after "150" — see perks.html.
-  perkShippingTitle: 'Free shipping over 150',
+  // Rendered with <app-riyal-symbol> appended after "14" — see perks.html.
+  perkShippingTitle: 'Flat shipping, only 14',
   perkShippingSub: 'Across the Kingdom',
   perkPointsTitle: 'Points on every order',
   perkPointsSub: 'Redeem for free bags',

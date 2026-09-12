@@ -149,6 +149,26 @@ describe('Header', () => {
     expect(button.textContent!.trim()).toBe(EN.langSwitch);
   });
 
+  // Bar 1 is hidden below 820px, so the drawer is the only route to the switch
+  // on a phone. It carries the other two bar-1 affordances already; without the
+  // language switch too, a mobile visitor cannot change language at all.
+  it('offers the language switch inside the mobile drawer', async () => {
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('.header__drawer')).toBeNull();
+
+    (el.querySelector('.header__burger') as HTMLButtonElement).click();
+    await fixture.whenStable();
+
+    const button = el.querySelector('.header__drawer-lang') as HTMLButtonElement;
+    expect(button).toBeTruthy();
+    expect(button.textContent!.trim()).toBe(AR.langSwitch);
+
+    button.click();
+    await fixture.whenStable();
+
+    expect(TestBed.inject(TranslationService).locale()).toBe('en');
+  });
+
   it('re-renders every label when the language switches', async () => {
     fixture.nativeElement.querySelector('.header__lang').click();
     await fixture.whenStable();

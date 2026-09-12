@@ -37,10 +37,12 @@ export interface ProductRoasterRef {
   country: string;
 }
 
+/** `image` is null until staff upload one — the field is optional in the admin. */
 export interface CoffeeOrigin {
   id: number;
   name: string;
   slug: string;
+  image: string | null;
 }
 
 export interface ProductImage {
