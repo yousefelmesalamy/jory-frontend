@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 /**
  * Drops the decimals from a money amount when they carry nothing: the API
- * always sends two places ("340.00"), but a whole-riyal price reads better as
+ * always sends two places ("340.00"), but a whole-pound price reads better as
  * "340". Amounts with real cents keep both places ("12.50" stays "12.50") so
  * the fractional part never looks truncated.
  *

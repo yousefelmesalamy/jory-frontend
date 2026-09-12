@@ -258,16 +258,16 @@ describe('Header', () => {
     expect(panel().classList).not.toContain('is-open');
   });
 
-  it('shows the cart total with the Riyal glyph', async () => {
+  it('shows the cart total with the currency mark', async () => {
     const cartTotal = () => fixture.nativeElement.querySelector('.header__cart-total');
-    expect(cartTotal().textContent.trim()).toBe('0');
-    expect(cartTotal().querySelector('svg.riyal-symbol')).toBeTruthy();
+    expect(cartTotal().textContent.trim()).toBe('0 ل.س');
+    expect(cartTotal().querySelector('span.riyal-symbol')).toBeTruthy();
 
     TestBed.inject(TranslationService).setLocale('en');
     await fixture.whenStable();
 
-    expect(cartTotal().textContent.trim()).toBe('0');
-    expect(cartTotal().querySelector('svg.riyal-symbol')).toBeTruthy();
+    expect(cartTotal().textContent.trim()).toBe('0 S.P');
+    expect(cartTotal().querySelector('span.riyal-symbol')).toBeTruthy();
   });
 });
 
